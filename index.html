@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>ドライフラワー店ノート</title>
-<meta name="theme-color" content="#8A3F55">
+<meta name="theme-color" content="#FFFFFF">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="店ノート">
@@ -15,16 +15,18 @@
 <link rel="icon" href="icon-192.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@400;500;700&family=Zen+Old+Mincho:wght@600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=BIZ+UDPGothic:wght@400;700&display=swap" rel="stylesheet">
 <style>
 :root{
-  /* 方針: スマホ縦1列。大きな文字と押しやすいボタン。下に5つのタブ。色は乾いたバラ色ひとつだけ */
-  /* 生成りの背景・濃い文字。コントラストはどれも7:1前後 */
-  --paper:#F6F1E6; --surface:#FFFDF8; --ink:#1E1A17; --muted:#4A433F; --line:#D6CDBF;
-  --accent:#84384E; --accent-ink:#FFFFFF; --accent-soft:#F1E3E3;
-  --good:#22663F; --warn:#7F4A0E; --bad:#9E2A2A;
-  --display:"Zen Old Mincho","Hiragino Mincho ProN","Yu Mincho",serif;
-  --body:"Zen Kaku Gothic New","Hiragino Sans","Yu Gothic",system-ui,sans-serif;
+  /* 方針（v2）: 明るいグレーの地に白いカード。文字はほぼ黒（白地で17:1）。
+     押せるものは「バラ色の枠か塗り」、入力欄は「濃いグレーの枠」（どちらも白地で4.5:1以上）。
+     文字はユニバーサルデザインフォント（BIZ UDPゴシック）。色だけに頼らず ✓ や文字でも区別する */
+  --paper:#EDEFF2; --surface:#FFFFFF; --ink:#16181D; --muted:#474C55; --line:#C3C8CF; --ctl:#6B727C;
+  --accent:#A02550; --accent-ink:#FFFFFF; --accent-soft:#FCEBF1;
+  --good:#1B6B3C; --warn:#8A4A00; --bad:#B42318;
+  --shadow:0 1px 3px rgba(16,24,40,.10),0 1px 2px rgba(16,24,40,.06);
+  --display:"BIZ UDPGothic","Hiragino Sans","Hiragino Kaku Gothic ProN","Yu Gothic UI",Meiryo,system-ui,sans-serif;
+  --body:"BIZ UDPGothic","Hiragino Sans","Hiragino Kaku Gothic ProN","Yu Gothic UI",Meiryo,system-ui,sans-serif;
   color-scheme:light;
 }
 *{box-sizing:border-box}
@@ -159,7 +161,8 @@ body[data-split="lr"] .composer,body[data-split="tb"] .composer{bottom:-12px}
 .regibtn .p{font-size:20px;font-weight:700;color:var(--accent)}
 .regibtn .l{font-size:16px;color:var(--muted)}
 .regibtn .t{font-size:16px;font-weight:700;color:var(--accent)}
-.regibtn.out{border-color:var(--line);opacity:.6}
+.regibtn.out{border:2px dashed var(--ctl);background:#F4F5F7;box-shadow:none}
+.regibtn.out .p{color:var(--muted)}
 .hbar{display:grid;grid-template-columns:44px 1fr 48px;align-items:center;gap:8px}
 .hbar b{display:block;height:16px;border-radius:8px;background:var(--accent);min-width:4px}
 .pstrip{display:flex;flex-direction:column;gap:8px}
@@ -282,9 +285,175 @@ input[type=range]{width:100%;accent-color:var(--accent);min-height:36px}
   .panel{max-width:860px}
   body[data-split="none"] .panebody[data-view="home"]{display:grid;grid-template-columns:1fr 1fr;gap:18px;align-items:start}
   body[data-split="none"] .panebody[data-view="home"] > *{min-width:0}
-  body[data-split="none"] .panebody[data-view="home"] > .hero,body[data-split="none"] .panebody[data-view="home"] > .quick{grid-column:1/-1}
+  body[data-split="none"] .panebody[data-view="home"] > .hero,body[data-split="none"] .panebody[data-view="home"] > .quick,body[data-split="none"] .panebody[data-view="home"] > .apps,body[data-split="none"] .panebody[data-view="home"] > .todaybox{grid-column:1/-1}
   body[data-split="none"] .panebody[data-view="ai"] .chat{max-width:900px}
 }
+
+/* ===== 共通: ±の部品・確認表示・レジ・スケジュール・ガイド ===== */
+.f{display:grid;gap:6px;font-size:17px;font-weight:700}
+.nstep{display:flex;align-items:stretch;gap:6px}
+.nstep .nb{flex:none;width:60px;min-height:58px;border-radius:14px;border:2px solid var(--line);background:var(--surface);font-size:28px;font-weight:700;line-height:1;cursor:pointer;color:var(--ink);touch-action:manipulation;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;padding:0}
+.nstep .nb.x{width:auto;padding:0 10px;font-size:17px}
+.nstep .nb:active{background:var(--accent-soft);border-color:var(--accent)}
+.nstep .nvw{flex:1;min-width:0;position:relative;display:flex}
+.nstep input{text-align:center;font-size:22px !important;font-weight:700;font-variant-numeric:tabular-nums;min-height:58px;padding:6px 4px !important}
+.nstep .nvw .u{position:absolute;right:10px;top:50%;transform:translateY(-50%);font-size:15px;color:var(--muted);pointer-events:none;font-weight:500}
+.nstep .nvw:has(.u) input{padding-right:34px !important}
+.toast{display:flex;align-items:center;justify-content:center;gap:12px;left:0;right:0;margin:0 auto;width:max-content;max-width:calc(100% - 32px);transform:none;border-radius:18px}
+.toast > span{min-width:0}
+body:has(.basketbar) .toast{bottom:calc(176px + env(safe-area-inset-bottom))}
+.toast .tbtn{min-height:44px;padding:4px 16px;border-radius:999px;border:2px solid var(--paper);background:transparent;color:var(--paper);font-weight:700;font-size:16px;cursor:pointer;flex:none}
+.flash{position:fixed;inset:0;display:grid;place-items:center;z-index:95;pointer-events:none;transition:opacity .35s}
+.flash > div{background:var(--good);color:#fff;border-radius:24px;padding:22px 34px;text-align:center;box-shadow:0 10px 40px rgba(0,0,0,.25);animation:pop .18s ease-out}
+.flash .ck{font-size:52px;line-height:1;font-weight:700}
+.flash b{display:block;font-size:28px;font-variant-numeric:tabular-nums}
+.flash span{display:block;font-size:17px}
+.flash.out{opacity:0}
+@keyframes pop{from{transform:scale(.85);opacity:0}to{transform:none;opacity:1}}
+@media (prefers-reduced-motion:reduce){.flash > div{animation:none}}
+.regihead .big{font:700 30px/1.2 var(--body);font-variant-numeric:tabular-nums;color:var(--accent)}
+.goalbar{height:14px;border-radius:999px;background:var(--accent-soft);overflow:hidden;margin-top:6px}
+.goalbar b{display:block;height:100%;background:var(--accent);border-radius:999px}
+.regibtn{position:relative}
+.regibtn .l{display:flex;justify-content:space-between;align-items:center;gap:4px 6px;width:100%;flex-wrap:wrap}
+.regibtn .l > span:first-child{white-space:nowrap}
+.regibtn .inb{background:var(--accent);color:var(--accent-ink);border-radius:999px;padding:0 10px;font-size:16px;font-weight:700;white-space:nowrap}
+.regibtn s{color:var(--muted);font-size:16px;font-weight:500;margin-right:4px}
+.regibtn.inbasket{box-shadow:inset 0 0 0 2px var(--accent);background:var(--accent-soft)}
+.basketbar{position:sticky;bottom:calc(80px + env(safe-area-inset-bottom));z-index:8;display:flex;gap:10px;align-items:center;background:var(--ink);color:var(--paper);border-radius:18px;padding:10px 10px 10px 16px;box-shadow:0 6px 24px rgba(0,0,0,.2)}
+.basketbar .sum{flex:1;line-height:1.35;background:none;border:0;color:inherit;text-align:left;padding:0;cursor:pointer;font:inherit}
+.basketbar .sum b{font-size:22px;font-variant-numeric:tabular-nums;display:block}
+.basketbar .btn{min-height:60px;background:var(--accent);border-color:var(--accent);color:#fff;font-size:19px}
+body[data-split="lr"] .basketbar,body[data-split="tb"] .basketbar{bottom:0}
+.ckrow{display:grid;grid-template-columns:1fr auto;gap:8px;align-items:center;border-bottom:1px solid var(--line);padding:8px 0}
+.ckrow .nstep .nb{width:52px;min-height:52px}
+.ckrow .nstep input{width:56px;min-height:52px}
+.total{display:flex;justify-content:space-between;align-items:baseline;font-weight:700}
+.total b{font-size:30px;font-variant-numeric:tabular-nums;color:var(--accent)}
+.change{background:var(--surface);border:2px solid var(--good);border-radius:14px;padding:10px 14px;display:flex;justify-content:space-between;align-items:baseline;font-weight:700}
+.change b{font-size:28px;color:var(--good);font-variant-numeric:tabular-nums}
+.tbl tfoot td{font-weight:700;border-top:2px solid var(--line)}
+.tl{list-style:none;margin:0;padding:0}
+.tl li{display:grid;grid-template-columns:62px 22px 1fr;gap:6px;align-items:start;min-height:52px}
+.tl .tm{font-weight:700;font-variant-numeric:tabular-nums;text-align:right;padding-top:2px}
+.tl .dot{position:relative;height:100%}
+.tl .dot::before{content:"";position:absolute;left:50%;top:0;bottom:0;width:3px;margin-left:-1.5px;background:var(--line)}
+.tl li:last-child .dot::before{bottom:auto;height:14px}
+.tl .dot::after{content:"";position:absolute;left:50%;top:8px;width:14px;height:14px;margin-left:-7px;border-radius:50%;background:var(--surface);border:3px solid var(--accent)}
+.tl li.key .dot::after{background:var(--accent)}
+.tl li.now .tm,.tl li.now .tx b{color:var(--accent)}
+.tl li.now .dot::after{width:18px;height:18px;margin-left:-9px;top:6px;background:var(--accent);box-shadow:0 0 0 4px var(--accent-soft)}
+.tl li.gone .dot::after{border-color:var(--ctl);background:var(--ctl)}
+.tl li.gone .tx b::after{content:"（すぎました）";font-weight:400;font-size:15px;color:var(--muted)}
+.tl .tx{padding-bottom:10px}
+.tl .tx b{display:block;line-height:1.4}
+.tl .tx span{display:block;font-size:16px;color:var(--muted);line-height:1.5}
+.warnbox{border:2px solid var(--warn);background:#FBF1E4;border-radius:12px;padding:10px 12px;font-size:16px;color:var(--warn);font-weight:700}
+.todaybox{border:2px solid var(--accent);background:var(--surface)}
+.todaybox .k{font-size:16px;color:var(--accent);font-weight:700}
+.todaybox h2{font:700 22px/1.35 var(--display)}
+.cal{display:grid;grid-template-columns:repeat(7,1fr);gap:3px}
+.cal .wd{text-align:center;font-size:15px;color:var(--muted);font-weight:700}
+.cal .wd.su,.cal .d.su .n{color:var(--bad)} .cal .wd.sa,.cal .d.sa .n{color:#1F4E8C}
+.cal .d{min-height:64px;border-radius:10px;border:1px solid var(--line);background:var(--surface);padding:3px 3px 4px;display:flex;flex-direction:column;align-items:stretch;gap:2px;cursor:pointer;text-align:left;overflow:hidden;color:var(--ink)}
+.cal .d.out{visibility:hidden}
+.cal .d .n{font-size:16px;font-weight:700;line-height:1.2;text-align:center}
+.cal .d.today{border:2px solid var(--accent)}
+.cal .d.today .n{background:var(--accent);color:#fff !important;border-radius:999px}
+.cal .d.sel{background:var(--accent-soft);border-color:var(--accent)}
+.cal .d i{display:block;font-style:normal;font-size:12px;line-height:1.3;border-radius:4px;padding:0 3px;white-space:nowrap;overflow:hidden;background:var(--accent);color:#fff}
+.cal .d i.o{background:#5E6B3B} .cal .d i.t{background:transparent;color:var(--warn);border:1px solid var(--warn)}
+.calnav{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.calnav b{font:700 20px var(--display)}
+.helpsteps{margin:0;padding-left:1.4em;display:grid;gap:6px}
+.helpsteps li{padding-left:2px}
+details.faq{border:1px solid var(--line);border-radius:12px;background:var(--surface);padding:0 14px}
+details.faq summary{min-height:54px;display:flex;align-items:center;font-weight:700;cursor:pointer;list-style:none;gap:8px}
+details.faq summary::before{content:"Q";color:var(--accent);font-weight:700}
+details.faq[open] summary{border-bottom:1px solid var(--line)}
+details.faq > div{padding:10px 0 12px;line-height:1.75}
+.tipbox{background:var(--surface);border-left:5px solid var(--accent);border-radius:8px;padding:10px 14px}
+@media (min-width:1024px){ .basketbar{bottom:12px} }
+@media (max-width:520px){ body.zoomed #splitBtn{display:none} body.zoomed .top h1{font-size:20px} }
+
+/* ===== 見やすさ v2（コントラスト・押せる物の見分け・UDフォント） ===== */
+body{letter-spacing:.02em}
+.top{background:var(--surface);margin:0 -16px 12px;padding-left:16px;padding-right:16px;border-bottom:1px solid var(--line)}
+.top h1{font:700 21px/1.3 var(--body)}
+.card,.hero,.evcard,.pcard,.tile,.notice,.regibtn{box-shadow:var(--shadow)}
+.section-title h2{font:700 21px/1.4 var(--body)}
+.card h2.h,.card > h2,.panel .head h2,.monthnav strong,.calnav b,.report h3,.evdate b,.todaybox h2{font-family:var(--body)}
+.btn{border:2px solid var(--accent);color:var(--accent);background:var(--surface);box-shadow:0 1px 2px rgba(16,24,40,.10)}
+.btn.primary{background:var(--accent);color:var(--accent-ink)}
+.btn.ghost{border-color:transparent;box-shadow:none;background:transparent}
+.btn.danger{color:var(--bad);border-color:var(--bad)}
+.btn.ghost.danger{border-color:transparent;text-decoration:underline;text-underline-offset:4px}
+.btn:active,.app-t:active,.regibtn:active{transform:translateY(1px)}
+.iconbtn{border:2px solid var(--ctl);box-shadow:0 1px 2px rgba(16,24,40,.10)}
+.seg button{border:2px solid var(--ctl);color:var(--ink);min-height:52px}
+.seg button[aria-pressed="true"]{border-color:var(--accent)}
+.seg button[aria-pressed="true"]::before{content:"✓";margin-right:6px;font-weight:700}
+input[type=text],input[type=number],input[type=date],input[type=time],input[type=email],input[type=password],input[type=search],select,textarea{border:2px solid var(--ctl)}
+input::placeholder,textarea::placeholder{color:#6B727C}
+.del{border-color:var(--ctl)}
+.copy,.chipbtn{border-width:2px;background:var(--surface)}
+.nstep .nb,.bigstep button,.stepper button{border:2px solid var(--ctl);background:var(--surface);color:var(--ink)}
+.nstep .nb:active{background:var(--accent-soft);border-color:var(--accent)}
+.check-item input[type=checkbox]{width:34px;height:34px}
+.pick label{border:2px solid var(--ctl)}
+.banner{background:#FFF6DB;border:2px solid var(--warn);color:var(--ink);font-weight:700}
+.notice{border:1px solid var(--line);border-left:6px solid var(--ctl)}
+.evdate{background:var(--accent-soft);color:var(--accent)} .evdate span{color:var(--accent)}
+.hero .label{color:var(--ink);font-weight:700}
+.regibtn{border:2px solid var(--accent)}
+.regibtn.inbasket{background:var(--accent-soft);box-shadow:inset 0 0 0 2px var(--accent)}
+.bubble.user{background:var(--accent-soft);border:1px solid #E7B9C8}
+.presets button{border:2px solid var(--ctl)}
+.composer{background:var(--paper)}
+.panel{background:var(--paper)} .panel .head{background:var(--paper)}
+details.faq{box-shadow:var(--shadow)}
+.tbl th{color:var(--ink);font-weight:700}
+.empty{color:var(--muted)}
+a{color:var(--accent)}
+/* 下のタブ（スマホは5つ）。いまの画面はバラ色の丸＋太字＋上の線で、色以外でも分かる */
+.tabs{background:var(--surface);border-top:1px solid var(--line);box-shadow:0 -2px 12px rgba(16,24,40,.08)}
+.tabs .in{grid-template-columns:repeat(5,1fr)}
+.tabs a{letter-spacing:0;color:var(--muted);gap:4px;position:relative;font-weight:700}
+.tabs a .ic{display:grid;place-items:center;width:58px;height:34px;border-radius:999px}
+.tabs a[aria-current="page"]{background:none;color:var(--accent)}
+.tabs a[aria-current="page"] .ic{background:var(--accent)}
+.tabs a[aria-current="page"] .ic svg{stroke:#fff}
+.tabs a[aria-current="page"]::before{content:"";position:absolute;top:0;left:22%;right:22%;height:4px;border-radius:0 0 4px 4px;background:var(--accent)}
+.tabs a.wide{display:none}
+/* ホームの機能ボタン（アイコン＋ことば） */
+.apps{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.app-t{display:flex;flex-direction:column;align-items:center;justify-content:flex-start;gap:6px;min-height:108px;padding:12px 4px 10px;border-radius:16px;border:1px solid var(--line);background:var(--surface);box-shadow:var(--shadow);font-weight:700;font-size:16px;line-height:1.3;text-align:center;color:var(--ink);cursor:pointer;text-decoration:none;font-family:inherit}
+.app-t .ai{width:50px;height:50px;border-radius:15px;background:var(--accent-soft);display:grid;place-items:center;flex:none}
+.app-t .ai svg{width:28px;height:28px;stroke:var(--accent);fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+.app-t.primary .ai{background:var(--accent)} .app-t.primary .ai svg{stroke:#fff}
+/* メニューの一覧 */
+.mrow{display:grid;grid-template-columns:52px 1fr 20px;gap:12px;align-items:center;min-height:76px;padding:12px 14px;background:var(--surface);border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow);text-decoration:none;color:var(--ink);cursor:pointer;text-align:left;width:100%;font-family:inherit}
+.mrow .ai{width:52px;height:52px;border-radius:15px;background:var(--accent-soft);display:grid;place-items:center}
+.mrow .ai svg{width:28px;height:28px;stroke:var(--accent);fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+.mrow b{display:block;font-size:19px;line-height:1.35}
+.mrow span.d{display:block;font-size:16px;color:var(--muted);line-height:1.5;font-weight:400}
+.mrow .go{font-size:24px;color:var(--accent);font-weight:700}
+.back{font-size:18px}
+@media (max-width:759px){ #splitBtn{display:none} }
+@media (min-width:1024px){
+  .tabs .in{grid-template-columns:1fr}
+  .tabs a.wide{display:flex} .tabs a.narrow{display:none}
+  .tabs a[aria-current="page"]::before{top:16%;bottom:16%;left:0;right:auto;width:4px;height:auto;border-radius:0 4px 4px 0}
+  .back.narrow{display:none}
+  .apps{grid-template-columns:repeat(5,1fr)}
+  .top{margin:0 0 12px;border-radius:0 0 16px 16px}
+}
+@media (min-width:760px){ .apps{grid-template-columns:repeat(5,1fr)} .top{margin-left:-24px;margin-right:-24px;padding-left:24px;padding-right:24px} }
+/* くっきり表示（設定で切りかえ） */
+body.hc{--paper:#FFFFFF;--line:#6B727C;--muted:#30343A;--accent-soft:#F7DDE6}
+body.hc .card,body.hc .hero,body.hc .evcard,body.hc .pcard,body.hc .tile,body.hc .notice,body.hc .app-t,body.hc .mrow,body.hc details.faq{border:2px solid var(--ink);box-shadow:none}
+body.hc .btn{border-width:3px}
+body.hc .note,body.hc .meta{color:var(--ink)}
 </style>
 </head>
 <body>
@@ -295,6 +464,7 @@ input[type=range]{width:100%;accent-color:var(--accent);min-height:36px}
       <div class="date" id="todayLabel"></div>
     </div>
     <div class="row" style="gap:8px;flex-wrap:nowrap">
+    <button class="iconbtn" data-act="openHelp" aria-label="使い方・困ったとき"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9.5"/><path d="M9.3 9.2a2.8 2.8 0 0 1 5.4 1c0 1.9-2.7 2.4-2.7 4"/><circle cx="12" cy="17.3" r=".6" fill="currentColor"/></svg><span>使い方</span></button>
     <button class="iconbtn" id="splitBtn" data-act="openSplit" aria-label="画面の分け方"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M12 4v16"/></svg><span>2画面</span></button>
     <button class="iconbtn" data-act="openSettings" aria-label="お店の設定">
       <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg><span>設定</span>
@@ -363,6 +533,58 @@ const S = () => ({ ...DEFAULTS, ...(state.settingsDoc || {}) });
 let db = null, sample = null, dict = null, downloads = null, user = null, tts = null;
 const COPY = {};
 
+/* ---------- 押しやすい ± の部品（長押しで連続） ---------- */
+function numStep(attrs, value, o = {}) {
+  const step = o.step || 1, min = o.min ?? 0, max = o.max ?? "";
+  const lab = esc(o.label || "数"), dec = String(step).includes(".");
+  const bigB = o.big ? `<button type="button" class="nb x" data-nd="${-o.big}" aria-label="${lab}を${o.big}減らす">−${o.big}</button>` : "";
+  const bigF = o.big ? `<button type="button" class="nb x" data-nd="${o.big}" aria-label="${lab}を${o.big}増やす">＋${o.big}</button>` : "";
+  return `<div class="nstep" data-min="${min}" data-max="${max}">${bigB}<button type="button" class="nb" data-nd="${-step}" aria-label="${lab}を${step}減らす">−</button><span class="nvw"><input type="number" inputmode="${dec ? "decimal" : "numeric"}" step="${step}" ${attrs} value="${esc(value)}" aria-label="${lab}">${o.unit ? `<span class="u">${esc(o.unit)}</span>` : ""}</span><button type="button" class="nb" data-nd="${step}" aria-label="${lab}を${step}増やす">＋</button>${bigF}</div>`;
+}
+function nsApply(btn) {
+  const w = btn.closest(".nstep"); const inp = w && w.querySelector("input"); if (!inp) return false;
+  const min = w.dataset.min === "" ? -Infinity : Number(w.dataset.min), max = w.dataset.max === "" ? Infinity : Number(w.dataset.max);
+  let v = Math.round((num(inp.value) + Number(btn.dataset.nd)) * 100) / 100; v = Math.min(max, Math.max(min, v));
+  if (String(v) === String(inp.value)) return false;
+  inp.value = v; inp.dispatchEvent(new Event("input", { bubbles: true })); inp.dispatchEvent(new Event("change", { bubbles: true }));
+  buzz(); return true;
+}
+const NS = { t: 0, n: 0, btn: null };
+function nsStop() { clearTimeout(NS.t); NS.t = 0; NS.btn = null; }
+document.addEventListener("pointerdown", e => {
+  const b = e.target.closest && e.target.closest(".nstep .nb"); if (!b || e.button > 0) return;
+  e.preventDefault(); nsStop();
+  if (!nsApply(b)) return;
+  NS.btn = b; NS.n = 0;
+  const tick = () => { if (!NS.btn || !NS.btn.isConnected) return nsStop(); NS.n++; if (!nsApply(NS.btn)) return nsStop(); NS.t = setTimeout(tick, NS.n > 14 ? 45 : NS.n > 5 ? 90 : 160); };
+  NS.t = setTimeout(tick, 480);
+});
+["pointerup", "pointercancel", "blur", "scroll"].forEach(ev => window.addEventListener(ev, nsStop, true));
+document.addEventListener("keydown", e => { const b = e.target.closest && e.target.closest(".nstep .nb"); if (b && (e.key === "Enter" || e.key === " ")) { e.preventDefault(); nsApply(b); } });
+document.addEventListener("contextmenu", e => { if (e.target.closest && e.target.closest(".nstep .nb, .regibtn")) e.preventDefault(); });
+
+/* ---------- 押したときの手ごたえ（振動・音・大きな✓） ---------- */
+function buzz() { try { if (LS.get("dfn-buzz", true) && navigator.vibrate) navigator.vibrate(12); } catch {} }
+let AC = null;
+function chimePrep() { if (!LS.get("dfn-sound", true)) return; try { AC = AC || new (window.AudioContext || window.webkitAudioContext)(); if (AC.state === "suspended") AC.resume(); } catch {} }
+function chime() {
+  if (!LS.get("dfn-sound", true) || !AC) return;
+  try { const t = AC.currentTime + .02; [[988, 0], [1319, .13]].forEach(([f, d]) => { const o = AC.createOscillator(), g = AC.createGain(); o.type = "sine"; o.frequency.value = f; g.gain.setValueAtTime(0.0001, t + d); g.gain.exponentialRampToValueAtTime(0.22, t + d + .02); g.gain.exponentialRampToValueAtTime(0.0001, t + d + .4); o.connect(g); g.connect(AC.destination); o.start(t + d); o.stop(t + d + .45); }); } catch {}
+}
+function doneFlash(big, small) {
+  const d = document.createElement("div"); d.className = "flash"; d.setAttribute("role", "status");
+  d.innerHTML = `<div><div class="ck" aria-hidden="true">✓</div><b>${esc(big)}</b>${small ? `<span>${esc(small)}</span>` : ""}</div>`;
+  document.body.appendChild(d); setTimeout(() => d.classList.add("out"), 1000); setTimeout(() => d.remove(), 1400);
+}
+function toastAct(msg, label, fn, ms = 8000) {
+  const t = $("#toast"); t.innerHTML = `<span>${esc(msg)}</span><button type="button" class="tbtn">${esc(label)}</button>`;
+  t.querySelector("button").onclick = () => { t.textContent = ""; fn(); };
+  clearTimeout(toast.t); toast.t = setTimeout(() => { t.textContent = ""; }, ms);
+}
+const ZOOMS = [["1", "ふつう"], ["1.12", "大きめ"], ["1.25", "とても大きい"]];
+function applyZoom() { const z = String(LS.get("dfn-zoom", "1")); document.body.style.zoom = z === "1" ? "" : z; document.body.classList.toggle("zoomed", z !== "1"); document.body.classList.toggle("hc", !!LS.get("dfn-hc", false)); }
+const lineUrl = t => "https://line.me/R/share?text=" + encodeURIComponent(String(t || ""));
+
 /* ---------- お金の計算 ---------- */
 function priceCalc(material, minutes, packing, st = S()) {
   const labor = num(st.wage) * num(minutes) / 60;
@@ -382,7 +604,7 @@ function matchProduct(name) {
   return state.products.find(p => normName(p.name) === n) || state.products.find(p => { const pn = normName(p.name); return pn && (n.includes(pn) || pn.includes(n)); }) || null;
 }
 const saleProduct = s => (s.productId && state.products.find(p => p.id === s.productId)) || matchProduct(s.name);
-const saleTotal = s => num(s.price) * (num(s.qty) || 1);
+const saleTotal = s => num(s.price) * (num(s.qty) || 1) - num(s.discount);
 const saleFee = (s, st = S()) => s.channel === "BASE" ? saleTotal(s) * num(st.feeRate) / 100 + num(st.feeFixed) : 0;
 const saleCost = s => { const p = saleProduct(s); return p ? productCost(p) * (num(s.qty) || 1) : null; };
 const channelOf = s => s.eventId || s.channel === "イベント" || s.channel === "マルシェ" ? "イベント・マルシェ" : s.channel === "BASE" ? "BASE" : "その他";
@@ -404,7 +626,9 @@ function eventResult(e) {
   const costs = eventCosts(e);
   const profit = sm.total - sm.cost - costs;
   const brought = (e.lineup || []).reduce((a, l) => a + num(l.qty), 0);
-  return { sales, ...sm, costs, profit, hourly: num(e.hours) ? profit / num(e.hours) : null, brought, sellRate: brought ? sm.items / brought : null };
+  const disc = sales.reduce((a, x) => a + num(x.discount), 0), cash = sales.filter(x => (x.pay || "現金") === "現金").reduce((a, x) => a + saleTotal(x), 0);
+  const customers = new Set(sales.map(x => x.basketId || x.id)).size;
+  return { sales, ...sm, costs, profit, hourly: num(e.hours) ? profit / num(e.hours) : null, brought, sellRate: brought ? sm.items / brought : null, disc, cash, customers };
 }
 function soldOf(e, pid) { return state.sales.filter(s => s.eventId === e.id && s.productId === pid).reduce((a, s) => a + (num(s.qty) || 1), 0); }
 function stockChip(p) {
@@ -1251,7 +1475,7 @@ function stockView() {
   </section>
   <section class="card list"><h2 class="h">制作の計画（あと何個作れるか）</h2>
     ${withRecipe.length ? `<p class="note" style="margin:0">作りたい数を入れると、足りない材料がわかります。マルシェの前の準備にどうぞ。</p>
-    ${withRecipe.map(p => { const mk = canMake(p); return `<div class="srow2"><div><div class="n">${esc(p.name)}</div><div class="note">いまの材料で あと${mk.n}個</div></div><label class="f" style="width:110px">作る数<input type="number" inputmode="numeric" data-plan="${esc(p.id)}" value="${esc(plan[p.id] || "")}"></label></div>`; }).join("")}
+    ${withRecipe.map(p => { const mk = canMake(p); return `<div class="srow2"><div><div class="n">${esc(p.name)}</div><div class="note">いまの材料で あと${mk.n}個</div></div><div class="f" style="width:190px;flex:none">作る数${numStep(`data-plan="${esc(p.id)}"`, num(plan[p.id]) || 0, { label: p.name + "を作る数" })}</div></div>`; }).join("")}
     ${short.length ? `<div class="list">${short.map(s => `<div class="note" style="color:${s.lack ? "var(--bad)" : "var(--good)"};font-weight:700">${esc(s.m.name)}：${s.need}${esc(s.m.unit || "")}いる／在庫${num(s.m.stock)}${s.lack ? `（${s.lack}${esc(s.m.unit || "")}足りない）` : "（足りる）"}</div>`).join("")}</div>
       ${short.some(s => s.lack) ? `<button class="btn primary wide" data-act="planShop">足りない材料を買い物リストに入れる</button>` : ""}` : ""}`
     : `<div class="empty">商品の詳細の「使う材料（レシピ）」を入れると、ここで計算できます。</div>`}
@@ -1267,12 +1491,14 @@ function calcSheet() {
     <div class="section-title"><b>使う材料</b><button class="btn small" data-act="ccAdd">＋ 材料を足す</button></div>
     <div id="cc-rows" class="list"></div>
     <div class="grid2"><label class="f">そのほかの材料費（円）<input type="number" inputmode="numeric" id="cc-extra" value=""></label>
-    <label class="f">作業時間（分）<input type="number" inputmode="numeric" id="cc-min" value="30"></label>
+    <div class="f">作業時間（分）${numStep('id="cc-min"', 30, { step: 5, label: "作業時間", unit: "分" })}</div>
     <label class="f">梱包費（円）<input type="number" inputmode="numeric" id="cc-pack" value="${esc(S().packing)}"></label></div>
-    <div class="calc" id="cc-out"></div>`, panel => {
+    <div class="calc" id="cc-out"></div>
+    <div class="f">値引きするなら${numStep('id="cc-off"', 0, { step: 50, label: "値引き", unit: "円引き" })}</div>
+    <div class="calc" id="cc-off-out"></div>`, panel => {
     panel._rows = [];
     const paint = () => {
-      $("#cc-rows").innerHTML = panel._rows.map((r, i) => `<div class="grid2" style="align-items:end"><label class="f">材料<select data-cc="${i}" data-k="mid"><option value="">えらぶ</option>${state.materials.map(m => `<option value="${esc(m.id)}"${m.id === r.mid ? " selected" : ""}>${esc(m.name)}（${m.price ? yen(m.price) + "/" + esc(m.unit || "") : "値段未設定"}）</option>`).join("")}</select></label><div class="row" style="flex-wrap:nowrap"><label class="f" style="flex:1">数<input type="number" inputmode="decimal" step="0.5" data-cc="${i}" data-k="qty" value="${esc(r.qty ?? 1)}"></label><button class="del" data-act="ccDel" data-i="${i}">消す</button></div></div>`).join("");
+      $("#cc-rows").innerHTML = panel._rows.map((r, i) => `<div class="list" style="gap:6px;padding-bottom:10px;border-bottom:1px solid var(--line)"><label class="f">材料<select data-cc="${i}" data-k="mid"><option value="">えらぶ</option>${state.materials.map(m => `<option value="${esc(m.id)}"${m.id === r.mid ? " selected" : ""}>${esc(m.name)}（${m.price ? yen(m.price) + "/" + esc(m.unit || "") : "値段未設定"}）</option>`).join("")}</select></label><div class="row" style="flex-wrap:nowrap;align-items:end"><div class="f" style="flex:1">数${numStep(`data-cc="${i}" data-k="qty"`, r.qty ?? 1, { step: 0.5, label: "数" })}</div><button class="del" data-act="ccDel" data-i="${i}">消す</button></div></div>`).join("");
       calc();
     };
     const calc = () => {
@@ -1282,6 +1508,11 @@ function calcSheet() {
         <div class="line"><span>原価（合計）</span><b>${yen(c.cost)}</b></div><div class="line"><span>これより安いと赤字（BASE）</span><b>${yen(c.breakeven)}</b></div>
         <div class="line rec"><span>おすすめ価格（BASE手数料込み）</span><b>${yen(c.suggested)}</b></div><div class="line rec"><span>マルシェだけで売るなら</span><b>${yen(marketPrice(c.cost))}</b></div>
         <div class="note" style="margin:0">原価 ${yen(c.cost)} ＝ 材料 ${yen(mat)} ＋ 作業代 ${yen(c.labor)} ＋ 梱包 ${yen(pack)}。BASEで${yen(c.suggested)}で売ると、手数料${yen(feeAt(c.suggested))}を引いて利益は約${yen(profitAt(c.suggested, c.cost))}です。</div>`;
+      const off = num(($("#cc-off") || {}).value), mp = marketPrice(c.cost), bp = c.suggested - off, mpp = mp - off, pb = profitAt(bp, c.cost), pm = mpp - c.cost;
+      const okB = Math.max(0, Math.floor((c.suggested - c.breakeven) / 10) * 10), okM = Math.max(0, Math.floor((mp - c.cost) / 10) * 10);
+      $("#cc-off-out").innerHTML = off ? `<div class="line"><span>BASE ${yen(c.suggested)} → ${yen(off)}引き</span><b>${yen(bp)}</b></div><div class="line"><span>そのときの利益</span><b style="color:${pb < 0 ? "var(--bad)" : "var(--good)"}">${yen(pb)}${pb < 0 ? "（赤字）" : ""}</b></div>
+        <div class="line"><span>マルシェ ${yen(mp)} → ${yen(off)}引き</span><b>${yen(mpp)}</b></div><div class="line"><span>そのときの利益</span><b style="color:${pm < 0 ? "var(--bad)" : "var(--good)"}">${yen(pm)}${pm < 0 ? "（赤字）" : ""}</b></div>
+        <div class="note" style="margin:0">赤字にならない値引きは、BASEで${yen(okB)}引きまで、マルシェで${yen(okM)}引きまでです。</div>` : `<div class="note" style="margin:0">「＋」を押すと、値引きしたときの値段と利益が出ます。赤字にならない値引き：BASE ${yen(okB)}引きまで・マルシェ ${yen(okM)}引きまで。</div>`;
     };
     panel._paint = paint;
     panel.addEventListener("input", e => { const t = e.target; if (t.dataset && t.dataset.cc != null) { const r = panel._rows[Number(t.dataset.cc)]; if (r) r[t.dataset.k] = t.dataset.k === "qty" ? num(t.value) : t.value; } calc(); });
@@ -1305,9 +1536,9 @@ function drySheet() {
   openSheet("乾燥を始める", `<label class="f">花材<input type="text" id="df-name" list="df-list" placeholder="例：ミモザ"><datalist id="df-list">${[...new Set([...mats.map(m => m.name), ...state.drying.map(d => d.name)])].map(n => `<option value="${esc(n)}">`).join("")}</datalist></label>
     <div id="df-past" class="list"></div>
     ${sample ? `<div id="df-ai"></div><button class="btn small" data-act="dryAi">AIに乾かし方のコツを聞く</button>` : ""}
-    <div class="grid2"><label class="f">数<input type="number" inputmode="numeric" id="df-qty" value="1"></label><label class="f">単位<select id="df-unit">${UNITS.map(u => `<option>${u}</option>`).join("")}</select></label>
+    <div class="grid2"><div class="f">数${numStep('id="df-qty"', 1, { min: 1, label: "数" })}</div><label class="f">単位<select id="df-unit">${UNITS.map(u => `<option>${u}</option>`).join("")}</select></label>
     <label class="f">乾かし方<select id="df-method">${DRY_METHODS.map(m => `<option>${m}</option>`).join("")}</select></label>
-    <label class="f">始めた日<input type="date" id="df-start" value="${todayStr()}"></label><label class="f">乾くまでの日数<span class="hint">めやす1〜3週間</span><input type="number" inputmode="numeric" id="df-days" value="14"></label></div>
+    <label class="f">始めた日<input type="date" id="df-start" value="${todayStr()}"></label><div class="f">乾くまでの日数<span style="font-weight:500;color:var(--muted);font-size:16px">めやす1〜3週間</span>${numStep('id="df-days"', 14, { min: 1, label: "乾くまでの日数", unit: "日" })}</div></div>
     <label class="f">メモ<input type="text" id="df-memo" placeholder="例：北の部屋、除湿機あり"></label>
     <div class="f">乾かす前の写真（ビフォー）<label class="btn small" for="df-photo" style="cursor:pointer;align-self:flex-start">＋ 写真を選ぶ・撮る</label><input type="file" id="df-photo" accept="image/*" hidden><div id="df-prev" class="pgrid"></div></div>
     <button class="btn primary big wide" data-act="drySave">記録する</button>`, panel => {
@@ -1322,11 +1553,11 @@ function dryFinishSheet(d) {
   openSheet("乾いた！（アフター）", `<p style="margin:0"><b>${esc(d.name)}</b>　${jpDate(d.start)}から <b>${days}日</b>たちました（${esc(d.method || "")}）</p>
     <div class="f">乾かす前の写真${photoStrip("drying/" + d.id, "before", "", true)}</div>
     <div class="f">乾いたあとの写真（アフター）${photoStrip("drying/" + d.id, "after", "アフターの写真を貼る")}</div>
-    <label class="f">実際にかかった日数<input type="number" inputmode="numeric" id="dd-days" value="${days}"></label>
+    <div class="f">実際にかかった日数${numStep('id="dd-days"', days, { min: 1, label: "日数", unit: "日" })}</div>
     <div class="f">仕上がり<div class="seg" role="group" id="dd-res">${DRY_RESULTS.map((r, i) => `<button type="button" data-v="${r}" aria-pressed="${i === 0}">${r}</button>`).join("")}</div></div>
     <label class="f">気づいたこと<span class="hint">次に役立つこと。例：色が少しあせた、シリカゲルの方がきれい</span><textarea id="dd-memo"></textarea></label>
     <label class="check"><input type="checkbox" id="dd-stock" checked> 材料の在庫に入れる</label>
-    <label class="f">在庫に入れる数<input type="number" inputmode="numeric" id="dd-qty" value="${esc(num(d.qty) || 1)}"></label>
+    <div class="f">在庫に入れる数${numStep('id="dd-qty"', num(d.qty) || 1, { label: "在庫に入れる数" })}</div>
     <button class="btn primary big wide" data-act="dryFinish" data-id="${esc(d.id)}">記録する</button>`, panel => {
     panel.querySelectorAll("#dd-res button").forEach(b => b.addEventListener("click", () => { panel.querySelectorAll("#dd-res button").forEach(x => x.setAttribute("aria-pressed", String(x === b))); if (b.dataset.v === "失敗") panel.querySelector("#dd-stock").checked = false; }));
   });
@@ -1692,7 +1923,7 @@ function pdfConfirmSheet(r, targetId) {
     <div class="grid2"><label class="f">開催日<input type="date" id="pi-date" value="${esc(date)}"></label>
     <label class="f">種類<select id="pi-kind">${KINDS.map(k => `<option${k === (r.kind || KINDS[0]) ? " selected" : ""}>${k}</option>`).join("")}</select></label>
     <label class="f">出展料（円）<input type="number" inputmode="numeric" id="pi-fee" value="${esc(r.fee ?? "")}"></label>
-    <label class="f">拘束時間（時間）<input type="number" inputmode="decimal" step="0.5" id="pi-hours" value="${esc(r.hours ?? "")}"></label></div>
+    <div class="f">拘束時間（時間）${numStep('id="pi-hours"', num(r.hours), { step: 0.5, label: "拘束時間", unit: "時間" })}</div></div>
     <label class="f">会場<input type="text" id="pi-place" value="${esc(r.place || "")}"></label>
     <label class="f">要点のメモ<textarea id="pi-memo" style="min-height:160px">${esc(memo)}</textarea></label>
     <div class="f">締め切り・大事な日（やることに入れます）
@@ -1960,7 +2191,7 @@ ${hasPhoto ? "・添付の写真がこの商品です。色や形、雰囲気は
 ・Threadsの投稿は、インスタより会話的で短く、ハッシュタグは1つまで。
 
 次の形のJSONだけを返してください:
-{"caption":"インスタのフィード投稿文。改行あり、200〜300字。ハッシュタグは含めない","hashtags":["#ドライフラワー","定番タグを含めて10〜15個"],"threads":"Threads用の投稿（150字以内、ハッシュタグは1つまで）","stories":["ストーリーに載せる短い一言（20字以内）","2つ目","3つ目"],"storyQuestion":"ストーリーの質問・アンケートスタンプ用の問いかけ（20字以内）","baseTitle":"BASEの商品名（30字以内）","baseDescription":"BASEの商品説明。サイズや素材は【サイズ】約○cm のように空欄を残す。いつも入れる文章があれば最後に入れる"}`;
+{"caption":"インスタのフィード投稿文。改行あり、200〜300字。ハッシュタグは含めない","hashtags":["#ドライフラワー","定番タグを含めて10〜15個"],"threads":"Threads用の投稿（150字以内、ハッシュタグは1つまで）","line":"LINE（友だち登録してくれたお客さま向け）の新作のお知らせ。100〜150字。絵文字は3個まで。最後に、ご質問・ご予約はこのLINEへどうぞ、など行動をうながす一言","stories":["ストーリーに載せる短い一言（20字以内）","2つ目","3つ目"],"storyQuestion":"ストーリーの質問・アンケートスタンプ用の問いかけ（20字以内）","baseTitle":"BASEの商品名（30字以内）","baseDescription":"BASEの商品説明。サイズや素材は【サイズ】約○cm のように空欄を残す。いつも入れる文章があれば最後に入れる"}`;
 }
 /* ---------- お手本（実際に投稿した文章） ---------- */
 const EX_KINDS = { instagram: "インスタ", threads: "Threads", base: "BASEの説明" };
@@ -2002,6 +2233,7 @@ function renderAiResult(ai, pid) {
   const k = "p" + pid + "_";
   COPY[k + "cap"] = `${ai.caption || ""}\n\n${tags}`.trim();
   COPY[k + "th"] = String(ai.threads || "");
+  COPY[k + "line"] = String(ai.line || "");
   COPY[k + "bt"] = String(ai.baseTitle || "");
   COPY[k + "bd"] = String(ai.baseDescription || "");
   COPY[k + "q"] = String(ai.storyQuestion || "");
@@ -2014,9 +2246,11 @@ function renderAiResult(ai, pid) {
     <div class="list"><button class="btn primary wide" data-act="copy" data-key="${k}ig">📋 Instagram用にコピー（本文＋ハッシュタグ）</button>
       ${COPY[k + "th"] ? `<button class="btn wide" data-act="copy" data-key="${k}th">📋 Threads用にコピー</button>` : ""}
       ${COPY[k + "base"] ? `<button class="btn wide" data-act="copy" data-key="${k}base">📋 BASE用にコピー（説明＋いつもの定型文）</button>` : ""}
+      ${COPY[k + "line"] ? `<div class="row"><button class="btn" data-act="copy" data-key="${k}line">📋 LINE用にコピー</button><button class="btn" data-act="lineSend" data-key="${k}line">LINEで送る</button></div>` : ""}
       <p class="note" style="margin:0">押すとコピーされます。それぞれのアプリで「ペースト」してください。定型文とハッシュタグは「設定」で変えられます。</p></div>
     ${block("インスタ投稿文（ハッシュタグ込み）", k + "cap", "instagram")}
     ${block("Threads", k + "th", "threads")}
+    ${block("LINE", k + "line")}
     ${stories.map((s, i) => block(`ストーリーの一言 ${i + 1}`, k + "s" + i)).join("")}
     ${block("ストーリーの質問スタンプ", k + "q")}
     ${block("BASEの商品名", k + "bt")}
@@ -2080,19 +2314,23 @@ VIEWS.home = () => {
     nextCard = `<section class="list"><div class="section-title"><h2>次の出店</h2></div>${evCard(next, `${d === 0 ? "今日です" : d === 1 ? "明日です" : "あと" + d + "日"}・持ち物 ${cl.filter(x => x.d).length}/${cl.length}`)}</section>`;
   }
   return `
+  ${todayEvCard()}
   <section class="hero">
     <div class="label">${Number(key.slice(5))}月の売上</div>
     <div class="big">${yen(sm.total)}</div>
     <div class="sub num">利益 約${yen(profit)}（原価・手数料・出展料を引いた額）・${sm.items}個</div>
   </section>
-  <div class="quick">
-    <button class="btn primary" data-act="newProduct"><span>＋ 新作を登録</span><small>写真から文章も</small></button>
-    <button class="btn" data-act="newSale"><span>売れた！を記録</span><small>在庫も減ります</small></button>
-    <button class="btn" data-act="newEvent"><span>出店・予定を追加</span><small>マルシェなど</small></button>
-    <a class="btn" href="#ai" style="flex-direction:column"><span>AIに相談</span><small>声でもOK</small></a>
-    <label class="btn" for="rcptIn" style="cursor:pointer;flex-direction:column"><span>📷 レシートを撮る</span><small>経費に自動で記録</small></label>
-    <button class="btn" data-act="openBulk"><span>🎤 まとめて記録</span><small>話すだけで振り分け</small></button>
-  </div>
+  <nav class="apps" aria-label="よく使う機能">
+    <button class="app-t primary" data-act="newSale">${icon("sale")}売れた！を<br>記録</button>
+    <button class="app-t" data-act="newProduct">${icon("plus")}新作を<br>登録</button>
+    <button class="app-t" data-act="newEvent">${icon("cal")}予定を<br>追加</button>
+    <label class="app-t" for="rcptIn">${icon("receipt")}レシートを<br>撮る</label>
+    <button class="app-t" data-act="openBulk">${icon("mic")}声で<br>まとめて記録</button>
+    <a class="app-t" href="#studio">${icon("post")}投稿を<br>つくる</a>
+    <a class="app-t" href="#ai">${icon("chat")}AIに<br>相談</a>
+    <a class="app-t" href="#analysis">${icon("chart")}分析・<br>確定申告</a>
+    <button class="app-t" data-act="openHelp">${icon("help")}使い方</button>
+  </nav>
   ${state.products.length ? "" : `<div class="card"><b>まずは商品を1つ登録してみましょう。</b><div class="note" style="margin-top:4px">写真と材料費、作業時間を入れると、値段のめやすとインスタ用の文章ができます。</div></div>`}
   ${todayTodosCard()}
   ${nextCard}
@@ -2105,6 +2343,32 @@ VIEWS.home = () => {
   </section>`;
 };
 
+const IC = {
+  sale: '<path d="M3 12V4h8l10 10-8 8z"/><circle cx="7.5" cy="8.5" r="1.5"/>',
+  plus: '<path d="M12 5v14M5 12h14"/>',
+  cal: '<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/>',
+  receipt: '<path d="M6 3h12v18l-3-2-3 2-3-2-3 2z"/><path d="M9 8h6M9 12h6M9 16h3"/>',
+  mic: '<rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/>',
+  post: '<rect x="3" y="6" width="18" height="14" rx="3"/><circle cx="12" cy="13" r="3.5"/><path d="M8 6l1.5-2h5L16 6"/>',
+  chat: '<path d="M21 12a8 8 0 0 1-11.6 7.1L4 21l1.9-5.4A8 8 0 1 1 21 12z"/>',
+  chart: '<path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/>',
+  help: '<circle cx="12" cy="12" r="9.5"/><path d="M9.3 9.2a2.8 2.8 0 0 1 5.4 1c0 1.9-2.7 2.4-2.7 4"/><path d="M12 17.2v.3"/>',
+  gear: '<circle cx="12" cy="12" r="3"/><path d="M12 2.5v3M12 18.5v3M2.5 12h3M18.5 12h3M5.3 5.3l2.1 2.1M16.6 16.6l2.1 2.1M5.3 18.7l2.1-2.1M16.6 7.4l2.1-2.1"/>',
+  split: '<rect x="3" y="4" width="18" height="16" rx="2"/><path d="M12 4v16"/>',
+  bag: '<path d="M5 8h14l-1 13H6z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/>',
+  menu: '<rect x="4" y="4" width="6.5" height="6.5" rx="1.5"/><rect x="13.5" y="4" width="6.5" height="6.5" rx="1.5"/><rect x="4" y="13.5" width="6.5" height="6.5" rx="1.5"/><rect x="13.5" y="13.5" width="6.5" height="6.5" rx="1.5"/>'
+};
+const icon = k => `<span class="ai" aria-hidden="true"><svg viewBox="0 0 24 24">${IC[k]}</svg></span>`;
+const SUB_TABS = ["studio", "analysis", "ai"];
+VIEWS.menu = () => `<div class="section-title"><h2>メニュー</h2></div>
+  <div class="list">
+    <a class="mrow" href="#studio">${icon("post")}<span><b>投稿をつくる</b><span class="d">インスタ・Threads・LINEの文章と写真</span></span><span class="go" aria-hidden="true">›</span></a>
+    <a class="mrow" href="#ai">${icon("chat")}<span><b>AIに相談</b><span class="d">声でも文字でも聞けます</span></span><span class="go" aria-hidden="true">›</span></a>
+    <a class="mrow" href="#analysis">${icon("chart")}<span><b>分析・確定申告</b><span class="d">売上と利益、経費、確定申告のまとめ</span></span><span class="go" aria-hidden="true">›</span></a>
+    <button class="mrow" data-act="openHelp">${icon("help")}<span><b>使い方・困ったとき</b><span class="d">画面の説明・よくある質問・AIに聞く</span></span><span class="go" aria-hidden="true">›</span></button>
+    <button class="mrow" data-act="openSettings">${icon("gear")}<span><b>設定</b><span class="d">文字の大きさ・お店の情報・AIの鍵・バックアップ</span></span><span class="go" aria-hidden="true">›</span></button>
+    <button class="mrow" data-act="openSplit">${icon("split")}<span><b>2画面で使う</b><span class="d">タブレット・パソコンで2つの画面を並べる</span></span><span class="go" aria-hidden="true">›</span></button>
+  </div>`;
 /* ---------- 画面: 商品 ---------- */
 VIEWS.products = () => {
   const seg = state.prodSeg || "list";
@@ -2153,15 +2417,17 @@ function evCard(e, sub) {
   </button>`;
 }
 VIEWS.events = () => {
-  if (state.evId) { const e = state.events.find(x => x.id === state.evId); if (e) return eventDetail(e); state.evId = null; }
+  if (state.evId) { const e = state.events.find(x => x.id === state.evId); if (e) return state.regi === e.id ? regiView(e) : eventDetail(e); state.evId = null; }
   const t = todayStr();
   const up = state.events.filter(e => e.date >= t).sort((a, b) => a.date < b.date ? -1 : 1);
   const past = state.events.filter(e => e.date < t).sort((a, b) => a.date < b.date ? 1 : -1);
   return `
   <div class="section-title"><h2>出店・予定</h2><button class="btn primary" data-act="newEvent">＋ 追加</button></div>
+  <div class="seg" role="group" aria-label="見かた"><button data-act="evMode" data-k="list" aria-pressed="${state.evMode !== "cal"}">一覧</button><button data-act="evMode" data-k="cal" aria-pressed="${state.evMode === "cal"}">カレンダー</button></div>
   ${sample ? `<label class="btn wide" for="pdfIn" style="cursor:pointer" data-pdf-target="">📄 要項のPDF・チラシから予定を登録</label>` : ""}
+  ${state.evMode === "cal" ? calView() : `
   <section class="list">${up.map(e => evCard(e, `あと${daysBetween(today(), parseYmd(e.date))}日`)).join("") || `<div class="empty">これからの予定はありません。</div>`}</section>
-  <section class="list"><div class="section-title"><h2>終わった出店・予定</h2></div>${past.slice(0, 30).map(e => evCard(e)).join("") || `<div class="empty">まだありません。</div>`}</section>
+  <section class="list"><div class="section-title"><h2>終わった出店・予定</h2></div>${past.slice(0, 30).map(e => evCard(e)).join("") || `<div class="empty">まだありません。</div>`}</section>`}
   <details class="card"><summary>季節のめやす</summary>
     <p class="note" style="margin:0 0 4px">ドライフラワーは作るのに時間がかかるので、イベントの1〜2か月前から準備します。日数はめやすです。</p>
     ${seasonStatus().slice(0, 6).map(s => `<div class="season"><div class="h"><b>${s.name}</b><span class="chip ${s.phase === "tell" ? "warn" : s.phase === "make" ? "good" : "muted"}">${s.label}</span></div><div class="dates num">当日 ${jpDateD(s.day)}　制作開始 ${jpDateD(s.make)}　告知開始 ${jpDateD(s.tell)}</div><div class="note">${s.idea}</div></div>`).join("")}
@@ -2177,7 +2443,7 @@ function eventDetail(e) {
     ${booth ? `<div class="meta num">出展料 ${yen(e.fee)}・交通費 ${yen(e.transport)}・その他 ${yen(e.otherCost)}・拘束 ${num(e.hours) || "?"}時間</div>` : ""}
     ${e.memo ? `<div class="note" style="margin-top:6px;white-space:pre-wrap">${esc(e.memo)}</div>` : ""}
     ${!booth ? `<div style="margin-top:8px">${photoStrip("events/" + e.id, "memo", "メモに写真を貼る")}</div>` : ""}
-    ${e.repeatId ? `<div class="note" style="margin-top:6px">🔁 くり返しの予定から入ったものです。</div>` : e.date >= todayStr() ? `<button class="btn small" style="margin-top:8px" data-act="calEvent" data-id="${esc(e.id)}">📅 スマホのカレンダーに入れる</button>` : ""}
+    ${e.repeatId ? `<div class="note" style="margin-top:6px">🔁 くり返しの予定から入ったものです。</div>` : e.date >= todayStr() ? `<div class="row" style="margin-top:8px"><button class="btn small" data-act="calEvent" data-id="${esc(e.id)}">📅 カレンダーに入れる</button>${booth ? `<button class="btn small" data-act="evAnnounce">📣 告知の文章をつくる</button>` : ""}</div>` : ""}
   </section>`;
   if (!booth) return head;
   const cl = e.checklist || [];
@@ -2192,6 +2458,9 @@ function eventDetail(e) {
       <div class="tile"><div class="l">売れた数</div><div class="v">${r.items}個</div></div>
       <div class="tile"><div class="l">販売率</div><div class="v">${r.sellRate == null ? "―" : Math.round(r.sellRate * 100) + "%"}</div></div>
       <div class="tile"><div class="l">経費</div><div class="v">${yen(r.costs)}</div></div>
+      <div class="tile"><div class="l">お客さま</div><div class="v">${r.customers}組</div></div>
+      <div class="tile"><div class="l">客単価</div><div class="v">${r.customers ? yen(r.total / r.customers) : "―"}</div></div>
+      <div class="tile"><div class="l">値引き</div><div class="v">${yen(r.disc)}</div></div>
     </div>
     ${(() => { const ss = r.sales; if (!ss.length) return ""; const pay = {}; const hr = {}; for (const s of ss) { const k = s.pay || "記録なし"; pay[k] = (pay[k] || 0) + saleTotal(s); const t = s.time || (s.createdAt && s.date === ymd(new Date(s.createdAt)) ? String(new Date(s.createdAt).getHours()).padStart(2, "0") + ":00" : ""); if (t) { const H = Number(t.slice(0, 2)); hr[H] = (hr[H] || 0) + (num(s.qty) || 1); } }
       const hs = Object.keys(hr).map(Number).sort((a, b) => a - b), mx = Math.max(1, ...Object.values(hr));
@@ -2201,19 +2470,18 @@ function eventDetail(e) {
   </section>`;
   return `${head}
   ${past || isToday ? results : ""}
+  ${isToday || past ? `<section class="card list todaybox"><div class="k">${isToday ? "今日は出店日です" : "あとから売上を入れるとき"}</div>
+    <button class="btn primary big wide" data-act="regiOpen" data-id="${esc(e.id)}" style="min-height:76px;font-size:22px">🛍 レジを開く</button>
+    <div class="note">売れた商品を押すだけで、売上・個数・在庫が自動で計算されます。値引きやおつりの計算もできます。</div></section>` : ""}
   <section class="card">
-    <div class="section-title"><h2>${past ? "持っていった商品" : "持っていく商品"}</h2><button class="btn small" data-act="editLineup">選ぶ・数を変える</button></div>
-    ${lineup.length ? `<div class="scroll"><table class="tbl"><thead><tr><th>商品</th><th>値段</th><th>持参</th><th>売れた</th></tr></thead><tbody>
-      ${lineup.map(l => `<tr><td>${esc(l.name)}</td><td>${yen(l.price)}</td><td>${num(l.qty)}</td><td>${soldOf(e, l.pid)}</td></tr>`).join("")}
-    </tbody></table></div>` : `<div class="empty">まだ選んでいません。</div>`}
+    <div class="section-title"><h2>${past ? "持っていった商品" : "持っていく商品"}</h2><button class="btn small" data-act="editLineup">${lineup.length ? "数・値段を変える" : "選ぶ"}</button></div>
+    ${lineup.length ? (() => { let tq = 0, ts = 0, tt = 0; const rows = lineup.map(l => { const sold = soldOf(e, l.pid), amt = r.sales.filter(x => x.productId === l.pid).reduce((a, x) => a + saleTotal(x), 0); tq += num(l.qty); ts += sold; tt += amt; return `<tr><td><b>${esc(l.name)}</b><div class="note num" style="font-size:15px;line-height:1.4">${num(l.off) ? `${yen(lpPrice(l))}（${yen(l.off)}引き）` : yen(l.price)}</div></td><td class="num">${sold} / ${num(l.qty)}</td><td class="num">${Math.max(0, num(l.qty) - sold)}</td><td class="num">${yen(amt)}</td></tr>`; }).join("");
+      const other = r.sales.filter(x => !lineup.some(l => l.pid === x.productId)), oAmt = other.reduce((a, x) => a + saleTotal(x), 0), oQ = other.reduce((a, x) => a + (num(x.qty) || 1), 0);
+      return `<div class="scroll"><table class="tbl"><thead><tr><th>商品・値段</th><th>売れた<br><small>／持参</small></th><th>残り</th><th>売上</th></tr></thead><tbody>${rows}${other.length ? `<tr><td>一覧にない商品など</td><td class="num">${oQ}</td><td></td><td class="num">${yen(oAmt)}</td></tr>` : ""}</tbody>
+      <tfoot><tr><td>合計</td><td class="num">${ts + oQ} / ${tq}</td><td class="num">${Math.max(0, tq - ts)}</td><td class="num">${yen(tt + oAmt)}</td></tr></tfoot></table></div>${r.disc ? `<p class="note" style="margin:6px 0 0">売上は値引き（合計${yen(r.disc)}）を引いた金額です。</p>` : ""}`; })()
+    : `<div class="empty">まだ選んでいません。「選ぶ」を押して、持っていく数を「＋」で決めましょう。</div>`}
   </section>
-  ${lineup.length && (isToday || past) ? `<section class="card">
-    <div class="section-title"><h2>販売モード</h2>${state.lastEvSale ? `<button class="btn small" data-act="undoEvSale">ひとつ取り消す</button>` : ""}</div>
-    <p class="note" style="margin:0 0 4px">売れたらボタンを押すだけ。売上と在庫に自動で反映されます。</p>
-    <div class="f">支払い方法（押したまま売れた順に記録されます）<div class="seg" role="group">${PAYS.map(pm => `<button data-act="payMethod" data-k="${pm}" aria-pressed="${(state.payMethod || "現金") === pm}">${pm}</button>`).join("")}</div></div>
-    <div class="regi">${lineup.map(l => { const sold = soldOf(e, l.pid), left = Math.max(0, num(l.qty) - sold); return `<button class="regibtn${left <= 0 ? " out" : ""}" data-act="evSell" data-pid="${esc(l.pid)}"><span class="n">${esc(l.name)}</span><span class="p num">${yen(l.price)}</span><span class="l num">残り ${left} / ${num(l.qty)}</span><span class="t">押すと「売れた」</span></button>`; }).join("")}</div>
-    <button class="btn wide" style="margin-top:8px" data-act="evOtherSale">一覧にない商品が売れた</button>
-  </section>` : ""}
+  ${!past ? schedCard(e) + (prepRows(e).some(r => r.date >= todayStr()) && !isToday ? prepCard(e) : "") : ""}
   <section class="card">
     <div class="section-title"><h2>持ち物チェック</h2><span class="note">${cl.filter(x => x.d).length}/${cl.length}</span></div>
     ${cl.map((x, i) => `<label class="check-item${x.d ? " done" : ""}"><input type="checkbox" data-act="clToggle" data-i="${i}"${x.d ? " checked" : ""}><span>${esc(x.t)}</span><button class="del x" data-act="clDel" data-i="${i}" aria-label="${esc(x.t)}を消す">消す</button></label>`).join("") || `<div class="empty">まだありません。</div>`}
@@ -2444,9 +2712,9 @@ function productSheet(p, opts = {}) {
   <label class="f">花材やメモ<span class="hint">AIの文章はここに書いた花材だけを使います</span><textarea id="pf-memo" placeholder="例：ユーカリ、コットンフラワー、ヒムロスギ。玄関向き。">${esc(p.memo)}</textarea></label>
   <div class="grid2">
     <label class="f">材料費（円）<input type="number" inputmode="numeric" id="pf-material" value="${esc(p.material)}"></label>
-    <label class="f">作業時間（分）<input type="number" inputmode="numeric" id="pf-minutes" value="${esc(p.minutes)}"></label>
+    <div class="f">作業時間（分）${numStep('id="pf-minutes"', num(p.minutes), { step: 5, label: "作業時間", unit: "分" })}</div>
     <label class="f">梱包費（円）<input type="number" inputmode="numeric" id="pf-packing" value="${esc(p.packing)}"></label>
-    <label class="f">在庫（点）<input type="number" inputmode="numeric" id="pf-stock" value="${esc(p.stock)}"></label>
+    <div class="f">在庫（点）${numStep('id="pf-stock"', num(p.stock), { label: "在庫", unit: "点" })}</div>
   </div>
   <section class="card list" style="padding:12px">
     <div class="section-title"><b>使う材料（レシピ）</b><button class="btn small" data-act="rcAdd">＋ 材料を足す</button></div>
@@ -2485,8 +2753,8 @@ function productSheet(p, opts = {}) {
     panel._recipe = (p.recipe || []).map(r => ({ ...r }));
     panel._paintRecipe = () => {
       const rows = panel._recipe;
-      $("#pf-recipe").innerHTML = rows.map((r, i) => `<div class="grid2" style="align-items:end"><label class="f">材料<select data-rc="${i}" data-k="mid"><option value="">えらぶ</option>${state.materials.map(m => `<option value="${esc(m.id)}"${m.id === r.mid ? " selected" : ""}>${esc(m.name)}（${esc(m.unit || "")}）</option>`).join("")}</select></label>
-        <div class="row" style="flex-wrap:nowrap"><label class="f" style="flex:1">数<input type="number" inputmode="decimal" step="0.5" data-rc="${i}" data-k="qty" value="${esc(r.qty ?? 1)}"></label><button class="del" data-act="rcDel" data-i="${i}" aria-label="この材料を外す">消す</button></div></div>`).join("") || (state.materials.length ? "" : `<div class="note">先に「準備」→「材料・買い物」で材料を登録してください。</div>`);
+      $("#pf-recipe").innerHTML = rows.map((r, i) => `<div class="list" style="gap:6px;padding-bottom:10px;border-bottom:1px solid var(--line)"><label class="f">材料<select data-rc="${i}" data-k="mid"><option value="">えらぶ</option>${state.materials.map(m => `<option value="${esc(m.id)}"${m.id === r.mid ? " selected" : ""}>${esc(m.name)}（${esc(m.unit || "")}）</option>`).join("")}</select></label>
+        <div class="row" style="flex-wrap:nowrap;align-items:end"><div class="f" style="flex:1">数${numStep(`data-rc="${i}" data-k="qty"`, r.qty ?? 1, { step: 0.5, label: "数" })}</div><button class="del" data-act="rcDel" data-i="${i}" aria-label="この材料を外す">消す</button></div></div>`).join("") || (state.materials.length ? "" : `<div class="note">先に「準備」→「材料・買い物」で材料を登録してください。</div>`);
       const rc = recipeCost(rows), mk = canMake({ recipe: rows });
       $("#pf-make").innerHTML = rows.length ? `レシピの材料費：<b>${yen(rc.cost)}</b>${rc.unknown ? `（値段の入っていない材料が${rc.unknown}つあります）` : ""}　<button class="btn small" data-act="rcUseCost" data-v="${Math.round(rc.cost)}">材料費に入れる</button><br>いまの在庫で、あと<b>${mk.n}個</b>作れます${mk.short.length ? `（先に足りなくなるのは ${esc(mk.short.join("、"))}）` : ""}` : "";
     };
@@ -2528,7 +2796,7 @@ async function generatePost() {
     const opts = { cache: false }; if (useImg) opts.images = [blob];
     const ai = await sample.json(postPrompt(p, useImg), opts);
     if (!ai || typeof ai !== "object" || !ai.caption) throw { code: "invalid_json" };
-    const clean = { caption: String(ai.caption), hashtags: Array.isArray(ai.hashtags) ? ai.hashtags.map(String).slice(0, 20) : [], threads: String(ai.threads || ""),
+    const clean = { caption: String(ai.caption), hashtags: Array.isArray(ai.hashtags) ? ai.hashtags.map(String).slice(0, 20) : [], threads: String(ai.threads || ""), line: String(ai.line || ""),
       stories: Array.isArray(ai.stories) ? ai.stories.map(String).slice(0, 5) : [], storyQuestion: String(ai.storyQuestion || ""),
       baseTitle: String(ai.baseTitle || ""), baseDescription: String(ai.baseDescription || "") };
     area.innerHTML = renderAiResult(clean, id);
@@ -2547,7 +2815,7 @@ function saleSheet(preset = {}) {
   <label class="f">売れた商品<select id="sf-product"><option value="">（一覧にない商品）</option>${prods.map(p => `<option value="${esc(p.id)}">${esc(p.name)}（在庫${num(p.stock)}）</option>`).join("")}</select></label>
   <label class="f" id="sf-name-wrap">商品名<input type="text" id="sf-name" placeholder="例：ミニブーケ"></label>
   <div class="grid2">
-    <label class="f">個数<input type="number" inputmode="numeric" id="sf-qty" value="1" min="1"></label>
+    <div class="f">個数${numStep('id="sf-qty"', 1, { min: 1, label: "個数", unit: "個" })}</div>
     <label class="f">1個の値段（円）<input type="number" inputmode="numeric" id="sf-price"></label>
   </div>
   ${ev ? "" : `<div class="f" style="font-size:16px;color:var(--muted)">どこで売れた？
@@ -2575,8 +2843,8 @@ async function saveSale() {
 }
 
 /* 出店・予定 */
-function eventSheet(e) {
-  const isNew = !e; e = e || { date: todayStr(), title: "", kind: KINDS[0], place: "", memo: "", fee: "", transport: "", otherCost: "", hours: "" };
+function eventSheet(e, date) {
+  const isNew = !e; e = e || { date: date || todayStr(), title: "", kind: KINDS[0], place: "", memo: "", fee: "", transport: "", otherCost: "", hours: "" };
   const html = `
   <label class="f">日付<input type="date" id="ef-date" value="${esc(e.date)}"></label>
   <label class="f">名前<input type="text" id="ef-title" value="${esc(e.title)}" placeholder="例：○○公園のクリスマスマルシェ"></label>
@@ -2587,7 +2855,7 @@ function eventSheet(e) {
       <label class="f">出展料（円）<input type="number" inputmode="numeric" id="ef-fee" value="${esc(e.fee ?? "")}"></label>
       <label class="f">交通費（円）<input type="number" inputmode="numeric" id="ef-transport" value="${esc(e.transport ?? "")}"></label>
       <label class="f">その他の経費（円）<span class="hint">駐車場・お昼代など</span><input type="number" inputmode="numeric" id="ef-otherCost" value="${esc(e.otherCost ?? "")}"></label>
-      <label class="f">拘束時間（時間）<span class="hint">準備・移動も含めて</span><input type="number" inputmode="decimal" step="0.5" id="ef-hours" value="${esc(e.hours ?? "")}"></label>
+      <div class="f">拘束時間（時間）<span class="hint" style="font-weight:500;color:var(--muted);font-size:16px">準備・移動も含めて</span>${numStep('id="ef-hours"', num(e.hours), { step: 0.5, label: "拘束時間", unit: "時間" })}</div>
     </div>
   </div>
   ${isNew ? `<label class="f" id="ef-tpl-w">持ち物<select id="ef-tpl">${tplSources().filter(s => !s.key.startsWith("e:")).map(s => `<option value="${esc(s.key)}">${esc(s.name)}（${s.items.length}こ）</option>`).join("")}<option value="">あとで入れる</option></select></label>` : ""}
@@ -2616,18 +2884,301 @@ async function saveEvent() {
   closeSheet(); toast("保存しました");
   if (isBooth(data)) { state.evId = id; showTab("events"); }
 }
+/* ---------- 使い方ガイド・困ったとき ---------- */
+const HELP = {
+  home: { t: "ホーム", s: ["上の大きな数字が、今月の売上です。", "出店の日は、いちばん上に「🛍 レジを開く」が出ます。", "その下の四角いボタンが、よく使う機能です。「売れた！を記録」はBASE（ネット）などで売れたときに使います。", "「レシートを撮る」で、経費が自動で記録されます。", "下の「お知らせ」に、やること・少ない在庫・乾いた花などが出ます。", "いちばん下のボタンで画面を切りかえます。投稿・AI相談・分析は「メニュー」の中にあります。"] },
+  products: { t: "商品", s: ["「一覧」で商品を見ます。押すと詳しく見たり直したりできます。", "「在庫」で「＋」「−」を押すと、数が1つずつ変わります。長押しすると速く変わります。", "「オーダー」で、オーダーメイドのお客さまのメモを残せます。", "新しい商品はホームの「＋ 新作を登録」から。写真を入れるとAIが投稿の文章も作ります。"] },
+  studio: { t: "投稿", s: ["インスタ用の写真・動画を選んで、AIに構成や仕上げをしてもらえます。", "「LINE・お知らせの文章」で、何のお知らせか・お得な情報を選ぶと、LINEの文章ができます。", "「LINEで送る」を押すと、LINEが開いて文章が入ります。送り先を選ぶだけです。", "「今やるといい宣伝」で、AIが季節や在庫から「今ならこれ」を考えます。"] },
+  prep: { t: "準備", s: ["「やること」：期限つきのやることリスト。終わったら丸を押してチェック。", "「材料・買い物」：材料の在庫と買い物リスト。", "「乾燥中」：乾かしている花の記録。乾いたら「乾いた！」を押します。", "「くり返し」：月1回など、決まって来る予定を自動で入れます。"] },
+  events: { t: "出店", s: ["「＋ 追加」で出店を登録します。要項のPDFやチラシの写真からも登録できます。", "出店を押すと、持っていく商品・当日のスケジュール・持ち物チェックが見られます。", "「持っていく商品」で、数を「＋」「−」で決めます。値引きもここで入れられます。", "当日は「🛍 レジを開く」。売れた商品を押して「会計する」だけで、売上が自動で計算されます。", "「カレンダー」に切り替えると、月の予定が見られます。"] },
+  regi: { t: "レジ", s: ["売れた商品を押すと「かご」に入ります（2つなら2回押す）。", "下の「会計する」を押します。", "値引きするときは「100円引き」などを押します。", "現金なら「お預かり」の金額を押すと、おつりが大きく出ます。", "最後に「✓ ○円を会計する」。チャイムが鳴って記録されます。", "間違えたら、すぐ下に出る「取り消す」を押します。", "閉店したら「レジ締め」で、レジにあるはずのお金を確かめます。"] },
+  analysis: { t: "分析", s: ["「売上・利益」：期間ごとの売上、よく売れた商品、出店の成績が見られます。", "「経費・確定申告」：レシートの記録と、確定申告用のまとめが見られます。", "表は「書き出す」でファイルにして、息子さんや税理士さんに送れます。"] },
+  menu: { t: "メニュー", s: ["投稿・AI相談・分析・使い方・設定は、ここから開きます。", "開いた画面の左上の「‹ メニューにもどる」で、ここにもどれます。"] },
+  ai: { t: "AI相談", s: ["下の欄に聞きたいことを書くか、「声で」を押して話します。", "話題ごとに「部屋」を分けられます。", "写真を送って相談することもできます。"] }
+};
+const FAQ = [
+  ["出店で売れたときは？", "「出店」→その日の出店→「🛍 レジを開く」。売れた商品を押して、下の「会計する」→「✓ ○円を会計する」。売上・個数・在庫は自動で計算されます。"],
+  ["値引きして売ったときは？", "会計の画面で「100円引き」などを押します。決まった金額以外は「ほかの金額」。はじめから値引きして売る商品は、「持っていく商品」→「値段・値引きを変える」で入れておけます。"],
+  ["間違えて会計してしまった", "会計のすぐあとに下に出る「取り消す」を押します。あとからなら、レジの画面の上の「直前の会計を取り消す」。"],
+  ["おつりの計算をしたい", "会計の画面で支払い方法を「現金」にして、「お預かり」の金額（1,000円など）を押すと、おつりが大きく出ます。"],
+  ["持っていく商品と数を決めたい", "出店の画面の「持っていく商品」→「選ぶ」。「＋」「−」で数を決めて「決定」。「前回と同じにする」を押すと一度で入ります。"],
+  ["出店の日の予定を立てたい", "出店の画面の「当日のスケジュール」で、入り時間・開始・終わりの時間を入れて「スケジュールを作る」。起きる時間から帰るまでの予定ができます。前の日までの準備は「やることリストに入れる」で日付つきで入ります。"],
+  ["ネット（BASE）で売れたときは？", "ホームの「売れた！を記録」を押して、商品と個数を選びます。在庫も1つ減ります。"],
+  ["LINEで宣伝したい", "「投稿」→「LINE・お知らせの文章」。何のお知らせか・お得な情報を選んで「AIに文章を作ってもらう」→「LINEで送る」。"],
+  ["在庫の数を直したい", "「商品」→「在庫」で「＋」「−」を押します。数字を押すと、数を直接入れることもできます。"],
+  ["数字は自分で打たないといけない？", "ほとんどの数は「＋」「−」で変えられます。押したままにすると速く変わります。"],
+  ["文字が小さくて読みにくい", "この画面のいちばん下の「文字の大きさ」で「大きめ」か「とても大きい」を選びます。"],
+  ["画面がおかしい・動かない", "アプリを一度とじて、開き直してください。記録は消えません。直らないときは息子さんに連絡を。"],
+  ["記録が消えないか心配", "ホーム画面のアイコンから開いて使ってください。ときどきホームに出る「バックアップを保存」もしておくと安心です。"],
+  ["AIが使えない", "インターネットにつながっているか確かめてください。「設定」→「AIの設定」で鍵が入っているかも見てください。今月の上限をこえていると止まります。"]
+];
+const helpKey = () => state.tab === "events" && state.regi && state.evId ? "regi" : state.tab;
+function a11yPrefs() {
+  const z = String(LS.get("dfn-zoom", "1"));
+  return `<div class="f">文字の大きさ<div class="seg" role="group" aria-label="文字の大きさ">${ZOOMS.map(([k, l]) => `<button data-act="setZoom" data-k="${k}" aria-pressed="${z === k}">${l}</button>`).join("")}</div></div>
+    <label class="check"><input type="checkbox" data-pref="dfn-hc"${LS.get("dfn-hc", false) ? " checked" : ""}> くっきり表示（背景を白に、枠を濃くする）</label>
+    <label class="check"><input type="checkbox" data-pref="dfn-sound"${LS.get("dfn-sound", true) ? " checked" : ""}> 会計したときにチャイムを鳴らす</label>
+    <label class="check"><input type="checkbox" data-pref="dfn-buzz"${LS.get("dfn-buzz", true) ? " checked" : ""}> ボタンを押したときに小さくふるえる（Androidのみ）</label>`;
+}
+function helpSheet() {
+  const k = helpKey(), h = HELP[k] || HELP.home;
+  openSheet("使い方・困ったとき", `
+    <section class="card list todaybox"><div class="k">いまの画面：${esc(h.t)}</div><ol class="helpsteps">${h.s.map(x => `<li>${esc(x)}</li>`).join("")}</ol></section>
+    <section class="card list"><h3 style="font:700 19px var(--display)">AIに使い方を聞く</h3>
+      ${sample && apiKey() ? `<label class="f">わからないことを、そのまま書いてください<textarea id="hp-q" placeholder="例：値引きして売ったときはどうするの？"></textarea></label>
+      ${dict ? `<div class="row">${micBtn("hp-q", "声で聞く")}</div>` : ""}
+      <button class="btn primary wide" data-act="hpAsk">聞く</button><div id="help-ai" aria-live="polite"></div>` : `<p class="note" style="margin:0">AIの鍵を入れると、使い方をAIに聞けます。下の「よくある質問」もご覧ください。</p>`}
+    </section>
+    <h3 style="font:700 19px var(--display)">よくある質問</h3>
+    <div class="list" style="gap:8px">${FAQ.map(([q, a]) => `<details class="faq"><summary>${esc(q)}</summary><div>${esc(a)}</div></details>`).join("")}</div>
+    <details class="faq"><summary>ほかの画面の使い方</summary><div class="list">${Object.entries(HELP).filter(([x]) => x !== k).map(([, v]) => `<div><b>${esc(v.t)}</b><ol class="helpsteps">${v.s.map(x => `<li>${esc(x)}</li>`).join("")}</ol></div>`).join("")}</div></details>
+    <section class="card list"><h3 style="font:700 19px var(--display)">見やすさ・音</h3>${a11yPrefs()}</section>`);
+}
+function helpManual() { return Object.values(HELP).map(v => `【${v.t}の画面】\n` + v.s.map(x => "・" + x).join("\n")).join("\n") + "\n【よくある質問】\n" + FAQ.map(([q, a]) => `Q ${q}\nA ${a}`).join("\n"); }
+function todayEvCard() {
+  const t = todayStr(), tm = ymd(addD(today(), 1));
+  const te = state.events.find(e => isBooth(e) && e.date === t), ne = !te && state.events.find(e => isBooth(e) && e.date === tm);
+  if (te) {
+    const p = evPlan(te), now = new Date(), nowM = now.getHours() * 60 + now.getMinutes(), nx = p && p.rows.find(r => r.t >= nowM - 5), r = eventResult(te);
+    return `<section class="card list todaybox"><div class="k">今日は出店日です</div><h2>${esc(te.title)}</h2>
+      ${nx ? `<div class="num" style="font-weight:700">つぎ：${hmStr(nx.t)} ${esc(nx.l)}</div>` : ""}${r.total ? `<div class="note num">いまの売上 ${yen(r.total)}（${r.items}個）</div>` : ""}
+      <button class="btn primary big wide" data-act="regiOpen" data-id="${esc(te.id)}" style="min-height:76px;font-size:22px">🛍 レジを開く</button>
+      <button class="btn wide" data-act="openEv" data-id="${esc(te.id)}">スケジュール・持ち物を見る</button></section>`;
+  }
+  if (ne) {
+    const p = evPlan(ne), cl = ne.checklist || [];
+    return `<section class="card list todaybox"><div class="k">明日は出店です</div><h2>${esc(ne.title)}</h2>
+      ${p ? `<div class="num" style="font-weight:700">起きる ${hmStr(p.wake)}・出発 ${hmStr(p.depart)}</div>` : `<div class="note">「当日のスケジュール」を作っておくと安心です。</div>`}
+      <div class="note">持ち物チェック ${cl.filter(x => x.d).length}/${cl.length}・持っていく商品 ${(ne.lineup || []).reduce((a, l) => a + num(l.qty), 0)}個</div>
+      <button class="btn primary wide" data-act="openEv" data-id="${esc(ne.id)}">準備を見る</button></section>`;
+  }
+  return "";
+}
+function calView() {
+  const key = state.calMonth || todayStr().slice(0, 7), [y, m] = key.split("-").map(Number);
+  const lead = new Date(y, m - 1, 1).getDay(), days = new Date(y, m, 0).getDate(), t = todayStr();
+  const sel = state.calDay && state.calDay.startsWith(key) ? state.calDay : t.startsWith(key) ? t : key + "-01";
+  const evBy = {}, tdBy = {};
+  for (const e of state.events) if (String(e.date).startsWith(key)) (evBy[e.date] = evBy[e.date] || []).push(e);
+  for (const x of state.todos) if (!x.done && x.due && x.due.startsWith(key)) (tdBy[x.due] = tdBy[x.due] || []).push(x);
+  const cells = [];
+  for (let i = 0; i < lead; i++) cells.push(`<span class="d out" aria-hidden="true"></span>`);
+  for (let d = 1; d <= days; d++) {
+    const ds = `${key}-${pad(d)}`, wd = (lead + d - 1) % 7, ev = evBy[ds] || [], td = tdBy[ds] || [];
+    cells.push(`<button class="d${wd === 0 ? " su" : wd === 6 ? " sa" : ""}${ds === t ? " today" : ""}${ds === sel ? " sel" : ""}" data-act="calDay" data-d="${ds}" aria-label="${m}月${d}日${ev.length ? "、予定" + ev.length + "件" : ""}${td.length ? "、やること" + td.length + "件" : ""}" aria-pressed="${ds === sel}"><span class="n">${d}</span>${ev.slice(0, 2).map(e => `<i class="${isBooth(e) ? "" : "o"}">${esc(String(e.title).slice(0, 6))}</i>`).join("")}${ev.length > 2 ? `<i class="o">+${ev.length - 2}</i>` : ""}${td.length ? `<i class="t">やること${td.length}</i>` : ""}</button>`);
+  }
+  const selEv = (evBy[sel] || []), selTd = tdBy[sel] || [];
+  return `<section class="card list">
+    <div class="calnav"><button class="btn small" data-act="calMove" data-d="-1" aria-label="前の月">‹ 前の月</button><b>${y}年${m}月</b><button class="btn small" data-act="calMove" data-d="1" aria-label="次の月">次の月 ›</button></div>
+    ${!t.startsWith(key) ? `<button class="btn small ghost" data-act="calMove" data-d="0">今月にもどる</button>` : ""}
+    <div class="cal">${WD.map((w, i) => `<span class="wd${i === 0 ? " su" : i === 6 ? " sa" : ""}">${w}</span>`).join("")}${cells.join("")}</div>
+    <div class="note"><span class="chip" style="background:var(--accent);color:#fff">出店</span> <span class="chip" style="background:#5E6B3B;color:#fff">そのほかの予定</span> <span class="chip warn">やること</span></div>
+  </section>
+  <section class="list"><div class="section-title"><h2>${jpDate(sel)}</h2><button class="btn small primary" data-act="newEvent" data-date="${sel}">＋ この日に追加</button></div>
+    ${selEv.map(e => evCard(e)).join("")}${selTd.length ? `<div class="card">${selTd.map(todoRow).join("")}</div>` : ""}${!selEv.length && !selTd.length ? `<div class="empty">この日の予定はありません。</div>` : ""}</section>`;
+}
+/* ---------- 出店の日のスケジュール ---------- */
+const hm = v => { const m = /^(\d{1,2}):(\d{2})/.exec(String(v || "")); return m ? Number(m[1]) * 60 + Number(m[2]) : null; };
+const hmStr = n => { const x = ((Math.round(n) % 1440) + 1440) % 1440; return `${Math.floor(x / 60)}:${pad(x % 60)}`; };
+const SCHED_DEF = { travel: 30, setup: 60, teardown: 45, ready: 60 };
+function schedDefaults(e) {
+  const prev = state.events.filter(x => isBooth(x) && x.id !== e.id && x.tStart).sort((a, b) => (a.place && a.place === e.place) - (b.place && b.place === e.place) || (a.date < b.date ? -1 : 1)).pop();
+  const o = {}; for (const k of Object.keys(SCHED_DEF)) o[k] = e[k] != null && e[k] !== "" ? num(e[k]) : prev && prev[k] != null ? num(prev[k]) : SCHED_DEF[k];
+  return { ...o, prev };
+}
+function evPlan(e) {
+  const tS = hm(e.tStart), tE = hm(e.tEnd); if (tS == null || tE == null) return null;
+  const d = schedDefaults(e), tOut = hm(e.tOut), cl = e.checklist || [];
+  const inT = hm(e.tIn) ?? (tS - d.setup - 15);
+  const arrive = inT - 15, depart = arrive - d.travel, load = depart - 20, wake = depart - d.ready;
+  const sd = inT + d.setup, chk = Math.max(sd, tS - 15), done = tE + d.teardown;
+  const R = [
+    { t: wake, l: "起きる・身支度", d: "朝ごはんをしっかり。お昼と飲み物も用意" },
+    { t: load, l: "車に積み込み", d: cl.length ? `持ち物チェック（${cl.filter(x => x.d).length}/${cl.length}）を見ながら` : "持ち物を見ながら" },
+    { t: depart, l: "出発", d: `移動 ${d.travel}分＋15分の余裕` },
+    { t: arrive, l: "到着・受付・駐車" },
+    { t: inT, l: hm(e.tIn) == null ? "搬入・設営スタート（めやす）" : "搬入・設営スタート", d: `設営のめやす ${d.setup}分` },
+    { t: sd, l: "設営おわり" },
+    { t: chk, l: "開店前の確認", d: "値札・釣り銭・アプリのレジ・ブースの写真を撮る" },
+    { t: tS, l: "販売スタート", d: "アプリの「レジを開く」を押しておく", key: 1 }
+  ];
+  if (tE - tS >= 300 && 720 > tS + 60 && 720 < tE - 60) R.push({ t: 720, l: "お昼（すきを見て）", d: "お客さんが少ないときに手早く" });
+  if (tE - tS >= 150) R.push({ t: tE - 30, l: "閉店30分前", d: "売れ残りの声かけ・値引きを考える" });
+  R.push({ t: tE, l: "販売おわり・片付け", d: `片付けのめやす ${d.teardown}分`, key: 1 });
+  R.push({ t: done, l: "撤収完了・出発", d: tOut != null ? `撤収の締め切り ${hmStr(tOut)}` : "" });
+  R.push({ t: done + d.travel, l: "帰宅", d: "レジ締め（お金を数える）・残った商品を片付ける・気づいたことをメモ" });
+  const warn = [];
+  if (sd > tS - 10) warn.push(`設営が開店に間に合わないかもしれません（設営おわり ${hmStr(sd)}・開店 ${hmStr(tS)}）。入り時間を早めるか、並べ方を簡単にしましょう。`);
+  if (tOut != null && done > tOut) warn.push(`撤収の締め切り（${hmStr(tOut)}）に間に合わないかもしれません。閉店前から少しずつ片付けましょう。`);
+  if (wake < 300) warn.push("起きる時間がとても早いです。前の日に積み込みまで済ませておくと安心です。");
+  if (tE <= tS) warn.push("終わりの時間が始まりより前になっています。時間を確かめてください。");
+  return { rows: R.sort((a, b) => a.t - b.t), warn, depart, wake, home: done + d.travel, d };
+}
+const PREP_STEPS = [
+  [14, "告知1回目（インスタ・Threads・LINE）", "出店の画面の「告知の文章をつくる」でAIが下書きします"],
+  [10, "持っていく商品と数を決める", "「持っていく商品」で＋−を押すだけ"],
+  [7, "足りない材料の買い出し・制作の追い込み", "「準備」→「在庫」の制作の計画で、足りない材料がわかります"],
+  [5, "値札・POP・ショップカードの準備", ""],
+  [3, "天気予報の確認・雨と風の対策・告知2回目", ""],
+  [2, "釣り銭の両替（千円札・百円玉）", "レジ締めのために、用意した金額をメモ"],
+  [1, "持ち物チェック・積み込み・スマホとモバイルバッテリーの充電・前日の告知", "「明日出店します」の投稿も"]
+];
+const prepRows = e => PREP_STEPS.map(([n, l, d]) => ({ n, l, d, date: ymd(addD(parseYmd(e.date), -n)) }));
+function schedCard(e) {
+  const p = evPlan(e), editing = !p || state.schedEdit === e.id, d = schedDefaults(e);
+  const isToday = e.date === todayStr(), now = new Date(), nowM = now.getHours() * 60 + now.getMinutes();
+  let nextIdx = -1; if (p && isToday) nextIdx = p.rows.findIndex(r => r.t >= nowM - 5);
+  const form = `<p class="note" style="margin:0">時間を入れると、起きる時間から帰るまでの予定を作ります。わからないところは空けたままでOKです。</p>
+    <div class="grid2"><label class="f">入り時間（搬入）<input type="time" id="sc-tIn" value="${esc(e.tIn || "")}"></label><label class="f">撤収の締め切り<input type="time" id="sc-tOut" value="${esc(e.tOut || "")}"></label>
+    <label class="f">販売の開始<input type="time" id="sc-tStart" value="${esc(e.tStart || "10:00")}"></label><label class="f">販売の終わり<input type="time" id="sc-tEnd" value="${esc(e.tEnd || "16:00")}"></label></div>
+    <div class="f">家から会場まで${numStep(`id="sc-travel"`, d.travel, { step: 10, label: "移動時間", unit: "分" })}</div>
+    <div class="f">設営にかかる時間${numStep(`id="sc-setup"`, d.setup, { step: 10, label: "設営の時間", unit: "分" })}</div>
+    <div class="f">片付けにかかる時間${numStep(`id="sc-teardown"`, d.teardown, { step: 10, label: "片付けの時間", unit: "分" })}</div>
+    <div class="f">起きてから出発まで${numStep(`id="sc-ready"`, d.ready, { step: 10, label: "支度の時間", unit: "分" })}</div>
+    ${d.prev ? `<p class="note" style="margin:0">移動・設営・片付けの時間は、前の出店（${jpDate(d.prev.date)} ${esc(d.prev.title.slice(0, 12))}）と同じにしています。</p>` : ""}
+    <button class="btn primary big wide" data-act="schedSave">スケジュールを作る</button>${p ? `<button class="btn ghost wide" data-act="schedCancel">やめる</button>` : ""}`;
+  const tl = p ? `${p.warn.map(w => `<div class="warnbox">⚠ ${esc(w)}</div>`).join("")}
+    <ol class="tl">${p.rows.map((r, i) => `<li class="${r.key ? "key " : ""}${i === nextIdx ? "now " : ""}${isToday && nextIdx > i ? "gone" : ""}"><span class="tm">${hmStr(r.t)}</span><span class="dot" aria-hidden="true"></span><span class="tx"><b>${i === nextIdx ? "つぎ：" : ""}${esc(r.l)}</b>${r.d ? `<span>${esc(r.d)}</span>` : ""}</span></li>`).join("")}</ol>
+    <div class="list"><button class="btn wide" data-act="schedCal">📅 スマホのカレンダーに入れる（出発30分前に通知）</button>
+    ${tts ? `<button class="btn wide" data-act="schedSpeak">🔊 読み上げる</button>` : ""}
+    ${sample ? `<div id="sched-ai-${esc(e.id)}">${streamOr("sched-ai-" + e.id, e.schedAi ? `<div class="prose">${fmtAi(e.schedAi.text)}</div>` : "")}</div><button class="btn wide" data-act="schedAi">AIに見直してもらう（要項・メモもふまえて）</button>` : ""}</div>` : "";
+  return `<section class="card list" id="sched-card"><div class="section-title"><h2 style="font:700 19px var(--display)">当日のスケジュール</h2>${p && !editing ? `<button class="btn small" data-act="schedEditBtn">時間を変える</button>` : ""}</div>
+    ${editing ? form : tl}</section>`;
+}
+function prepCard(e) {
+  const rows = prepRows(e), t = todayStr(), mine = state.todos.filter(x => x.eventId === e.id && x.prep);
+  return `<section class="card list"><div class="section-title"><h2 style="font:700 19px var(--display)">前の日までの準備</h2></div>
+    <ol class="tl">${rows.map(r => { const gone = r.date < t, isT = r.date === t; return `<li class="${isT ? "now " : ""}${gone ? "gone" : ""}"><span class="tm" style="font-size:16px">${r.n}日前<br><small class="note">${Number(r.date.slice(5, 7))}/${Number(r.date.slice(8))}</small></span><span class="dot" aria-hidden="true"></span><span class="tx"><b>${isT ? "今日：" : ""}${esc(r.l)}</b>${r.d ? `<span>${esc(r.d)}</span>` : ""}</span></li>`; }).join("")}</ol>
+    ${mine.length ? `<p class="note" style="margin:0">✓ やることリストに入っています（${mine.filter(x => x.done).length}/${mine.length} 完了）。</p>` : rows.some(r => r.date >= t) ? `<button class="btn primary wide" data-act="prepAdd">やることリストに入れる（日付つき）</button>` : ""}</section>`;
+}
 const curEv = () => state.events.find(x => x.id === state.evId);
 async function evUpdate(data) { const e = curEv(); if (!e) return; try { await store.update("events", e.id, { ...data, updatedAt: Date.now() }); } catch {} }
+const lpPrice = l => Math.max(0, num(l.price) - num(l.off));
 function lineupSheet() {
   const e = curEv(); if (!e) return;
   const cur = new Map((e.lineup || []).map(l => [l.pid, l]));
-  const prods = [...state.products].sort((a, b) => String(a.name).localeCompare(String(b.name), "ja"));
-  const html = `<p class="note" style="margin:0">持っていく数を入れてください。0の商品は持っていきません。値段はイベント用に変えられます。</p>
-  ${prods.map(p => { const l = cur.get(p.id); return `<div class="card" style="padding:12px"><div style="font-weight:700">${esc(p.name)}</div><div class="note">在庫 ${num(p.stock)}</div>
-    <div class="grid2" style="margin-top:6px"><label class="f">持っていく数<input type="number" inputmode="numeric" data-lp="${esc(p.id)}" data-k="qty" value="${l ? num(l.qty) : 0}"></label>
-    <label class="f">値段（円）<input type="number" inputmode="numeric" data-lp="${esc(p.id)}" data-k="price" value="${l ? num(l.price) : num(p.price)}"></label></div></div>`; }).join("") || `<div class="empty">先に商品を登録してください。</div>`}
-  <div class="row"><button class="btn" data-act="lineupAll">在庫を全部持っていく</button><button class="btn primary" data-act="saveLineup">決定</button></div>`;
-  openSheet("持っていく商品", html);
+  const prods = [...state.products].sort((a, b) => (cur.has(b.id) - cur.has(a.id)) || String(a.name).localeCompare(String(b.name), "ja"));
+  const prev = pastBoothEvents(e.id).find(pe => (pe.lineup || []).length);
+  const html = `<p class="note" style="margin:0">「＋」「−」で持っていく数を決めます。0のものは持っていきません。値段と値引きは、この出店だけ変えられます。</p>
+  <div class="list">${prev ? `<button class="btn wide" data-act="lineupPrev">前回（${jpDate(prev.date)} ${esc(prev.title.slice(0, 10))}）と同じにする</button>` : ""}<button class="btn wide" data-act="lineupAll">在庫を全部持っていく</button></div>
+  <details class="card" style="padding:12px 14px"><summary style="font-weight:700;cursor:pointer;min-height:44px;display:flex;align-items:center">全部まとめて値引きする</summary>
+    <div class="row" style="margin-top:8px"><button class="btn small" data-act="lineupOff" data-v="100">全部 100円引き</button><button class="btn small" data-act="lineupOff" data-v="200">全部 200円引き</button><button class="btn small" data-act="lineupOff" data-v="10%">全部 10%引き</button><button class="btn small" data-act="lineupOff" data-v="0">値引きをやめる</button></div></details>
+  ${prods.map(p => { const l = cur.get(p.id); const price = l ? num(l.price) : num(p.price), off = l ? num(l.off) : 0; return `<div class="card lp-row list" data-pid="${esc(p.id)}" style="padding:12px 14px;gap:8px">
+    <div class="section-title"><b style="font-size:18px">${esc(p.name)}</b><span class="note">在庫 ${num(p.stock)}点</span></div>
+    <div class="f">持っていく数${numStep(`data-lp="${esc(p.id)}" data-k="qty"`, l ? num(l.qty) : 0, { label: p.name + "の持っていく数", unit: "個" })}</div>
+    <details><summary class="lp-sale" style="cursor:pointer;min-height:44px;display:flex;align-items:center;gap:8px;flex-wrap:wrap"></summary>
+      <div class="list" style="margin-top:8px;gap:8px"><div class="f">値段${numStep(`data-lp="${esc(p.id)}" data-k="price"`, price, { step: 100, label: p.name + "の値段", unit: "円" })}</div>
+      <div class="f">値引き${numStep(`data-lp="${esc(p.id)}" data-k="off"`, off, { step: 50, label: p.name + "の値引き", unit: "円引き" })}</div></div></details></div>`; }).join("") || `<div class="empty">先に商品を登録してください。</div>`}
+  <button class="btn primary big wide" data-act="saveLineup">決定</button>`;
+  openSheet("持っていく商品", html, panel => { panel.querySelectorAll(".lp-row").forEach(paintLp); panel.addEventListener("input", ev => { const r = ev.target.closest(".lp-row"); if (r) paintLp(r); }); });
+}
+function paintLp(row) {
+  const v = k => num((row.querySelector(`[data-k="${k}"]`) || {}).value);
+  const price = v("price"), off = Math.min(v("off"), price);
+  row.querySelector(".lp-sale").innerHTML = `<span class="num">売る値段 <b style="font-size:19px">${yen(price - off)}</b>${off ? `（${yen(price)}から${yen(off)}引き）` : ""}</span><span class="chipbtn" style="display:inline-flex;align-items:center">値段・値引きを変える</span>`;
+  row.style.borderColor = v("qty") > 0 ? "var(--accent)" : "";
+}
+function setLp(pid, k, val) { const inp = document.querySelector(`[data-lp="${pid}"][data-k="${k}"]`); if (inp) { inp.value = val; inp.dispatchEvent(new Event("input", { bubbles: true })); } }
+
+/* ---------- 出店レジ ---------- */
+function basket() {
+  const e = curEv(); let b = state.basket;
+  if (!b || !e || b.eid !== e.id) { b = state.basket = LS.get("dfn-basket", null); if (!b || !e || b.eid !== e.id) b = state.basket = { eid: e ? e.id : "", items: [], disc: "0", recv: 0 }; }
+  return b;
+}
+const saveBasket = () => LS.set("dfn-basket", state.basket);
+function basketLines(e, b) {
+  return b.items.filter(i => i.qty > 0).map(i => { const l = (e.lineup || []).find(x => x.pid === i.pid); return l ? { l, qty: i.qty, unit: num(l.price), off: Math.min(num(l.off), num(l.price)), sub: lpPrice(l) * i.qty } : null; }).filter(Boolean);
+}
+function basketDisc(b, sub) { const d = String(b.disc || "0"); const v = d.endsWith("%") ? Math.round(sub * num(d) / 100) : num(d); return Math.max(0, Math.min(sub, v)); }
+function basketSum(e, b) { const lines = basketLines(e, b); const sub = lines.reduce((a, x) => a + x.sub, 0); const disc = basketDisc(b, sub); return { lines, sub, disc, total: sub - disc, count: lines.reduce((a, x) => a + x.qty, 0) }; }
+function regiView(e) {
+  const r = eventResult(e), b = basket(), bs = basketSum(e, b), lineup = e.lineup || [];
+  const inB = pid => (b.items.find(i => i.pid === pid) || {}).qty || 0;
+  const goal = num(e.goal);
+  return `<button class="back" data-act="regiClose">‹ 出店の画面にもどる</button>
+  <section class="card regihead list" style="gap:6px">
+    <div class="section-title"><h2 style="font:700 20px var(--display)">${esc(e.title)}のレジ</h2>${state.lastBasket ? `<button class="btn small" data-act="undoBasket">直前の会計を取り消す</button>` : ""}</div>
+    <div><span class="note">${e.date === todayStr() ? "今日" : jpDate(e.date)}の売上</span><div class="big">${yen(r.total)}</div><div class="note num">${r.items}個・お客さま${r.customers}組${r.disc ? `・値引き ${yen(r.disc)}` : ""}</div></div>
+    ${goal ? `<div><div class="goalbar" role="progressbar" aria-valuemin="0" aria-valuemax="${goal}" aria-valuenow="${r.total}" aria-label="目標までの進み具合"><b style="width:${Math.min(100, Math.round(r.total / goal * 100))}%"></b></div><div class="note num" style="margin-top:4px">${r.total >= goal ? `🎉 目標の${yen(goal)}を達成しました！` : `目標 ${yen(goal)}まで あと <b>${yen(goal - r.total)}</b>`}<button class="chipbtn" style="margin-left:8px" data-act="regiGoal">変える</button></div></div>` : `<button class="btn small" data-act="regiGoal">今日の売上目標を決める</button>`}
+  </section>
+  <p class="note" style="margin:0">売れた商品を押すと「かご」に入ります。最後に下の「会計する」を押すと記録されます。</p>
+  ${lineup.length ? `<div class="regi">${lineup.map(l => { const sold = soldOf(e, l.pid), n = inB(l.pid), left = num(l.qty) - sold - n; return `<button class="regibtn${left <= 0 && !n ? " out" : ""}${n ? " inbasket" : ""}" data-act="regiAdd" data-pid="${esc(l.pid)}" aria-label="${esc(l.name)}、${yen(lpPrice(l))}、残り${Math.max(0, left)}個${n ? "、かごに" + n + "個" : ""}"><span class="n">${esc(l.name)}</span><span class="p num">${num(l.off) ? `<s>${yen(l.price)}</s>` : ""}${yen(lpPrice(l))}</span><span class="l num"><span>残り ${Math.max(0, left)} / ${num(l.qty)}</span>${n ? `<span class="inb">かごに${n}</span>` : ""}</span></button>`; }).join("")}</div>`
+    : `<div class="card"><b>持っていく商品がまだ決まっていません。</b><button class="btn primary wide" style="margin-top:8px" data-act="editLineup">持っていく商品を選ぶ</button></div>`}
+  <div class="list"><button class="btn wide" data-act="evOtherSale">一覧にない商品・自由な金額で売れた</button>${lineup.length ? `<button class="btn wide ghost" data-act="editLineup">持っていく商品・値段を直す</button>` : ""}</div>
+  <section class="card list">
+    <h2 class="h" style="font:700 19px var(--display)">閉店したら：レジ締め</h2>
+    <div class="f">朝に用意したおつり（釣り銭）${numStep(`id="rg-float" data-evf="float"`, num(e.float), { step: 1000, big: 5000, label: "釣り銭", unit: "円" })}</div>
+    <div class="change" style="border-color:var(--accent)"><span>レジのお金は<br><small class="note">釣り銭 ${yen(e.float)}＋現金の売上 ${yen(r.cash)}</small></span><b style="color:var(--accent)">${yen(num(e.float) + r.cash)}</b></div>
+    <p class="note" style="margin:0">お金を数えて、この金額と合っていればOKです。PayPay・カードの売上（${yen(r.total - r.cash)}）はレジのお金には入りません。</p>
+  </section>
+  ${bs.count ? `<div class="basketbar"><button class="sum" data-act="checkout"><span>かご ${bs.count}点${bs.disc ? `・${yen(bs.disc)}引き` : ""}</span><b>${yen(bs.total)}</b></button><button class="btn" data-act="checkout">会計する ›</button></div>` : ""}`;
+}
+function checkoutSheet() {
+  const e = curEv(); if (!e) return;
+  openSheet("会計", `<div id="ck-body" class="list" style="gap:14px"></div>`, panel => {
+    panel._paint = () => paintCheckout(panel); panel._paint();
+    panel.addEventListener("change", ev => {
+      const t = ev.target, b = basket();
+      if (t.dataset.ckq) { const it = b.items.find(i => i.pid === t.dataset.ckq); if (it) it.qty = Math.max(0, Math.round(num(t.value))); b.items = b.items.filter(i => i.qty > 0); b.recv = 0; saveBasket(); setTimeout(rePaintCheckout, 0); }
+      else if (t.id === "ck-disc") { b.disc = String(Math.max(0, num(t.value))); b.recv = 0; saveBasket(); setTimeout(rePaintCheckout, 0); }
+    });
+  });
+}
+const DISCS = [["0", "なし"], ["50", "50円引き"], ["100", "100円引き"], ["200", "200円引き"], ["500", "500円引き"], ["10%", "10%引き"]];
+function paintCheckout(panel) {
+  const e = curEv(), b = basket(); if (!e) return;
+  const bs = basketSum(e, b); const pay = state.payMethod || "現金";
+  const custom = !!b.custom;
+  const recv = num(b.recv), notes = [...new Set([Math.ceil(bs.total / 1000) * 1000, Math.ceil(bs.total / 5000) * 5000, 10000])].filter(v => v > bs.total).slice(0, 3);
+  const body = panel.querySelector("#ck-body");
+  if (!bs.count) { body.innerHTML = `<div class="empty">かごは空です。</div><button class="btn wide" data-act="closeSheet">もどる</button>`; return; }
+  body.innerHTML = `
+    <div>${bs.lines.map(x => `<div class="ckrow"><div><b>${esc(x.l.name)}</b><div class="note num">${x.off ? `<s>${yen(x.unit)}</s> ` : ""}${yen(x.unit - x.off)} × ${x.qty} ＝ <b>${yen(x.sub)}</b></div></div>
+      <div class="nstep" data-min="0" data-max=""><button type="button" class="nb" data-nd="-1" aria-label="${esc(x.l.name)}を1つ減らす">−</button><span class="nvw"><input type="number" inputmode="numeric" data-ckq="${esc(x.l.pid)}" value="${x.qty}" aria-label="${esc(x.l.name)}の数"></span><button type="button" class="nb" data-nd="1" aria-label="${esc(x.l.name)}を1つ増やす">＋</button></div></div>`).join("")}</div>
+    <div class="f">値引き<div class="seg" role="group" aria-label="値引き">${DISCS.map(([k, l]) => `<button data-act="ckDisc" data-v="${k}" aria-pressed="${!custom && String(b.disc || "0") === k}">${l}</button>`).join("")}<button data-act="ckDisc" data-v="custom" aria-pressed="${custom}">ほかの金額</button></div>
+      ${custom ? numStep(`id="ck-disc"`, num(b.disc), { step: 10, big: 100, label: "値引きの金額", unit: "円" }) : ""}</div>
+    <div class="card list" style="gap:4px;padding:12px 14px">
+      ${bs.disc ? `<div class="total" style="font-weight:500"><span>小計</span><span class="num">${yen(bs.sub)}</span></div><div class="total" style="font-weight:500;color:var(--bad)"><span>値引き</span><span class="num">−${yen(bs.disc)}</span></div>` : ""}
+      <div class="total"><span>合計</span><b>${yen(bs.total)}</b></div></div>
+    <div class="f">支払い方法<div class="seg" role="group" aria-label="支払い方法">${PAYS.map(pm => `<button data-act="ckPay" data-k="${pm}" aria-pressed="${pay === pm}">${pm}</button>`).join("")}</div></div>
+    ${pay === "現金" ? `<div class="f">お預かり<span style="font-weight:500;color:var(--muted);font-size:16px">押すと、おつりが出ます（なくてもOK）</span>
+      <div class="seg" role="group" aria-label="お預かり"><button data-act="ckRecv" data-v="${bs.total}" aria-pressed="${recv === bs.total}">ちょうど</button>${notes.map(v => `<button data-act="ckRecv" data-v="${v}" aria-pressed="${recv === v}">${yen(v)}</button>`).join("")}</div>
+      ${recv ? (recv >= bs.total ? `<div class="change"><span>おつり</span><b>${yen(recv - bs.total)}</b></div>` : `<div class="warnbox">お預かりが ${yen(bs.total - recv)} 足りません</div>`) : ""}</div>` : ""}
+    <button class="btn primary big wide" data-act="doCheckout" style="min-height:72px;font-size:21px">✓ ${yen(bs.total)} を会計する</button>
+    <button class="btn ghost wide" data-act="basketClear">かごを空にする</button>`;
+}
+function rePaintCheckout() { const p = $(".panel"); if (p && p._paint) p._paint(); render(); }
+async function doCheckout(btn) {
+  chimePrep();
+  const e = curEv(), b = basket(); if (!e) return; const bs = basketSum(e, b); if (!bs.count) return;
+  btn.disabled = true;
+  const pay = state.payMethod || "現金", now = new Date(), time = `${pad(now.getHours())}:${pad(now.getMinutes())}`, bid = newId(); let left = bs.disc; const done = [];
+  try {
+    for (let i = 0; i < bs.lines.length; i++) {
+      const x = bs.lines[i]; const share = i === bs.lines.length - 1 ? left : Math.round(bs.disc * x.sub / (bs.sub || 1)); left -= share;
+      const id = await store.add("sales", { date: e.date, productId: x.l.pid, name: x.l.name, qty: x.qty, price: x.unit, discount: x.off * x.qty + share, channel: "イベント", eventId: e.id, pay, time, basketId: bid, createdAt: Date.now() });
+      await addStock(x.l.pid, -x.qty); done.push({ id, pid: x.l.pid, qty: x.qty });
+    }
+  } catch { btn.disabled = false; return; }
+  state.lastBasket = { id: bid, lines: done, total: bs.total };
+  state.basket = { eid: e.id, items: [], disc: "0", recv: 0 }; saveBasket();
+  closeSheet(); chime(); buzz(); doneFlash(yen(bs.total), `${pay}で記録しました`);
+  toastAct(`${yen(bs.total)}（${bs.count}点）を記録しました`, "取り消す", undoBasket);
+  render();
+}
+async function undoBasket() {
+  const lb = state.lastBasket; if (!lb) return;
+  try { for (const x of lb.lines) { await store.remove("sales", x.id); await addStock(x.pid, x.qty); } } catch { return; }
+  state.lastBasket = null; toast(`${yen(lb.total)}の会計を取り消しました`); render();
+}
+function goalSheet() {
+  const e = curEv(); if (!e) return;
+  const past = pastBoothEvents(e.id).map(pe => eventResult(pe).total).filter(Boolean);
+  const avg = past.length ? Math.round(past.slice(0, 5).reduce((a, v) => a + v, 0) / Math.min(5, past.length) / 1000) * 1000 : 0;
+  openSheet("今日の売上目標", `<p class="note" style="margin:0">目標を決めると、レジの画面に「あといくら」が出ます。${avg ? `最近の出店の平均は約${yen(avg)}です。` : ""}</p>
+    ${numStep(`id="gl-v"`, num(e.goal) || avg || 20000, { step: 1000, big: 10000, label: "売上目標", unit: "円" })}
+    <button class="btn primary big wide" data-act="goalSave">これにする</button>${e.goal ? `<button class="btn ghost wide" data-act="goalSave" data-clear="1">目標を消す</button>` : ""}`);
 }
 
 /* レポート */
@@ -2736,6 +3287,10 @@ function settingsSheet() {
   const st = S(); const u = usageNow(); const last = LS.get("dfn-lastBackup", 0);
   const html = `
   <section class="card list">
+    <h2 class="h">見やすさ・音</h2>
+    ${a11yPrefs()}
+  </section>
+  <section class="card list">
     <h2 class="h">AIの設定</h2>
     <div class="note">APIの鍵：${apiKey() ? "入っています（" + esc(apiKey().slice(0, 10)) + "…）" : "<b style='color:var(--bad)'>まだ入っていません</b>"}</div>
     <button class="btn wide" data-act="openKey">${apiKey() ? "鍵を入れ直す" : "APIの鍵を入れる"}</button>
@@ -2766,7 +3321,7 @@ function settingsSheet() {
     <label class="f">時給（円）<span class="hint">作業時間の値打ち</span><input type="number" inputmode="numeric" id="sg-wage" value="${esc(st.wage)}"></label>
     <label class="f">目標の利益率（%）<span class="hint">おすすめ価格の計算</span><input type="number" inputmode="numeric" id="sg-margin" value="${esc(st.margin)}"></label>
     <label class="f">梱包費のめやす（円）<input type="number" inputmode="numeric" id="sg-packing" value="${esc(st.packing)}"></label>
-    <label class="f">「残りわずか」の数<input type="number" inputmode="numeric" id="sg-lowStock" value="${esc(st.lowStock)}"></label>
+    <div class="f">「残りわずか」の数${numStep('id="sg-lowStock"', num(st.lowStock), { label: "残りわずかの数" })}</div>
     <label class="f">BASE手数料（%）<input type="number" inputmode="decimal" step="0.1" id="sg-feeRate" value="${esc(st.feeRate)}"></label>
     <label class="f">BASE手数料（1件あたり円）<input type="number" inputmode="numeric" id="sg-feeFixed" value="${esc(st.feeFixed)}"></label>
   </div>
@@ -2816,7 +3371,7 @@ async function exportCsv(kind) {
     rows = [["日付", "名前", "場所", "天気", "気温", "人出", "出展料", "交通費", "その他経費", "拘束時間", "売上", "売れた数", "利益", "時給換算", "メモ"]].concat(state.events.filter(isBooth).sort((a, b) => a.date < b.date ? -1 : 1).map(e => { const r = eventResult(e); return [e.date, e.title, e.place || "", e.weather || "", e.temp ?? "", e.crowd || "", num(e.fee), num(e.transport), num(e.otherCost), num(e.hours), r.total, r.items, Math.round(r.profit), r.hourly == null ? "" : Math.round(r.hourly), e.note || ""]; }));
     filename = `出店の成績_${todayStr()}.csv`;
   } else {
-    rows = [["日付", "商品名", "個数", "単価", "金額", "販路", "手数料めやす", "原価めやす"]].concat([...state.sales].sort((a, b) => a.date < b.date ? -1 : 1).map(s => { const c = saleCost(s); return [s.date, s.name, num(s.qty) || 1, num(s.price), saleTotal(s), channelOf(s), Math.round(saleFee(s)), c == null ? "" : Math.round(c)]; }));
+    rows = [["日付", "時刻", "商品名", "個数", "単価", "値引き", "金額", "販路", "支払い", "手数料めやす", "原価めやす"]].concat([...state.sales].sort((a, b) => a.date < b.date ? -1 : 1).map(s => { const c = saleCost(s); return [s.date, s.time || "", s.name, num(s.qty) || 1, num(s.price), num(s.discount), saleTotal(s), channelOf(s), s.pay || "", Math.round(saleFee(s)), c == null ? "" : Math.round(c)]; }));
     filename = `売上記録_${todayStr()}.csv`;
   }
   try { await saveFile(new Blob([toCSV(rows)], { type: "text/csv" }), filename); } catch { toast("書き出せませんでした。"); }
@@ -3204,6 +3759,8 @@ VIEWS.studio = () => {
     <div class="note" id="st-vprog">${esc(studio.videoBusy)}</div>
     <p class="note" style="margin:0">保存した写真・動画をインスタで選び、投稿文はAIの構成案から「コピー」して貼ります。音楽はインスタで付けます。${canRecord() ? "" : "この端末では動画は作れません（写真は保存できます）。"}</p>
   </section>` : ""}
+  ${lineCard()}
+  ${promoCard()}
   ${sample ? `<section class="card list">
     <h2 class="h">BGMだけ選ぶ</h2>
     <div class="seg" role="group">${MOODS.map(m => `<button data-act="stMood" data-k="${m}" aria-pressed="${studio.mood === m}">${m}</button>`).join("")}</div>
@@ -3275,6 +3832,12 @@ const STUDIO_ACT = {
   edSave: async () => { const it = commitEdit(); if (it) { render(true); await savePhoto(it, studio.items.indexOf(it) + 1); } },
   edRemove: () => { const panel = $(".panel"); if (!panel) return; const it = panel._it; studio.items = studio.items.filter(x => x !== it); URL.revokeObjectURL(it.url); closeSheet(); render(true); }
 };
+const EVF = {};
+document.addEventListener("change", e => { if (e.target && e.target.dataset && e.target.dataset.pref) { LS.set(e.target.dataset.pref, e.target.checked); applyZoom(); } });
+document.addEventListener("change", e => { if (e.target && e.target.dataset && e.target.dataset.lnev) lnS().evId = e.target.value; });
+document.addEventListener("change", e => {
+  const ft = e.target; if (ft && ft.dataset && ft.dataset.evf) { clearTimeout(EVF.t); const k = ft.dataset.evf, v = num(ft.value); EVF.t = setTimeout(() => evUpdate({ [k]: v }), 500); }
+});
 document.addEventListener("change", e => {
   const t = e.target;
   if (t.dataset && t.dataset.pane) {
@@ -3294,6 +3857,62 @@ document.addEventListener("change", e => {
 });
 
 /* ---------- 日常の投稿ネタ ---------- */
+const LN_PURPOSES = ["出店のお知らせ", "新作のお知らせ", "お得・セール", "再販・入荷", "季節のあいさつ"];
+const LN_OFFERS = ["つけない", "円引き", "%引き", "プレゼント", "先着特典", "送料無料", "LINEを見せると特典"];
+const lnS = () => studio.ln || (studio.ln = { purpose: "出店のお知らせ", offer: "つけない", evId: "", busy: false, res: LS.get("dfn-lnres", null), ideas: LS.get("dfn-lnideas", null), ideasBusy: false });
+function lnOfferText(o) {
+  const v = num(($("#ln-ov") || {}).value), tx = (($("#ln-ot") || {}).value || "").trim();
+  return { "円引き": `${v || 100}円引き`, "%引き": `${v || 10}%引き`, "プレゼント": `お買い上げの方にプレゼント（${tx || "内容はあとで決める"}）`, "先着特典": `先着${v || 5}名さまに特典（${tx || "内容はあとで決める"}）`, "送料無料": "BASEで送料無料", "LINEを見せると特典": `このLINEを出店のブースで見せると特典（${tx || "内容はあとで決める"}）` }[o] || "";
+}
+function lnCopyBlock(title, key, line) {
+  if (!COPY[key]) return "";
+  return `<div class="aiblock"><div class="h"><b>${title}</b><button class="copy" data-act="copy" data-key="${key}">コピー</button></div><div class="txt">${esc(COPY[key])}</div>${line ? `<div class="row" style="margin-top:8px"><button class="btn" data-act="lineSend" data-key="${key}">LINEで送る</button>${navigator.share ? `<button class="btn" data-act="shareText" data-key="${key}">ほかのアプリで送る</button>` : ""}</div>` : ""}</div>`;
+}
+function lineCard() {
+  const L = lnS(), evs = state.events.filter(e => isBooth(e) && e.date >= todayStr()).sort((a, b) => a.date < b.date ? -1 : 1);
+  if (L.purpose === "出店のお知らせ" && !L.evId && evs[0]) L.evId = evs[0].id;
+  const r = L.res; if (r) { COPY.ln_line = r.line || ""; COPY.ln_ig = r.instagram || ""; COPY.ln_th = r.threads || ""; }
+  const needV = L.offer === "円引き" || L.offer === "%引き" || L.offer === "先着特典", needT = L.offer === "プレゼント" || L.offer === "先着特典" || L.offer === "LINEを見せると特典";
+  return `<section class="card list" id="line-card">
+    <h2 class="h">LINE・お知らせの文章</h2>
+    <p class="note" style="margin:0">LINEで送る宣伝の文章を作ります。同じ内容のインスタ・Threads用も一緒にできます。</p>
+    <div class="f">何のお知らせ？<div class="seg" role="group">${LN_PURPOSES.map(p => `<button data-act="lnPurpose" data-k="${p}" aria-pressed="${L.purpose === p}">${p}</button>`).join("")}</div></div>
+    ${L.purpose === "出店のお知らせ" ? (evs.length ? `<label class="f">どの出店？<select id="ln-ev" data-lnev="1">${evs.map(e => `<option value="${esc(e.id)}"${e.id === L.evId ? " selected" : ""}>${jpDate(e.date)} ${esc(e.title)}</option>`).join("")}</select></label>` : `<div class="note">これからの出店が登録されていません。「出店」から追加すると、日付や場所が自動で入ります。</div>`) : ""}
+    <div class="f">お得な情報をつける<div class="seg" role="group">${LN_OFFERS.map(o => `<button data-act="lnOffer" data-k="${o}" aria-pressed="${L.offer === o}">${o === "円引き" ? "○円引き" : o === "%引き" ? "○%引き" : o}</button>`).join("")}</div></div>
+    ${needV ? `<div class="f">${L.offer === "先着特典" ? "先着の人数" : "どれくらい引く？"}${numStep(`id="ln-ov"`, L.offer === "円引き" ? 100 : L.offer === "%引き" ? 10 : 5, { step: L.offer === "円引き" ? 50 : L.offer === "%引き" ? 5 : 1, min: 1, label: "お得の大きさ", unit: L.offer === "円引き" ? "円" : L.offer === "%引き" ? "%" : "名" })}</div>` : ""}
+    ${needT ? `<label class="f">特典の中身<input type="text" id="ln-ot" placeholder="例：ミニスワッグ・ポストカード"></label>` : ""}
+    <label class="f">伝えたいこと（なくてもOK）<textarea id="ln-msg" placeholder="例：クリスマスリースを多めに持っていきます。予約もできます"></textarea></label>
+    ${dict ? `<div class="row">${micBtn("ln-msg", "声で入力")}</div>` : ""}
+    ${sample ? `<button class="btn primary big wide" data-act="lnMake"${L.busy ? " disabled" : ""}>${L.busy ? "AIが文章を書いています…" : "AIに文章を作ってもらう"}</button>` : `<div class="note">AIの鍵を入れると使えます。</div>`}
+    ${L.err ? `<div style="color:var(--bad)">${esc(L.err)}</div>` : ""}
+    ${r ? `${r.when || r.tip ? `<div class="tipbox">${r.when ? `<div><b>送るタイミング：</b>${esc(r.when)}</div>` : ""}${r.tip ? `<div><b>ひと工夫：</b>${esc(r.tip)}</div>` : ""}</div>` : ""}
+      ${lnCopyBlock("LINE", "ln_line", true)}${lnCopyBlock("インスタ", "ln_ig")}${lnCopyBlock("Threads", "ln_th")}` : ""}
+  </section>`;
+}
+function promoCard() {
+  const L = lnS(), ideas = Array.isArray(L.ideas) ? L.ideas : [];
+  ideas.forEach((x, i) => { COPY["lni_" + i] = String(x.text || ""); });
+  return `<section class="card list">
+    <h2 class="h">今やるといい宣伝（おすすめ）</h2>
+    <p class="note" style="margin:0">季節・これからの出店・在庫の多い商品から、AIが「今ならこれ」というお得情報や宣伝を3つ考えます。</p>
+    ${sample ? `<button class="btn wide" data-act="lnIdeas"${L.ideasBusy ? " disabled" : ""}>${L.ideasBusy ? "AIが考えています…" : ideas.length ? "もう一度考えてもらう" : "AIに今のおすすめを聞く"}</button>` : ""}
+    ${L.ideasErr ? `<div style="color:var(--bad)">${esc(L.ideasErr)}</div>` : ""}
+    ${ideas.map((x, i) => `<div class="card" style="background:var(--paper);padding:12px 14px">
+      <b style="font-size:18px">${i + 1}. ${esc(x.title || "")}</b>
+      ${x.why ? `<div class="note">なぜ今？ ${esc(x.why)}</div>` : ""}
+      ${x.offer && x.offer !== "なし" ? `<div style="margin-top:4px"><span class="chip warn">お得：${esc(x.offer)}</span></div>` : ""}
+      ${x.channel ? `<div class="note">おすすめ：${esc(x.channel)}</div>` : ""}
+      ${lnCopyBlock("LINEの文章", "lni_" + i, true)}</div>`).join("")}
+    <details class="faq"><summary>宣伝のコツ（いつでも見られます）</summary><div><ul class="helpsteps" style="list-style:disc">
+      <li>LINEのお知らせは<b>月2〜4回</b>くらいに。多すぎるとブロックされやすくなります。</li>
+      <li>出店の告知は<b>1〜2週間前・前日・当日の朝</b>の3回が基本です。</li>
+      <li>お得な情報には<b>「期限」と「数」</b>を入れると、動いてもらいやすくなります（例：今週末まで・先着5名さま）。</li>
+      <li>値引きより<b>セット割・おまけ</b>の方が利益を守れます（例：2点で300円引き、ミニブーケのプレゼント）。</li>
+      <li>ブースに<b>「LINE登録で次回100円引き」</b>のPOPを置くと、お客さまとつながり続けられます。</li>
+      <li>文章の<b>最初の1行</b>で「何のお知らせか」が分かるようにします。写真は明るい時間に自然光で。</li>
+    </ul></div></details>
+  </section>`;
+}
 function ideasCard() {
   if (studio.ideasErr) return `<div style="color:var(--bad)">${esc(studio.ideasErr)}</div>`;
   const list = Array.isArray(studio.ideas) ? studio.ideas : [];
@@ -3485,7 +4104,7 @@ function materialSheet(m) {
   const isNew = !m; m = m || { name: "", cat: "花材", unit: "本", stock: 0, low: 5, price: "", supplier: "", memo: "" };
   openSheet(isNew ? "材料を登録" : "材料の編集", `<label class="f">名前<input type="text" id="mf-name" value="${esc(m.name)}" placeholder="例：ユーカリ・ポポラス"></label>
     <div class="grid2"><label class="f">種類<select id="mf-cat">${MAT_CATS.map(c => `<option${c === m.cat ? " selected" : ""}>${c}</option>`).join("")}</select></label><label class="f">単位<select id="mf-unit">${UNITS.map(u => `<option${u === m.unit ? " selected" : ""}>${u}</option>`).join("")}</select></label>
-    <label class="f">いまの在庫<input type="number" inputmode="numeric" id="mf-stock" value="${esc(m.stock)}"></label><label class="f">これ以下で「少ない」<input type="number" inputmode="numeric" id="mf-low" value="${esc(m.low)}"></label>
+    <div class="f">いまの在庫${numStep('id="mf-stock"', num(m.stock), { label: "いまの在庫" })}</div><label class="f">これ以下で「少ない」<input type="number" inputmode="numeric" id="mf-low" value="${esc(m.low)}"></label>
     <label class="f">1単位の値段（円）<input type="number" inputmode="numeric" id="mf-price" value="${esc(m.price ?? "")}"></label><label class="f">仕入れ先<input type="text" id="mf-supplier" value="${esc(m.supplier || "")}" placeholder="例：花市場"></label></div>
     <label class="f">メモ<textarea id="mf-memo" placeholder="例：秋だけ手に入る。2束で作品3つ分">${esc(m.memo || "")}</textarea></label>
     <button class="btn primary big wide" data-act="matSave" data-id="${isNew ? "" : esc(m.id)}">保存する</button>
@@ -3495,7 +4114,7 @@ function shopSheet() {
   const mats = [...state.materials].sort((a, b) => String(a.name).localeCompare(String(b.name), "ja"));
   openSheet("買い物リストに追加", `<label class="f">登録済みの材料から選ぶ<select id="sf2-mat"><option value="">（選ばずに名前を入れる）</option>${mats.map(m => `<option value="${esc(m.id)}">${esc(m.name)}（在庫${num(m.stock)}${esc(m.unit || "")}）</option>`).join("")}</select></label>
     <label class="f">名前<input type="text" id="sf2-name"></label>
-    <div class="grid2"><label class="f">数<input type="number" inputmode="numeric" id="sf2-qty" value="1"></label><label class="f">単位<select id="sf2-unit">${UNITS.map(u => `<option>${u}</option>`).join("")}</select></label></div>
+    <div class="grid2"><div class="f">数${numStep('id="sf2-qty"', 1, { min: 1, label: "数" })}</div><label class="f">単位<select id="sf2-unit">${UNITS.map(u => `<option>${u}</option>`).join("")}</select></label></div>
     <label class="f">買う場所<input type="text" id="sf2-sup" placeholder="例：花市場"></label>
     <button class="btn primary big wide" data-act="shopSave">追加する</button>`, () => {
     $("#sf2-mat").addEventListener("change", () => { const m = state.materials.find(x => x.id === $("#sf2-mat").value); if (m) { $("#sf2-name").value = m.name; $("#sf2-unit").value = m.unit || "本"; $("#sf2-sup").value = m.supplier || ""; } });
@@ -3618,7 +4237,7 @@ const ACT = {
   period: el => { state.period = el.dataset.k; render(); },
   importCsv: () => csvSheet(),
   doImport: el => doImport(el),
-  newEvent: () => eventSheet(null),
+  newEvent: el => eventSheet(null, el && el.dataset && /^\d{4}-\d{2}-\d{2}$/.test(el.dataset.date || "") ? el.dataset.date : ""),
   openEv: el => { state.evId = el.dataset.id; state.lastEvSale = null; showTab("events"); },
   closeEv: () => { state.evId = null; render(true); toTop("events"); },
   openSplit: () => splitSheet(),
@@ -3728,11 +4347,137 @@ ${past || "（まだありません）"}
   clAdd: () => { const e = curEv(); const v = $("#cl-new").value.trim(); if (!e || !v) return; $("#cl-new").value = ""; evUpdate({ checklist: [...(e.checklist || []), { t: v, d: false }] }); },
   clTemplate: () => evUpdate({ checklist: String(S().checklist || "").split("\n").map(t => t.trim()).filter(Boolean).map(t => ({ t, d: false })) }),
   editLineup: () => lineupSheet(),
-  lineupAll: () => { document.querySelectorAll('[data-lp][data-k="qty"]').forEach(inp => { const p = state.products.find(x => x.id === inp.dataset.lp); if (p) inp.value = num(p.stock); }); },
+  lineupAll: () => { document.querySelectorAll('[data-lp][data-k="qty"]').forEach(inp => { const p = state.products.find(x => x.id === inp.dataset.lp); if (p) setLp(p.id, "qty", num(p.stock)); }); toast("在庫の数を入れました"); },
+  lineupPrev: () => { const e = curEv(); const prev = e && pastBoothEvents(e.id).find(pe => (pe.lineup || []).length); if (!prev) return; const m = new Map(prev.lineup.map(l => [l.pid, l])); document.querySelectorAll('[data-lp][data-k="qty"]').forEach(inp => { const l = m.get(inp.dataset.lp); setLp(inp.dataset.lp, "qty", l ? num(l.qty) : 0); if (l) { setLp(l.pid, "price", num(l.price)); setLp(l.pid, "off", num(l.off)); } }); toast("前回と同じ数・値段にしました"); },
+  lineupOff: el => { const v = el.dataset.v; document.querySelectorAll('[data-lp][data-k="price"]').forEach(inp => { const price = num(inp.value); const off = v.endsWith("%") ? Math.round(price * num(v) / 100 / 10) * 10 : Math.min(price, num(v)); setLp(inp.dataset.lp, "off", off); }); toast(v === "0" ? "値引きをやめました" : "値引きを入れました。「決定」で保存されます"); },
+  schedSave: async () => {
+    const g = id => ($("#sc-" + id) || {}).value || "";
+    const data = { tIn: g("tIn"), tOut: g("tOut"), tStart: g("tStart"), tEnd: g("tEnd"), travel: num(g("travel")), setup: num(g("setup")), teardown: num(g("teardown")), ready: num(g("ready")), schedAi: null };
+    if (!data.tStart || !data.tEnd) { toast("販売の開始と終わりの時間を入れてください"); return; }
+    state.schedEdit = null; await evUpdate(data); toast("スケジュールを作りました");
+    setTimeout(() => { const c = $("#sched-card"); if (c) c.scrollIntoView({ block: "start", behavior: "smooth" }); }, 50);
+  },
+  schedEditBtn: () => { state.schedEdit = state.evId; render(); },
+  schedCancel: () => { state.schedEdit = null; render(); },
+  schedCal: () => {
+    const e = curEv(); const p = e && evPlan(e); if (!p) return;
+    const dt = n => `${icsDate(e.date)}T${pad(Math.floor(((n % 1440) + 1440) % 1440 / 60))}${pad(((n % 60) + 60) % 60)}00`;
+    const stamp = new Date().toISOString().replace(/[-:]/g, "").replace(/\.\d+/, "");
+    const desc = p.rows.map(r => `${hmStr(r.t)} ${r.l}`).join("\n");
+    const L = ["BEGIN:VEVENT", `UID:sc-${e.id}@dfn-shop`, `DTSTAMP:${stamp}`, `DTSTART:${dt(Math.max(0, p.depart))}`, `DTEND:${dt(Math.min(1439, p.home))}`, `SUMMARY:${icsEsc("【出店】" + e.title)}`, `DESCRIPTION:${icsEsc(desc)}`];
+    if (e.place) L.push(`LOCATION:${icsEsc(e.place)}`);
+    L.push("BEGIN:VALARM", "ACTION:DISPLAY", `DESCRIPTION:${icsEsc("30分後に出発：" + e.title)}`, "TRIGGER:-PT30M", "END:VALARM", "BEGIN:VALARM", "ACTION:DISPLAY", `DESCRIPTION:${icsEsc("明日は出店：" + e.title)}`, "TRIGGER:-PT12H", "END:VALARM", "END:VEVENT");
+    calSheet([L.map(icsFold).join("\r\n")], e.title + "_スケジュール", `「${e.title}」の当日のスケジュール（出発 ${hmStr(p.depart)}〜帰宅 ${hmStr(p.home)}）`);
+  },
+  schedSpeak: () => { const e = curEv(); const p = e && evPlan(e); if (!p || !tts) return; speak(p.rows.map(r => { const x = ((Math.round(r.t) % 1440) + 1440) % 1440; return `${Math.floor(x / 60)}時${x % 60 ? (x % 60) + "分" : ""}、${r.l}`; }).join("。")); },
+  schedAi: () => {
+    const e = curEv(); const p = e && evPlan(e); if (!p) return;
+    aiText(`あなたはマルシェ出店に慣れた先輩です。${SHOP_FACT}ひとりで出店するオーナーの当日のスケジュールを見直してください。
+出店: ${jpDate(e.date)} ${e.title}${e.place ? "（" + e.place + "）" : ""}
+スケジュール:
+${p.rows.map(r => `${hmStr(r.t)} ${r.l}${r.d ? "（" + r.d + "）" : ""}`).join("\n")}
+メモ・要項から分かったこと: ${e.memo || "なし"}
+持ち物チェック: ${(e.checklist || []).map(x => x.t).join("、") || "なし"}
+持っていく商品の数: ${(e.lineup || []).reduce((a, l) => a + num(l.qty), 0)}個
+
+無理な点、忘れやすい点、ひとりで回すときの工夫を、やさしい丁寧語で400字以内で。見出し記号(#)や表は使わず「・」の箇条書きにしてください。時間を直したほうがよい点は「○時○分を○時○分に」と具体的に書いてください。`, "sched-ai-" + e.id, text => evUpdate({ schedAi: { text, at: Date.now() } }));
+  },
+  prepAdd: async () => {
+    const e = curEv(); if (!e) return; const t = todayStr(); let n = 0;
+    for (const r of prepRows(e)) { if (r.date < t) continue; await store.add("todos", { title: `【${e.title.slice(0, 12)}】${r.l}`, due: r.date, cat: "出店", memo: r.d || "", done: false, eventId: e.id, prep: true, createdAt: Date.now() }); n++; }
+    toast(`やることリストに${n}件入れました`, 3000);
+  },
+  lineSend: el => { const t = COPY[el.dataset.key] || ""; if (!t) return; window.open(lineUrl(t), "_blank", "noopener"); },
+  shareText: el => { const t = COPY[el.dataset.key] || ""; if (navigator.share && t) navigator.share({ text: t }).catch(() => {}); },
+  lnPurpose: el => { const L = lnS(); L.purpose = el.dataset.k; render(); },
+  lnOffer: el => { const L = lnS(); L.offer = el.dataset.k; render(); },
+  lnMake: async () => {
+    const L = lnS(); if (L.busy || !sample) return; const st = S();
+    const ev = L.purpose === "出店のお知らせ" ? state.events.find(e => e.id === (($("#ln-ev") || {}).value || L.evId)) : null;
+    const offer = L.offer === "つけない" ? "" : lnOfferText(L.offer), msg = (($("#ln-msg") || {}).value || "").trim();
+    L.busy = true; L.err = ""; render();
+    try {
+      const v = await sample.json(`あなたは小さなドライフラワー店のSNS・LINE担当です。${SHOP_FACT}
+お店の名前: ${st.shopName}／雰囲気: ${st.shopMood || "ナチュラル"}／紹介: ${st.shopIntro || "なし"}
+今日: ${jpDate(todayStr())}
+お知らせの目的: ${L.purpose}
+${ev ? `出店: ${jpDate(ev.date)} ${ev.title}／場所: ${ev.place || "（未定・空欄で残す）"}／時間: ${ev.tStart ? ev.tStart + "〜" + (ev.tEnd || "") : "（未定・空欄で残す）"}／持っていく主な商品: ${(ev.lineup || []).slice(0, 8).map(l => l.name + " " + yen(lpPrice(l))).join("、") || "未定"}` : ""}
+お得な情報: ${offer || "なし"}
+伝えたいこと: ${msg || "とくになし"}
+
+守ること:
+・日付、場所、値段、商品名は上に書いたものだけを使う。わからないところは【　】の空欄で残す。
+・花の種類や効果など、確かでないことは書かない。大げさな表現はしない。
+・ていねいで親しみのある文。お得な情報があれば、条件（期限・数）をはっきり書く。
+
+次の形のJSONだけを返してください:
+{"line":"LINEで送る文章。150〜250字。最初の1行で何のお知らせか分かるように。絵文字は3個まで","instagram":"インスタ用の投稿文（200字前後）と最後にハッシュタグ5〜8個","threads":"Threads用（120字以内、答えやすい問いかけで終える）","when":"送るのにおすすめのタイミング（40字以内）","tip":"もっと反応をよくする一工夫（60字以内）"}`, { cache: false });
+      if (!v || !v.line) throw { code: "invalid_json" };
+      L.res = { line: String(v.line), instagram: String(v.instagram || ""), threads: String(v.threads || ""), when: String(v.when || ""), tip: String(v.tip || "") }; LS.set("dfn-lnres", L.res);
+    } catch (e) { L.err = aiError(e) || "うまく作れませんでした。もう一度お試しください。"; }
+    L.busy = false; render();
+  },
+  lnIdeas: async () => {
+    const L = lnS(); if (L.ideasBusy || !sample) return;
+    const t = todayStr(), lim = ymd(addD(today(), 30));
+    const evs = state.events.filter(e => isBooth(e) && e.date >= t && e.date <= lim).map(e => `${jpDate(e.date)} ${e.title}`).join("、") || "なし";
+    const many = state.products.filter(p => num(p.stock) >= 3).slice(0, 8).map(p => `${p.name}（在庫${num(p.stock)}・${yen(p.price)}）`).join("、") || "なし";
+    const recent = ranking(state.sales.filter(x => x.date >= ymd(addD(today(), -30)))).slice(0, 3).map(x => x.name).join("、") || "まだ記録なし";
+    const seasons = seasonStatus().slice(0, 3).map(x => `${x.name}（${x.label}）`).join("、");
+    L.ideasBusy = true; L.ideasErr = ""; render();
+    try {
+      const v = await sample.json(`あなたは小さなドライフラワー店の販促アドバイザーです。${SHOP_FACT}
+今日: ${jpDate(t)}
+季節のめやす: ${seasons}
+30日以内の出店: ${evs}
+在庫が多い商品: ${many}
+最近売れている商品: ${recent}
+
+LINE・インスタ・Threadsで「今」やるとよい宣伝やお得な情報を3つ提案してください。大きな値引きより、利益を守る工夫（セット割、期限つき、先着、おまけ、予約特典など）を優先します。ひとりで運営しているので、手間の少ない案にしてください。
+次の形のJSON配列だけを返してください:
+[{"title":"案の名前（20字以内）","why":"なぜ今か（50字以内）","offer":"お得な情報の中身（30字以内。なければ なし）","channel":"LINE・インスタ・Threadsのどれか（複数可）","text":"そのまま送れるLINEの文章（150字前後、絵文字は3個まで、わからない日付などは【　】で空欄）"}]`, { cache: false });
+      if (!Array.isArray(v) || !v.length) throw { code: "invalid_json" };
+      L.ideas = v.slice(0, 3).map(x => ({ title: String(x.title || ""), why: String(x.why || ""), offer: String(x.offer || ""), channel: String(x.channel || ""), text: String(x.text || "") })); LS.set("dfn-lnideas", L.ideas);
+    } catch (e) { L.ideasErr = aiError(e) || "うまく作れませんでした。もう一度お試しください。"; }
+    L.ideasBusy = false; render();
+  },
+  evAnnounce: () => { const e = curEv(); if (!e) return; const L = lnS(); L.purpose = "出店のお知らせ"; L.evId = e.id; location.hash = "#studio"; setTimeout(() => { const c = $("#line-card"); if (c) c.scrollIntoView({ block: "start" }); }, 120); },
+  openHelp: () => helpSheet(),
+  hpAsk: () => {
+    const q = (($("#hp-q") || {}).value || "").trim(); if (!q) { toast("聞きたいことを書いてください"); return; }
+    const k = helpKey();
+    aiText(`あなたはスマホのアプリ「店ノート」（ドライフラワー店の記録アプリ）の使い方案内係です。相手はスマホがあまり得意ではない40代の女性です。
+下の「説明書」だけをもとに、質問にやさしく答えてください。
+・200字くらいまで。手順は「1. 2. 3.」の番号つきで、押すボタンの名前は「」で囲む。
+・見出し記号(#)や表は使わない。むずかしいカタカナ語は使わない。
+・説明書にないことは推測せず、「説明書には載っていません。「AI相談」の画面で聞くか、息子さんに聞いてください」と答える。
+いま開いている画面: ${(HELP[k] || HELP.home).t}
+
+説明書:
+${helpManual()}
+
+質問: ${q}`, "help-ai", null, { modelTier: "quick", maxTokens: 900 });
+  },
+  setZoom: el => { LS.set("dfn-zoom", el.dataset.k); applyZoom(); document.querySelectorAll('[data-act="setZoom"]').forEach(b => b.setAttribute("aria-pressed", String(b.dataset.k === el.dataset.k))); },
+  evMode: el => { state.evMode = el.dataset.k; render(); },
+  calDay: el => { state.calDay = el.dataset.d; render(); },
+  calMove: el => { const d = Number(el.dataset.d); state.calMonth = d ? shiftMonth(state.calMonth || todayStr().slice(0, 7), d) : todayStr().slice(0, 7); state.calDay = null; render(); },
+  regiOpen: el => { const id = el.dataset.id || state.evId; state.evId = id; state.regi = id; if (visibleTabs().includes("events")) { render(true); toTop("events"); } else location.hash = "#events"; },
+  regiClose: () => { state.regi = null; render(true); toTop("events"); },
+  regiAdd: el => { const e = curEv(); if (!e) return; const b = basket(); const it = b.items.find(i => i.pid === el.dataset.pid); if (it) it.qty++; else b.items.push({ pid: el.dataset.pid, qty: 1 }); b.recv = 0; saveBasket(); buzz(); render(); },
+  checkout: () => checkoutSheet(),
+  ckDisc: el => { const b = basket(); if (el.dataset.v === "custom") { b.custom = true; if (String(b.disc).endsWith("%")) b.disc = "0"; } else { b.custom = false; b.disc = el.dataset.v; } b.recv = 0; saveBasket(); rePaintCheckout(); },
+  ckPay: el => { state.payMethod = el.dataset.k; LS.set("dfn-pay", state.payMethod); rePaintCheckout(); },
+  ckRecv: el => { const b = basket(); b.recv = num(el.dataset.v); saveBasket(); rePaintCheckout(); },
+  doCheckout: el => doCheckout(el),
+  basketClear: () => { const e = curEv(); state.basket = { eid: e ? e.id : "", items: [], disc: "0", recv: 0 }; saveBasket(); closeSheet(); render(); toast("かごを空にしました"); },
+  undoBasket: () => undoBasket(),
+  regiGoal: () => goalSheet(),
+  goalSave: async el => { const v = el.dataset.clear ? 0 : num($("#gl-v").value); await evUpdate({ goal: v }); closeSheet(); toast(v ? `目標を${yen(v)}にしました` : "目標を消しました"); },
   saveLineup: async () => {
     const m = new Map();
     document.querySelectorAll("[data-lp]").forEach(inp => { const o = m.get(inp.dataset.lp) || {}; o[inp.dataset.k] = num(inp.value); m.set(inp.dataset.lp, o); });
-    const lineup = []; for (const [pid, o] of m) { if (o.qty > 0) { const p = state.products.find(x => x.id === pid); lineup.push({ pid, name: p ? p.name : "", price: o.price || 0, qty: o.qty }); } }
+    const lineup = []; for (const [pid, o] of m) { if (o.qty > 0) { const p = state.products.find(x => x.id === pid); lineup.push({ pid, name: p ? p.name : "", price: o.price || 0, off: Math.min(o.off || 0, o.price || 0), qty: o.qty }); } }
     await evUpdate({ lineup }); closeSheet(); toast("持っていく商品を保存しました");
   },
   evSell: async el => {
@@ -3809,7 +4554,8 @@ ${bizSummary()}
   saveSettings: () => saveSettings(),
   export: el => exportCsv(el.dataset.k),
   copy: async el => {
-    try { await navigator.clipboard.writeText(COPY[el.dataset.key] || ""); el.textContent = "コピーしました"; setTimeout(() => { el.textContent = "コピー"; }, 1800); }
+    const o = el.dataset.orig || el.textContent; el.dataset.orig = o;
+    try { await navigator.clipboard.writeText(COPY[el.dataset.key] || ""); buzz(); el.textContent = "✓ コピーしました"; setTimeout(() => { el.textContent = o; }, 1800); toast("コピーしました。送りたいアプリで「ペースト」してください"); }
     catch { toast("コピーできませんでした。文章を長押ししてコピーしてください。", 3500); }
   },
   copyChat: async el => {
@@ -3876,14 +4622,16 @@ const TABS = [
   ["prep", "準備", '<path d="M9 5h11M9 12h11M9 19h11"/><path d="M3.5 5l1.5 1.5L7.5 4M3.5 12l1.5 1.5L7.5 11"/><circle cx="5" cy="19" r="1.5"/>'],
   ["events", "出店",'<path d="M3 9l2-5h14l2 5"/><path d="M3 9h18v2a3 3 0 0 1-6 0 3 3 0 0 1-6 0 3 3 0 0 1-6 0z"/><path d="M5 13v8h14v-8"/>'],
   ["analysis", "分析", '<path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/>'],
-  ["ai", "AI相談", '<path d="M21 12a8 8 0 0 1-11.6 7.1L4 21l1.9-5.4A8 8 0 1 1 21 12z"/>']
+  ["ai", "AI相談", '<path d="M21 12a8 8 0 0 1-11.6 7.1L4 21l1.9-5.4A8 8 0 1 1 21 12z"/>'],
+  ["menu", "メニュー", '<rect x="4" y="4" width="6.5" height="6.5" rx="1.5"/><rect x="13.5" y="4" width="6.5" height="6.5" rx="1.5"/><rect x="4" y="13.5" width="6.5" height="6.5" rx="1.5"/><rect x="13.5" y="13.5" width="6.5" height="6.5" rx="1.5"/>']
 ];
+const NAV_ORDER = ["home", "events", "products", "prep", "studio", "analysis", "ai", "menu"];
 function route() { const h = location.hash.replace("#", ""); state.tab = TABS.some(t => t[0] === h) ? h : "home"; }
 
 /* ---------- 2画面（左右・上下） ---------- */
 const SPLIT_KEY = "dfn-split";
 const APP_URL = location.href.split("#")[0];
-const APP_VERSION = "2026-11-19-5";
+const APP_VERSION = "2026-11-20-2";
 window.__dfn = { get state() { return state; }, S: () => S(), ymd: d => ymd(d), repeatLabel: r => repeatLabel(r), occDate: (r, k) => occDate(r, k), rruleOf: r => rruleOf(r), alarmTrigger: (a, b) => alarmTrigger(a, b) }; // 動作確認用
 const SPLITS = { none: "1画面", lr: "左右に2つ", tb: "上下に2つ" };
 function loadSplit() { try { const o = JSON.parse(localStorage.getItem(SPLIT_KEY) || "{}"); if (SPLITS[o.split]) state.split = o.split; if (TABS.some(t => t[0] === o.tab2)) state.tab2 = o.tab2; } catch {} }
@@ -3926,7 +4674,7 @@ function renderPane(el, tab, n, force) {
   const keep = {}; el.querySelectorAll("input[id],textarea[id],select[id]").forEach(x => { if (x.type !== "file" && !x.id.startsWith("pane-sel")) keep[x.id] = x.value; });
   const focusId = document.activeElement && el.contains(document.activeElement) ? document.activeElement.id : "";
   const y = isSplit() ? el.scrollTop : window.scrollY;
-  el.innerHTML = (isSplit() ? paneHead(n, tab) : "") + `<div class="panebody" data-view="${tab}">${VIEWS[tab]()}</div>`;
+  el.innerHTML = (isSplit() ? paneHead(n, tab) : "") + `<div class="panebody" data-view="${tab}">${!isSplit() && SUB_TABS.includes(tab) ? `<a class="back narrow" href="#menu">‹ メニューにもどる</a>` : ""}${VIEWS[tab]()}</div>`;
   for (const [id, v] of Object.entries(keep)) { const x = document.getElementById(id); if (x && el.contains(x) && !(force && id === "aiInput")) x.value = v; }
   if (focusId) { const x = document.getElementById(focusId); if (x && el.contains(x)) x.focus({ preventScroll: true }); }
   if (!force) { if (isSplit()) el.scrollTop = y; else window.scrollTo(0, y); }
@@ -3947,7 +4695,7 @@ function render(force) {
   renderPane($("#view"), state.tab, 1, force);
   const v2 = $("#view2");
   if (isSplit()) { v2.hidden = false; renderPane(v2, state.tab2, 2, force); } else { v2.hidden = true; v2.innerHTML = ""; }
-  $("#tabs").innerHTML = TABS.map(([k, l, ic]) => `<a href="#${k}"${state.tab === k ? ' aria-current="page"' : ""}><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">${ic}</svg>${l}</a>`).join("");
+  $("#tabs").innerHTML = NAV_ORDER.map(k => TABS.find(t => t[0] === k)).map(([k, l, ic]) => { const cur = state.tab === k || (k === "menu" && SUB_TABS.includes(state.tab)); return `<a href="#${k}" class="${SUB_TABS.includes(k) ? "wide" : k === "menu" ? "narrow" : ""}"${cur ? ' aria-current="page"' : ""}><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">${ic}</svg></span>${l}</a>`; }).join("");
   $("#splitBtn").setAttribute("aria-label", `画面の分け方（いまは${SPLITS[isSplit() ? state.split : "none"]}）`);
   sizePanes();
   hydratePhotos();
@@ -3956,7 +4704,7 @@ function render(force) {
 /* ---------- 起動 ---------- */
 function isStandalone() { return (window.matchMedia && matchMedia("(display-mode: standalone)").matches) || window.navigator.standalone === true; }
 async function init() {
-  loadSplit(); route(); if (isSplit()) fixTab2();
+  applyZoom(); loadSplit(); route(); if (isSplit()) fixTab2();
   window.addEventListener("hashchange", () => { const prev = state.tab; route(); if (isSplit()) { fixTab2(prev); saveSplit(); } render(true); toTop(state.tab); });
   try { await IDB.open(); } catch { state.storageError = true; }
   let cloudUp = false;
@@ -3976,7 +4724,7 @@ async function init() {
   try { if (navigator.storage && navigator.storage.persist) state.persisted = await navigator.storage.persist(); } catch {}
   if ("serviceWorker" in navigator && location.protocol === "https:") navigator.serviceWorker.register("sw.js").catch(() => {});
   window.addEventListener("online", () => schedule()); window.addEventListener("offline", () => schedule());
-  state.chatId = LS.get("dfn-room", null);
+  state.chatId = LS.get("dfn-room", null); state.payMethod = LS.get("dfn-pay", state.payMethod || "現金");
   await runRepeats();
   document.addEventListener("visibilitychange", async () => { if (document.visibilityState === "visible" && !state.storageError) { await runRepeats(); render(true); } });
   render(true);
