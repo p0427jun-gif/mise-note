@@ -285,7 +285,7 @@ input[type=range]{width:100%;accent-color:var(--accent);min-height:36px}
   .panel{max-width:860px}
   body[data-split="none"] .panebody[data-view="home"]{display:grid;grid-template-columns:1fr 1fr;gap:18px;align-items:start}
   body[data-split="none"] .panebody[data-view="home"] > *{min-width:0}
-  body[data-split="none"] .panebody[data-view="home"] > .hero,body[data-split="none"] .panebody[data-view="home"] > .quick,body[data-split="none"] .panebody[data-view="home"] > .apps,body[data-split="none"] .panebody[data-view="home"] > .todaybox{grid-column:1/-1}
+  body[data-split="none"] .panebody[data-view="home"] > .hero,body[data-split="none"] .panebody[data-view="home"] > .quick,body[data-split="none"] .panebody[data-view="home"] > .apps,body[data-split="none"] .panebody[data-view="home"] > .apps.sub,body[data-split="none"] .panebody[data-view="home"] > .todaybox{grid-column:1/-1}
   body[data-split="none"] .panebody[data-view="ai"] .chat{max-width:900px}
 }
 
@@ -344,7 +344,10 @@ body[data-split="lr"] .basketbar,body[data-split="tb"] .basketbar{bottom:0}
 .tl li.now .tm,.tl li.now .tx b{color:var(--accent)}
 .tl li.now .dot::after{width:18px;height:18px;margin-left:-9px;top:6px;background:var(--accent);box-shadow:0 0 0 4px var(--accent-soft)}
 .tl li.gone .dot::after{border-color:var(--ctl);background:var(--ctl)}
-.tl li.gone .tx b::after{content:"（すぎました）";font-weight:400;font-size:15px;color:var(--muted)}
+.tl li.gone .dot::after{content:"✓";color:#fff;font-size:12px;line-height:18px;text-align:center;width:18px;height:18px;margin-left:-9px;top:6px;border:0}
+.tl li.gone .tx b{color:var(--muted);font-weight:500}
+.tl li.gone .tm{color:var(--muted);font-weight:500}
+.tl li.gone .tx span{display:none}
 .tl .tx{padding-bottom:10px}
 .tl .tx b{display:block;line-height:1.4}
 .tl .tx span{display:block;font-size:16px;color:var(--muted);line-height:1.5}
@@ -449,6 +452,86 @@ a{color:var(--accent)}
   .top{margin:0 0 12px;border-radius:0 0 16px 16px}
 }
 @media (min-width:760px){ .apps{grid-template-columns:repeat(5,1fr)} .top{margin-left:-24px;margin-right:-24px;padding-left:24px;padding-right:24px} }
+.grid2 > .f:has(> .nstep){grid-column:1/-1}
+.mh{margin:2px 0 0;font-size:16px;color:var(--muted);font-weight:500}
+.pdel{display:inline-flex;align-items:center;gap:4px;min-height:44px;padding:4px 12px;border-radius:999px;border:2px solid var(--ctl);background:var(--surface);color:var(--ink);font:700 16px var(--body);cursor:pointer}
+.pdel svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.pcard{position:relative}
+.pcard .pdel{position:absolute;top:8px;right:8px}
+.pcard .name{padding-right:84px}
+.pcard .meta{padding-right:80px}
+@media (max-width:480px){ .top .yr{display:none} }
+.srbox{position:sticky;top:0;z-index:2;background:var(--paper);padding-bottom:8px}
+.srbox input{font-size:20px !important;min-height:60px}
+.srg h3{font:700 17px var(--body);color:var(--muted);margin:10px 0 6px}
+.sri{display:grid;grid-template-columns:44px 1fr 20px;gap:10px;align-items:center;width:100%;min-height:60px;padding:8px 12px;background:var(--surface);border:1px solid var(--line);border-radius:14px;text-align:left;color:var(--ink);font:inherit;cursor:pointer;margin-bottom:6px}
+.sri .ai{width:44px;height:44px;border-radius:12px;background:var(--accent-soft);display:grid;place-items:center}
+.sri .ai svg{width:24px;height:24px;stroke:var(--accent);fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+.sri b{display:block;line-height:1.35}
+.sri span.d{display:block;font-size:16px;color:var(--muted);line-height:1.4}
+.sri mark{background:#FFE58A;color:inherit;border-radius:3px;padding:0 1px}
+.evtabs{position:sticky;top:0;z-index:6;background:var(--paper);padding:8px 0;margin:0}
+.evtabs button{flex:1;min-height:56px;font-size:18px}
+.countdown{display:flex;align-items:baseline;gap:6px;margin-top:8px;color:var(--accent);font-weight:700}
+.countdown b{font-size:34px;line-height:1;font-variant-numeric:tabular-nums}
+.carry{border:2px solid var(--accent)} .carry .k{color:var(--accent);font-weight:700}
+.lp-list{display:grid;gap:8px}
+.lp-row{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:8px 10px}
+.lp-row.on{border:2px solid var(--accent);background:#FFF8FA}
+.lp-top{display:grid;grid-template-columns:1fr auto;gap:8px;align-items:center}
+.lp-nm b{display:block;line-height:1.3}
+.lp-top .nstep .nb{width:50px;min-height:50px}
+.lp-top .nstep .nvw{flex:none;width:56px}
+.lp-top .nstep input{min-height:50px}
+.lp-sale{cursor:pointer;min-height:40px;display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:16px;list-style:none;color:var(--muted)}
+.lp-sale::-webkit-details-marker{display:none}
+.lp-chg{color:var(--accent);font-weight:700}
+.regi{grid-template-columns:repeat(3,1fr) !important;gap:8px}
+@media (min-width:760px){ .regi{grid-template-columns:repeat(4,1fr) !important} }
+@media (min-width:1024px){ .regi{grid-template-columns:repeat(5,1fr) !important} }
+.regibtn{padding:8px !important;min-height:120px !important;gap:2px}
+.regibtn .rph{width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:10px;display:block;margin-bottom:4px}
+.regibtn .n{font-size:16px !important;line-height:1.3;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.regibtn .p{font-size:18px !important}
+.regibtn .p s{display:block;font-size:14px}
+.regibtn .l{font-size:15px !important}
+.ckdisc summary{min-height:56px}
+.ckdisc summary::before{content:none !important}
+.ckdisc summary::after{content:"変える ›";margin-left:auto;color:var(--accent);font-weight:700}
+.ckdisc[open] summary::after{content:"閉じる ⌃"}
+.totop{position:fixed;right:14px;bottom:calc(96px + env(safe-area-inset-bottom));z-index:9;min-height:56px;padding:0 18px;border-radius:999px;border:2px solid var(--accent);background:var(--surface);color:var(--accent);font:700 17px var(--body);box-shadow:var(--shadow);cursor:pointer}
+body:has(.basketbar) .totop{bottom:calc(176px + env(safe-area-inset-bottom))}
+@media (min-width:1024px){ .totop{bottom:24px} }
+.apps.main .app-t{background:var(--accent-soft);border:2px solid var(--accent);min-height:116px;font-size:17px}
+.apps.main .app-t .ai{background:var(--accent)} .apps.main .app-t .ai svg{stroke:#fff}
+.apps.sub{grid-template-columns:repeat(4,1fr);gap:8px}
+.apps.sub .app-t{min-height:92px;padding:10px 2px 8px;font-size:16px}
+.apps.sub .app-t .ai{width:42px;height:42px;border-radius:13px} .apps.sub .app-t .ai svg{width:24px;height:24px}
+@media (min-width:760px){ .apps.main{grid-template-columns:repeat(3,1fr)} .apps.sub{grid-template-columns:repeat(8,1fr)} }
+.hero .ok{margin-top:6px;display:inline-flex;align-items:center;gap:6px;font-weight:700;color:var(--good);background:#E8F4EC;border-radius:999px;padding:4px 12px}
+.hero .ok.ng{color:var(--warn);background:#FFF3E0}
+.need .k{color:var(--warn);font-weight:700}
+.need button.nr{display:flex;justify-content:space-between;gap:8px;width:100%;min-height:52px;align-items:center;background:none;border:0;border-bottom:1px solid var(--line);padding:6px 0;font:inherit;color:var(--ink);text-align:left;cursor:pointer}
+.bxrow{display:grid;grid-template-columns:56px 1fr 20px;gap:12px;align-items:center;width:100%;min-height:72px;padding:8px 12px;background:var(--surface);border:1px solid var(--line);border-radius:14px;text-align:left;color:var(--ink);font:inherit;cursor:pointer;box-shadow:var(--shadow)}
+.bxrow[hidden]{display:none}
+.bxrow img{width:56px;height:56px;object-fit:cover;border-radius:10px;background:var(--paper)}
+.bxrow .bxic{width:56px;height:56px;border-radius:10px;background:var(--accent-soft);color:var(--accent);display:grid;place-items:center;font-weight:700;font-size:15px}
+.bxrow b{display:block;line-height:1.35;word-break:break-all}
+.bxrow span.d{display:block;font-size:16px;color:var(--muted)}
+.bxrow .go{font-size:22px;color:var(--accent);font-weight:700}
+.seg.scrollx{flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch;padding-bottom:4px;scrollbar-width:thin}
+.seg.scrollx button{flex:none;white-space:nowrap}
+.fold{padding:0 !important;overflow:hidden}
+.fold > summary{list-style:none;cursor:pointer;display:grid;grid-template-columns:1fr auto;gap:2px 10px;align-items:center;min-height:64px;padding:12px 16px}
+.fold > summary::-webkit-details-marker{display:none}
+.fold > summary b{font-size:19px;line-height:1.35}
+.fold > summary .st{grid-column:1;font-size:16px;color:var(--muted)}
+.fold > summary::after{content:"開く ›";grid-row:1 / span 2;grid-column:2;color:var(--accent);font-weight:700;font-size:16px;white-space:nowrap}
+.fold[open] > summary::after{content:"閉じる ⌃"}
+.fold[open] > summary{border-bottom:1px solid var(--line)}
+.fold > section{border:0 !important;box-shadow:none !important;margin:0 !important;border-radius:0}
+.fold > section > .section-title > h2,.fold > section > h2:first-child{display:none}
+.fold > section > .section-title:has(> h2:only-child){display:none}
 /* くっきり表示（設定で切りかえ） */
 body.hc{--paper:#FFFFFF;--line:#6B727C;--muted:#30343A;--accent-soft:#F7DDE6}
 body.hc .card,body.hc .hero,body.hc .evcard,body.hc .pcard,body.hc .tile,body.hc .notice,body.hc .app-t,body.hc .mrow,body.hc details.faq{border:2px solid var(--ink);box-shadow:none}
@@ -464,6 +547,7 @@ body.hc .note,body.hc .meta{color:var(--ink)}
       <div class="date" id="todayLabel"></div>
     </div>
     <div class="row" style="gap:8px;flex-wrap:nowrap">
+    <button class="iconbtn" data-act="openSearch" aria-label="アプリの中をさがす"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg><span>さがす</span></button>
     <button class="iconbtn" data-act="openHelp" aria-label="使い方・困ったとき"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9.5"/><path d="M9.3 9.2a2.8 2.8 0 0 1 5.4 1c0 1.9-2.7 2.4-2.7 4"/><circle cx="12" cy="17.3" r=".6" fill="currentColor"/></svg><span>使い方</span></button>
     <button class="iconbtn" id="splitBtn" data-act="openSplit" aria-label="画面の分け方"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M12 4v16"/></svg><span>2画面</span></button>
     <button class="iconbtn" data-act="openSettings" aria-label="お店の設定">
@@ -479,6 +563,7 @@ body.hc .note,body.hc .meta{color:var(--ink)}
 <input type="file" id="pdfIn" accept="application/pdf,image/*" hidden>
 <input type="file" id="rcptIn" accept="image/*" hidden>
 <script>document.addEventListener("click", e => { const l = e.target.closest && e.target.closest('label[for="pdfIn"]'); if (l) window.__pdfTarget = l.dataset.pdfTarget || ""; }, true);</script>
+<button class="totop" id="toTop" data-act="goTop" hidden>↑ 上へ</button>
 <div class="toast" id="toast" role="status"></div>
 <input type="file" id="chatPhoto" accept="image/*" hidden>
 
@@ -539,8 +624,10 @@ function numStep(attrs, value, o = {}) {
   const lab = esc(o.label || "数"), dec = String(step).includes(".");
   const bigB = o.big ? `<button type="button" class="nb x" data-nd="${-o.big}" aria-label="${lab}を${o.big}減らす">−${o.big}</button>` : "";
   const bigF = o.big ? `<button type="button" class="nb x" data-nd="${o.big}" aria-label="${lab}を${o.big}増やす">＋${o.big}</button>` : "";
-  return `<div class="nstep" data-min="${min}" data-max="${max}">${bigB}<button type="button" class="nb" data-nd="${-step}" aria-label="${lab}を${step}減らす">−</button><span class="nvw"><input type="number" inputmode="${dec ? "decimal" : "numeric"}" step="${step}" ${attrs} value="${esc(value)}" aria-label="${lab}">${o.unit ? `<span class="u">${esc(o.unit)}</span>` : ""}</span><button type="button" class="nb" data-nd="${step}" aria-label="${lab}を${step}増やす">＋</button>${bigF}</div>`;
+  return `<div class="nstep" data-min="${min}" data-max="${max}"${o.hm ? ' data-hm="1"' : ""}>${bigB}<button type="button" class="nb" data-nd="${-step}" aria-label="${lab}を${step}減らす">−</button><span class="nvw"><input type="number" inputmode="${dec ? "decimal" : "numeric"}" step="${step}" ${attrs} value="${esc(value)}" aria-label="${lab}">${o.unit ? `<span class="u">${esc(o.unit)}</span>` : ""}</span><button type="button" class="nb" data-nd="${step}" aria-label="${lab}を${step}増やす">＋</button>${bigF}</div>${o.hm ? `<div class="mh" aria-live="polite">${minText(value)}</div>` : ""}`;
 }
+const minText = v => { const m = Math.round(num(v)); return m >= 60 ? `＝ ${Math.floor(m / 60)}時間${m % 60 ? (m % 60) + "分" : ""}` : m ? `＝ ${m}分` : ""; };
+document.addEventListener("input", e => { const w = e.target.closest && e.target.closest('.nstep[data-hm]'); if (w && w.nextElementSibling && w.nextElementSibling.classList.contains("mh")) w.nextElementSibling.textContent = minText(e.target.value); });
 function nsApply(btn) {
   const w = btn.closest(".nstep"); const inp = w && w.querySelector("input"); if (!inp) return false;
   const min = w.dataset.min === "" ? -Infinity : Number(w.dataset.min), max = w.dataset.max === "" ? Infinity : Number(w.dataset.max);
@@ -732,11 +819,11 @@ const store = {
     else { try { await IDB.put(col + "/" + id, doc); } catch (e) { writeError(e); throw e; } }
     Object.keys(o).forEach(k => { if (k !== "id") delete o[k]; }); Object.assign(o, doc); schedule();
   },
-  async remove(col, id) {
+  async remove(col, id, keepPhotos) {
     if (CLOUD.on) cloudDel(col, id);
     else { try { await IDB.del(col + "/" + id); } catch (e) { writeError(e); throw e; } }
     state[col] = state[col].filter(x => x.id !== id); schedule();
-    if (["events", "todos", "drying", "orders", "expenses"].includes(col)) photoStore.removeOwner(col + "/" + id).catch(() => {});
+    if (!keepPhotos && ["events", "todos", "drying", "orders", "expenses"].includes(col)) photoStore.removeOwner(col + "/" + id).catch(() => {});
   },
   async settings(data) {
     const doc = plainCopy(data);
@@ -1491,7 +1578,7 @@ function calcSheet() {
     <div class="section-title"><b>使う材料</b><button class="btn small" data-act="ccAdd">＋ 材料を足す</button></div>
     <div id="cc-rows" class="list"></div>
     <div class="grid2"><label class="f">そのほかの材料費（円）<input type="number" inputmode="numeric" id="cc-extra" value=""></label>
-    <div class="f">作業時間（分）${numStep('id="cc-min"', 30, { step: 5, label: "作業時間", unit: "分" })}</div>
+    <div class="f">作業時間（1つ作るのにかかる時間）${numStep('id="cc-min"', 30, { step: 5, big: 30, label: "作業時間", unit: "分", hm: true })}</div>
     <label class="f">梱包費（円）<input type="number" inputmode="numeric" id="cc-pack" value="${esc(S().packing)}"></label></div>
     <div class="calc" id="cc-out"></div>
     <div class="f">値引きするなら${numStep('id="cc-off"', 0, { step: 50, label: "値引き", unit: "円引き" })}</div>
@@ -2319,16 +2406,21 @@ VIEWS.home = () => {
     <div class="label">${Number(key.slice(5))}月の売上</div>
     <div class="big">${yen(sm.total)}</div>
     <div class="sub num">利益 約${yen(profit)}（原価・手数料・出展料を引いた額）・${sm.items}個</div>
+    ${(() => { const ex = state.expenses.filter(x => String(x.date).startsWith(key)).reduce((a, x) => a + num(x.amount), 0); return `<div class="sub num">今月のレシート（経費） ${yen(ex)}</div>${sm.total ? `<div class="ok${profit < 0 ? " ng" : ""}">${profit >= 0 ? "✓ 今月は黒字です" : "今月はまだ赤字です"}</div>` : ""}`; })()}
   </section>
-  <nav class="apps" aria-label="よく使う機能">
+  <nav class="apps main" aria-label="毎日使う機能">
     <button class="app-t primary" data-act="newSale">${icon("sale")}売れた！を<br>記録</button>
-    <button class="app-t" data-act="newProduct">${icon("plus")}新作を<br>登録</button>
-    <button class="app-t" data-act="newEvent">${icon("cal")}予定を<br>追加</button>
-    <label class="app-t" for="rcptIn">${icon("receipt")}レシートを<br>撮る</label>
-    <button class="app-t" data-act="openBulk">${icon("mic")}声で<br>まとめて記録</button>
-    <a class="app-t" href="#studio">${icon("post")}投稿を<br>つくる</a>
-    <a class="app-t" href="#ai">${icon("chat")}AIに<br>相談</a>
-    <a class="app-t" href="#analysis">${icon("chart")}分析・<br>確定申告</a>
+    <label class="app-t primary" for="rcptIn">${icon("receipt")}レシートを<br>撮る</label>
+    <button class="app-t primary" data-act="openBulk">${icon("mic")}声で<br>記録</button>
+  </nav>
+  <nav class="apps sub" aria-label="そのほかの機能">
+    <button class="app-t" data-act="newProduct">${icon("plus")}新作登録</button>
+    <button class="app-t" data-act="newEvent">${icon("cal")}予定追加</button>
+    <a class="app-t" href="#studio">${icon("post")}投稿</a>
+    <a class="app-t" href="#ai">${icon("chat")}AI相談</a>
+    <a class="app-t" href="#analysis">${icon("chart")}分析</a>
+    <a class="app-t" href="#box">${icon("box")}保管箱</a>
+    <button class="app-t" data-act="openSearch">${icon("search")}さがす</button>
     <button class="app-t" data-act="openHelp">${icon("help")}使い方</button>
   </nav>
   ${state.products.length ? "" : `<div class="card"><b>まずは商品を1つ登録してみましょう。</b><div class="note" style="margin-top:4px">写真と材料費、作業時間を入れると、値段のめやすとインスタ用の文章ができます。</div></div>`}
@@ -2356,14 +2448,17 @@ const IC = {
   gear: '<circle cx="12" cy="12" r="3"/><path d="M12 2.5v3M12 18.5v3M2.5 12h3M18.5 12h3M5.3 5.3l2.1 2.1M16.6 16.6l2.1 2.1M5.3 18.7l2.1-2.1M16.6 7.4l2.1-2.1"/>',
   split: '<rect x="3" y="4" width="18" height="16" rx="2"/><path d="M12 4v16"/>',
   bag: '<path d="M5 8h14l-1 13H6z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/>',
+  box: '<path d="M3 7.5l9-4.5 9 4.5v9l-9 4.5-9-4.5z"/><path d="M3 7.5l9 4.5 9-4.5M12 12v9"/>',
+  search: '<circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/>',
   menu: '<rect x="4" y="4" width="6.5" height="6.5" rx="1.5"/><rect x="13.5" y="4" width="6.5" height="6.5" rx="1.5"/><rect x="4" y="13.5" width="6.5" height="6.5" rx="1.5"/><rect x="13.5" y="13.5" width="6.5" height="6.5" rx="1.5"/>'
 };
 const icon = k => `<span class="ai" aria-hidden="true"><svg viewBox="0 0 24 24">${IC[k]}</svg></span>`;
-const SUB_TABS = ["studio", "analysis", "ai"];
+const SUB_TABS = ["studio", "analysis", "ai", "box"];
 VIEWS.menu = () => `<div class="section-title"><h2>メニュー</h2></div>
   <div class="list">
     <a class="mrow" href="#studio">${icon("post")}<span><b>投稿をつくる</b><span class="d">インスタ・Threads・LINEの文章と写真</span></span><span class="go" aria-hidden="true">›</span></a>
     <a class="mrow" href="#ai">${icon("chat")}<span><b>AIに相談</b><span class="d">声でも文字でも聞けます</span></span><span class="go" aria-hidden="true">›</span></a>
+    <a class="mrow" href="#box">${icon("box")}<span><b>保管箱</b><span class="d">書類・写真・メモを分類してしまっておく</span></span><span class="go" aria-hidden="true">›</span></a>
     <a class="mrow" href="#analysis">${icon("chart")}<span><b>分析・確定申告</b><span class="d">売上と利益、経費、確定申告のまとめ</span></span><span class="go" aria-hidden="true">›</span></a>
     <button class="mrow" data-act="openHelp">${icon("help")}<span><b>使い方・困ったとき</b><span class="d">画面の説明・よくある質問・AIに聞く</span></span><span class="go" aria-hidden="true">›</span></button>
     <button class="mrow" data-act="openSettings">${icon("gear")}<span><b>設定</b><span class="d">文字の大きさ・お店の情報・AIの鍵・バックアップ</span></span><span class="go" aria-hidden="true">›</span></button>
@@ -2386,11 +2481,14 @@ function productListView() {
   const segBtn = (k, l) => `<button data-act="filter" data-k="${k}" aria-pressed="${f === k}">${l}</button>`;
   return `
   <div class="section-title"><h2>商品 ${state.products.length}点</h2><button class="btn primary" data-act="newProduct">＋ 新作を登録</button></div>
+  ${(() => { const need = state.products.filter(p => num(p.stock) <= 1).sort((a, b) => num(a.stock) - num(b.stock)); if (!need.length) return ""; const tm = t => { if (!t) return ""; const d = new Date(t); return `${d.getMonth() + 1}/${d.getDate()} ${d.getHours()}:${pad(d.getMinutes())}更新`; };
+    return `<section class="card list need" style="gap:0"><div class="k">要確認：売り切れ・残り1点（${need.length}）</div><div class="note" style="margin:2px 0 4px">BASEの在庫と合っているか確かめましょう。</div>${need.slice(0, 6).map(p => `<button class="nr" data-act="openProduct" data-id="${esc(p.id)}"><span><b>${esc(p.name)}</b> <span class="note">${tm(p.updatedAt)}</span></span><span class="chip ${num(p.stock) <= 0 ? "bad" : "warn"}">${num(p.stock) <= 0 ? "売り切れ" : "残り1"}</span></button>`).join("")}</section>`; })()}
   <button class="btn wide" data-act="openCalc">🧮 値段の計算（材料と時間から）</button>
   <div class="seg" role="group" aria-label="絞り込み">${segBtn("all","すべて")}${segBtn("sale","販売中")}${segBtn("low","残りわずか")}${segBtn("out","売り切れ")}</div>
   <div class="list plist">
     ${list.map(p => `
     <div class="pcard">
+      <button class="pdel" data-act="quickDelProduct" data-id="${esc(p.id)}" aria-label="${esc(p.name)}を消す"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13M10 11v6M14 11v6"/></svg>消す</button>
       <button data-act="openProduct" data-id="${esc(p.id)}" style="padding:0;border:0;background:none;cursor:pointer" aria-label="${esc(p.name)}を開く">${thumb(p)}</button>
       <div>
         <button class="name" data-act="openProduct" data-id="${esc(p.id)}">${esc(p.name)}</button>
@@ -2440,7 +2538,8 @@ function eventDetail(e) {
   <section class="card">
     <div class="section-title"><h2>${esc(e.title)}</h2><button class="btn small" data-act="editEv">編集</button></div>
     <div class="meta">${jpDate(e.date)}・${esc(e.kind || "予定")}${e.place ? "・" + esc(e.place) : ""}</div>
-    ${booth ? `<div class="meta num">出展料 ${yen(e.fee)}・交通費 ${yen(e.transport)}・その他 ${yen(e.otherCost)}・拘束 ${num(e.hours) || "?"}時間</div>` : ""}
+    ${countdownHtml(e)}
+    ${booth && (num(e.fee) || num(e.transport) || num(e.otherCost) || num(e.hours)) ? `<div class="meta num">出展料 ${yen(e.fee)}・交通費 ${yen(e.transport)}・その他 ${yen(e.otherCost)}・拘束 ${num(e.hours) || "?"}時間</div>` : ""}
     ${e.memo ? `<div class="note" style="margin-top:6px;white-space:pre-wrap">${esc(e.memo)}</div>` : ""}
     ${!booth ? `<div style="margin-top:8px">${photoStrip("events/" + e.id, "memo", "メモに写真を貼る")}</div>` : ""}
     ${e.repeatId ? `<div class="note" style="margin-top:6px">🔁 くり返しの予定から入ったものです。</div>` : e.date >= todayStr() ? `<div class="row" style="margin-top:8px"><button class="btn small" data-act="calEvent" data-id="${esc(e.id)}">📅 カレンダーに入れる</button>${booth ? `<button class="btn small" data-act="evAnnounce">📣 告知の文章をつくる</button>` : ""}</div>` : ""}
@@ -2468,35 +2567,34 @@ function eventDetail(e) {
       ${hs.length ? `<div class="f">よく売れた時間帯<div class="list" style="gap:4px">${hs.map(H => `<div class="hbar"><span class="num">${H}時</span><b style="width:${Math.round(hr[H] / mx * 100)}%"></b><span class="num">${hr[H]}個</span></div>`).join("")}</div></div>` : ""}`; })()}
     <p class="note" style="margin:8px 0 0">利益＝売上−商品の原価−出展料・交通費・その他。時給換算＝利益÷拘束時間。${r.unknown ? `原価が分からない売上が${yen(r.unknown)}あります。` : ""}</p>
   </section>`;
-  return `${head}
-  ${past || isToday ? results : ""}
-  ${isToday || past ? `<section class="card list todaybox"><div class="k">${isToday ? "今日は出店日です" : "あとから売上を入れるとき"}</div>
+  const S_regi = isToday || past ? `<section class="card list todaybox"><div class="k">${isToday ? "今日は出店日です" : "あとから売上を入れるとき"}</div>
     <button class="btn primary big wide" data-act="regiOpen" data-id="${esc(e.id)}" style="min-height:76px;font-size:22px">🛍 レジを開く</button>
-    <div class="note">売れた商品を押すだけで、売上・個数・在庫が自動で計算されます。値引きやおつりの計算もできます。</div></section>` : ""}
-  <section class="card">
+    <div class="note">売れた商品を押すだけで、売上・個数・在庫が自動で計算されます。値引きやおつりの計算もできます。</div></section>` : "";
+  const S_lineup = `  <section class="card">
     <div class="section-title"><h2>${past ? "持っていった商品" : "持っていく商品"}</h2><button class="btn small" data-act="editLineup">${lineup.length ? "数・値段を変える" : "選ぶ"}</button></div>
     ${lineup.length ? (() => { let tq = 0, ts = 0, tt = 0; const rows = lineup.map(l => { const sold = soldOf(e, l.pid), amt = r.sales.filter(x => x.productId === l.pid).reduce((a, x) => a + saleTotal(x), 0); tq += num(l.qty); ts += sold; tt += amt; return `<tr><td><b>${esc(l.name)}</b><div class="note num" style="font-size:15px;line-height:1.4">${num(l.off) ? `${yen(lpPrice(l))}（${yen(l.off)}引き）` : yen(l.price)}</div></td><td class="num">${sold} / ${num(l.qty)}</td><td class="num">${Math.max(0, num(l.qty) - sold)}</td><td class="num">${yen(amt)}</td></tr>`; }).join("");
       const other = r.sales.filter(x => !lineup.some(l => l.pid === x.productId)), oAmt = other.reduce((a, x) => a + saleTotal(x), 0), oQ = other.reduce((a, x) => a + (num(x.qty) || 1), 0);
       return `<div class="scroll"><table class="tbl"><thead><tr><th>商品・値段</th><th>売れた<br><small>／持参</small></th><th>残り</th><th>売上</th></tr></thead><tbody>${rows}${other.length ? `<tr><td>一覧にない商品など</td><td class="num">${oQ}</td><td></td><td class="num">${yen(oAmt)}</td></tr>` : ""}</tbody>
       <tfoot><tr><td>合計</td><td class="num">${ts + oQ} / ${tq}</td><td class="num">${Math.max(0, tq - ts)}</td><td class="num">${yen(tt + oAmt)}</td></tr></tfoot></table></div>${r.disc ? `<p class="note" style="margin:6px 0 0">売上は値引き（合計${yen(r.disc)}）を引いた金額です。</p>` : ""}`; })()
     : `<div class="empty">まだ選んでいません。「選ぶ」を押して、持っていく数を「＋」で決めましょう。</div>`}
-  </section>
-  ${!past ? schedCard(e) + (prepRows(e).some(r => r.date >= todayStr()) && !isToday ? prepCard(e) : "") : ""}
-  <section class="card">
+  </section>`;
+  const S_sched = !past ? schedCard(e) : "";
+  const S_prep = !past && !isToday && prepRows(e).some(r => r.date >= todayStr()) ? prepCard(e) : "";
+  const S_check = `  <section class="card">
     <div class="section-title"><h2>持ち物チェック</h2><span class="note">${cl.filter(x => x.d).length}/${cl.length}</span></div>
     ${cl.map((x, i) => `<label class="check-item${x.d ? " done" : ""}"><input type="checkbox" data-act="clToggle" data-i="${i}"${x.d ? " checked" : ""}><span>${esc(x.t)}</span><button class="del x" data-act="clDel" data-i="${i}" aria-label="${esc(x.t)}を消す">消す</button></label>`).join("") || `<div class="empty">まだありません。</div>`}
     <div class="row" style="margin-top:8px"><input type="text" id="cl-new" placeholder="持ち物を追加" style="flex:1 1 160px"><button class="btn small" data-act="clAdd">追加</button></div>
-    <div class="list" style="margin-top:8px"><button class="btn wide" data-act="tplPick">📋 テンプレートから呼び出す</button>${cl.length ? `<button class="btn wide" data-act="tplSave">💾 この持ち物をテンプレートに保存</button>` : ""}</div>
-  </section>
-  <section class="card list">
+    <div class="list" style="margin-top:8px">${cl.length ? `<button class="btn wide" data-act="lineText" data-k="check">持ち物リストをLINEで送る</button>` : ""}<button class="btn wide" data-act="tplPick">📋 テンプレートから呼び出す</button>${cl.length ? `<button class="btn wide" data-act="tplSave">💾 この持ち物をテンプレートに保存</button>` : ""}</div>
+  </section>`;
+  const S_status = `  <section class="card list">
     <h2 style="font:700 19px var(--display)">当日の状況</h2>
     <div><div class="note">天気</div>${segs("weather", WEATHER)}</div>
     <div class="grid2"><label class="f">気温（℃）<input type="number" inputmode="numeric" id="ev-temp" value="${esc(e.temp ?? "")}"></label><div><div class="note">人出</div>${segs("crowd", CROWD)}</div></div>
     <label class="f">気づいたこと<span class="hint">客層、よく見られた商品、隣のお店、場所の良し悪しなど</span><textarea id="ev-note">${esc(e.note || "")}</textarea></label>
     <div class="row">${micBtn("ev-note", "声でメモ")}<button class="btn" data-act="saveEvNote">メモを保存</button></div>
     ${photoStrip("events/" + e.id, "memo", "メモに写真を貼る")}
-  </section>
-  <section class="card list">
+  </section>`;
+  const S_booth = `  <section class="card list">
     <div class="section-title"><h2 style="font:700 19px var(--display)">ブースの写真と並べ方</h2></div>
     <p class="note" style="margin:0">ブースを撮っておくと、次の出店のときに見返せます。写真は自動で小さくしてから保存します。</p>
     ${photoStrip("events/" + e.id, "booth", "ブースの写真を貼る")}
@@ -2504,14 +2602,34 @@ function eventDetail(e) {
       <div class="list" style="margin-top:8px">${pastB.map(pe => `<div><div style="font-weight:700">${jpDate(pe.date)} ${esc(pe.title)}</div><div class="note num">売上 ${yen(eventResult(pe).total)}・${esc(pe.weather || "天気の記録なし")}</div>${photoStrip("events/" + pe.id, "booth", "", true)}</div>`).join("")}</div></details>` : ""; })()}
     ${sample ? `<div id="booth-ai-${esc(e.id)}">${streamOr("booth-ai-" + e.id, e.boothAi ? `<div class="prose">${fmtAi(e.boothAi.text)}</div><div class="note">${new Date(e.boothAi.at).toLocaleDateString("ja-JP")}に作成</div>${tts ? `<div class="tools"><button class="copy" data-act="speakEl">🔊 読み上げ</button></div>` : ""}` : "")}</div>
     <button class="btn primary wide" data-act="boothAi">${past || isToday ? "AIにブースの写真を見てもらう" : "AIに並べ方を考えてもらう"}</button>` : ""}
-  </section>
-  ${sample ? `<section class="card list">
+  </section>`;
+  const S_ai = sample ? `<section class="card list">
     <h2 style="font:700 19px var(--display)">${past ? "AIの振り返り" : "AIの予想"}</h2>
     <p class="note" style="margin:0">${past ? "この日の結果を、過去の出店とくらべて分析します。" : "これまでの出店のデータから、売上や持っていく数を予想します。"}${pastBoothEvents(e.id).length < 2 ? "出店の記録が増えるほど正確になります。" : ""}</p>
     <div id="ev-ai-${esc(e.id)}">${streamOr("ev-ai-" + e.id, (past ? e.ai : e.forecast) ? `<div class="prose">${fmtAi((past ? e.ai : e.forecast).text)}</div><div class="note">${new Date((past ? e.ai : e.forecast).at).toLocaleDateString("ja-JP")}に作成</div>${tts ? `<div class="tools"><button class="copy" data-act="speakEl">🔊 読み上げ</button></div>` : ""}` : "")}</div>
     <button class="btn primary wide" data-act="${past ? "evAnalyze" : "evForecast"}">${past ? "結果を分析してもらう" : "売上と準備を予想してもらう"}</button>
-  </section>` : ""}
-  <button class="btn ghost danger wide" data-act="delEvent">この予定を削除</button>`;
+  </section>` : "";
+  const tab = state.evTabFor === e.id && state.evTab ? state.evTab : (past ? "result" : isToday ? "day" : "prep");
+  const T = [["prep", "準備"], ["day", "当日"], ["result", "結果"]];
+  const tabsHtml = `<div class="seg evtabs" role="tablist" aria-label="出店の画面の切りかえ">${T.map(([k, l]) => `<button role="tab" data-act="evTab" data-k="${k}" aria-selected="${tab === k}" aria-pressed="${tab === k}">${l}</button>`).join("")}</div>`;
+  const plan = evPlan(e), prs = prepRows(e), nxt = prs.find(x => x.date >= todayStr()), luN = lineup.reduce((a, l) => a + num(l.qty), 0);
+  const F = (k, title, status, html, open) => html ? fold(e.id + ":" + tab + ":" + k, title, status, html, open) : "";
+  const fLineup = open => F("lineup", past ? "持っていった商品" : "持っていく商品", lineup.length ? `${lineup.length}種類・${luN}個` : "まだ選んでいません", S_lineup, open);
+  const fSched = open => F("sched", "当日のスケジュール", plan ? `出発 ${hmStr(plan.depart)}・開始 ${e.tStart}` : "まだ作っていません", S_sched, open);
+  const fCheck = open => F("check", "持ち物チェック", cl.length ? `${cl.filter(x => x.d).length}/${cl.length} 済み` : "まだありません", S_check, open);
+  const fBooth = open => F("booth", "ブースの写真と並べ方", "写真・AIの並べ方", S_booth, open);
+  const fStatus = open => F("status", "当日の状況・メモ", [e.weather, e.crowd ? "人出" + e.crowd : ""].filter(Boolean).join("・") || "天気・人出・気づいたこと", S_status, open);
+  const fAi = open => F("ai", past ? "AIの振り返り" : "AIの予想", "", S_ai, open);
+  const order = {
+    prep: [carryCard(e), lastYearCard(e), fLineup(!lineup.length), fSched(!plan), S_prep ? F("prep", "前の日までの準備", nxt ? `次：${nxt.n}日前 ${nxt.l.slice(0, 12)}` : "", S_prep, !state.todos.some(x => x.eventId === e.id && x.prep)) : "", fCheck(false), fBooth(false), fAi(false)],
+    day: [isToday ? "" : (S_regi || dayRegiNote(e)), fSched(true), fCheck(true), F("prevbooth", "前回のブース（見本）", "", prevBoothCard(e), false), fBooth(false), fStatus(false)],
+    result: [past || isToday ? results : `<div class="empty">出店が終わると、ここに売上や結果が出ます。</div>`, fLineup(true), reviewCard(e), fStatus(false), past ? fAi(false) : "", S_regi]
+  };
+  const headOut = tab === "day" && isToday ? head.replace(/^(<button class="back"[^]*?<\/button>)/, (m) => m + S_regi) : head;
+  return `${headOut}
+  ${tabsHtml}
+  ${order[tab].join("\n")}
+  <button class="btn ghost danger wide" data-act="delEvent">この予定を消す（売上の記録は残ります）</button>`;
 }
 
 /* ---------- 画面: 分析 ---------- */
@@ -2691,7 +2809,7 @@ function openSheet(title, html, mount) {
   const sheet = root.firstElementChild;
   sheet.addEventListener("click", e => { if (e.target === sheet) closeSheet(); });
   if (mount) mount(sheet.querySelector(".panel"));
-  hydratePhotos();
+  hydratePhotos(); hydrateBox();
 }
 function closeSheet() { $("#sheetRoot").innerHTML = ""; }
 document.addEventListener("keydown", e => { if (e.key === "Escape" && $("#sheetRoot").firstElementChild) { e.preventDefault(); closeSheet(); } });
@@ -2699,22 +2817,23 @@ document.addEventListener("keydown", e => { if (e.key === "Escape" && $("#sheetR
 /* 商品 */
 function productSheet(p, opts = {}) {
   const st = S(); const isNew = !p;
-  p = p || { name: "", category: "スワッグ", material: "", minutes: "", packing: st.packing, stock: 1, price: "", memo: "", photo: "" };
+  p = p || { name: "", category: "スワッグ", material: "", minutes: "", packing: st.packing, stock: 1, price: "", memo: "", photo: "", ...(opts.prefill || {}) };
   const local = { photo: p.photo || "", blob: opts.blob || null };
   const html = `
+  ${isNew ? "" : `<div class="row" style="justify-content:flex-end;margin-top:-6px"><button class="pdel" data-act="delProduct"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13M10 11v6M14 11v6"/></svg>この商品を消す</button></div>`}
   <div class="photo-pick">
     <div id="pf-prev">${thumb(local)}</div>
     <label class="btn" for="pf-photo" style="cursor:pointer">${p.photo ? "写真を変える" : "写真を選ぶ・撮る"}</label>
     <input type="file" id="pf-photo" accept="image/*" hidden>
   </div>
   <label class="f">商品名<input type="text" id="pf-name" value="${esc(p.name)}" placeholder="例：ユーカリのクリスマススワッグ"></label>
+  <div class="f">在庫（いまある数）${numStep('id="pf-stock"', num(p.stock), { label: "在庫", unit: "点" })}</div>
+  <div class="f">作業時間（1つ作るのにかかる時間）${numStep('id="pf-minutes"', num(p.minutes), { step: 5, big: 30, label: "作業時間", unit: "分", hm: true })}</div>
   <label class="f">種類<select id="pf-cat">${CATS.map(c => `<option${c === p.category ? " selected" : ""}>${c}</option>`).join("")}</select></label>
   <label class="f">花材やメモ<span class="hint">AIの文章はここに書いた花材だけを使います</span><textarea id="pf-memo" placeholder="例：ユーカリ、コットンフラワー、ヒムロスギ。玄関向き。">${esc(p.memo)}</textarea></label>
   <div class="grid2">
     <label class="f">材料費（円）<input type="number" inputmode="numeric" id="pf-material" value="${esc(p.material)}"></label>
-    <div class="f">作業時間（分）${numStep('id="pf-minutes"', num(p.minutes), { step: 5, label: "作業時間", unit: "分" })}</div>
     <label class="f">梱包費（円）<input type="number" inputmode="numeric" id="pf-packing" value="${esc(p.packing)}"></label>
-    <div class="f">在庫（点）${numStep('id="pf-stock"', num(p.stock), { label: "在庫", unit: "点" })}</div>
   </div>
   <section class="card list" style="padding:12px">
     <div class="section-title"><b>使う材料（レシピ）</b><button class="btn small" data-act="rcAdd">＋ 材料を足す</button></div>
@@ -2735,7 +2854,7 @@ function productSheet(p, opts = {}) {
     ${sample ? `<button class="btn wide" data-act="genPost">${p.ai ? "別の案を作る" : "AIで文章を作る"}</button>` : ""}
   </section>
   ${(p.recipe || []).length ? `<button class="btn wide" data-act="madeOne" data-id="${esc(p.id)}">🌿 1つ作った！（材料を減らして在庫を＋1）</button>` : ""}
-  <button class="btn ghost danger wide" data-act="delProduct">この商品を削除</button>` : ""}`;
+  <button class="btn ghost danger wide" data-act="delProduct">この商品を消す</button>` : ""}`;
   openSheet(isNew ? "新作を登録" : "商品の詳細", html, panel => {
     panel.dataset.pid = isNew ? "" : p.id; panel._local = local; panel._p = isNew ? null : p;
     const upd = () => {
@@ -2884,15 +3003,151 @@ async function saveEvent() {
   closeSheet(); toast("保存しました");
   if (isBooth(data)) { state.evId = id; showTab("events"); }
 }
+async function delUndo(col, id, after) {
+  const o = state[col].find(x => x.id === id); if (!o) return;
+  const { id: _i, ...keep } = JSON.parse(JSON.stringify(o)); let undone = false;
+  const label = o.title || o.name || o.vendor || o.customer || "";
+  try { await store.remove(col, id, true); } catch { return; }
+  if (["events", "todos", "drying", "orders", "expenses"].includes(col)) setTimeout(() => { if (!undone) photoStore.removeOwner(col + "/" + id).catch(() => {}); }, 9500);
+  buzz(); if (after) after();
+  toastAct(label ? `「${String(label).slice(0, 14)}」を消しました` : "消しました", "取り消す", async () => { undone = true; try { await store.put(col, id, keep); toast("元にもどしました"); } catch {} });
+}
+async function delProductUndo(id) {
+  const p = state.products.find(x => x.id === id); if (!p) return;
+  const { id: _i, ...keep } = JSON.parse(JSON.stringify(p));
+  try { await store.remove("products", id); } catch { return; }
+  buzz(); toastAct(`「${p.name}」を消しました`, "取り消す", async () => { try { await store.put("products", id, keep); toast("元にもどしました"); } catch {} });
+}
+/* ---------- 保管箱（この端末の中にしまっておく場所。クラウド同期とは別） ---------- */
+const BOX = { db: null, items: [], loaded: false, urls: new Map(), cat: "すべて", usage: "" };
+const BOX_CATS0 = ["とりあえず", "書類・要項", "レシート・請求書", "写真", "アイデア・メモ", "仕入れ先", "お客さま", "そのほか"];
+const boxCats = () => { const c = LS.get("dfn-boxcats", null); return Array.isArray(c) && c.length ? c : BOX_CATS0.slice(); };
+const idbReq = r => new Promise((res, rej) => { r.onsuccess = () => res(r.result); r.onerror = () => rej(r.error); });
+function boxDB() { return BOX.db || (BOX.db = new Promise((res, rej) => { const r = indexedDB.open("dfn-box", 1); r.onupgradeneeded = () => { const d = r.result; if (!d.objectStoreNames.contains("items")) d.createObjectStore("items", { keyPath: "id" }); if (!d.objectStoreNames.contains("files")) d.createObjectStore("files", { keyPath: "id" }); }; r.onsuccess = () => res(r.result); r.onerror = () => { BOX.db = null; rej(r.error); }; })); }
+async function boxOS(name, mode) { return (await boxDB()).transaction(name, mode).objectStore(name); }
+async function boxLoad() { if (BOX.loaded) return; try { BOX.items = await idbReq((await boxOS("items", "readonly")).getAll()); } catch { BOX.items = []; } BOX.loaded = true; boxUsage(); schedule(); }
+async function boxUsage() { try { const e = await navigator.storage.estimate(); BOX.usage = `この端末で使っている容量：約${Math.max(1, Math.round((e.usage || 0) / 1048576))}MB`; } catch { BOX.usage = ""; } }
+async function boxPutItem(it) { await idbReq((await boxOS("items", "readwrite")).put(it)); const i = BOX.items.findIndex(x => x.id === it.id); if (i >= 0) BOX.items[i] = it; else BOX.items.push(it); schedule(); }
+async function boxPutFile(f) { await idbReq((await boxOS("files", "readwrite")).put(f)); }
+async function boxGetFile(id) { return idbReq((await boxOS("files", "readonly")).get(id)); }
+async function boxDelFile(id) { await idbReq((await boxOS("files", "readwrite")).delete(id)); const u = BOX.urls.get(id); if (u) { URL.revokeObjectURL(u); BOX.urls.delete(id); } }
+async function boxFileUrl(id) { if (BOX.urls.has(id)) return BOX.urls.get(id); const f = await boxGetFile(id); if (!f) return ""; const u = URL.createObjectURL(new Blob([f.buf], { type: f.type || "application/octet-stream" })); BOX.urls.set(id, u); return u; }
+function hydrateBox() { document.querySelectorAll("img[data-boxfid]:not([src])").forEach(img => { boxFileUrl(img.dataset.boxfid).then(u => { if (u) img.src = u; }).catch(() => {}); }); }
+const fmtSize = n => n >= 1048576 ? (n / 1048576).toFixed(1) + "MB" : Math.max(1, Math.round(n / 1024)) + "KB";
+const fileKind = t => /^image\//.test(t) ? "写真" : /pdf/.test(t) ? "PDF" : /^video\//.test(t) ? "動画" : /^audio\//.test(t) ? "音声" : /sheet|excel|csv/.test(t) ? "表" : /word|document|text/.test(t) ? "文書" : "ファイル";
+async function boxAddFiles(files, cat, itemId) {
+  const out = [];
+  for (const file of files) {
+    if (file.size > 200 * 1048576) { toast(`「${file.name}」は大きすぎるので入れられません（200MBまで）`, 4000); continue; }
+    const id = newId(); await boxPutFile({ id, name: file.name, type: file.type || "", size: file.size, buf: await file.arrayBuffer() });
+    out.push({ id, name: file.name, type: file.type || "", size: file.size });
+  }
+  if (!out.length) return 0;
+  if (itemId) { const it = BOX.items.find(x => x.id === itemId); if (it) await boxPutItem({ ...it, files: [...(it.files || []), ...out], updatedAt: Date.now() }); return out.length; }
+  for (const f of out) await boxPutItem({ id: newId(), title: f.name.replace(/\.[^.]+$/, ""), cat, note: "", link: "", files: [f], pinned: false, createdAt: Date.now(), updatedAt: Date.now() });
+  return out.length;
+}
+function boxRow(it) {
+  const f = (it.files || [])[0], img = f && /^image\//.test(f.type);
+  const text = normJa([it.title, it.note, it.cat, it.link, ...(it.files || []).map(x => x.name)].join(" "));
+  return `<button class="bxrow" data-act="boxOpen" data-id="${esc(it.id)}" data-bxtext="${esc(text)}">${img ? `<img data-boxfid="${esc(f.id)}" alt="">` : `<span class="bxic">${f ? esc(fileKind(f.type)) : it.link ? "リンク" : "メモ"}</span>`}
+    <span><b>${it.pinned ? "📌 " : ""}${esc(it.title || "（題名なし）")}</b><span class="d">${esc(it.cat)}・${jpDate(ymd(new Date(it.updatedAt || it.createdAt)))}${(it.files || []).length ? "・" + (it.files.length > 1 ? it.files.length + "つ・" : "") + fmtSize(it.files.reduce((a, x) => a + (x.size || 0), 0)) : ""}</span></span><span class="go" aria-hidden="true">›</span></button>`;
+}
+VIEWS.box = () => {
+  if (!BOX.loaded) { boxLoad(); return `<div class="empty">読み込んでいます…</div>`; }
+  const cats = boxCats(), cat = cats.includes(BOX.cat) ? BOX.cat : "すべて";
+  const list = BOX.items.filter(x => cat === "すべて" || x.cat === cat).sort((a, b) => (b.pinned - a.pinned) || (b.updatedAt || b.createdAt) - (a.updatedAt || a.createdAt));
+  const cnt = c => BOX.items.filter(x => x.cat === c).length;
+  return `<div class="section-title"><h2>保管箱</h2></div>
+  <p class="note" style="margin:0">書類・写真・メモ・リンクなど、何でもしまっておける箱です。<b>この端末の中だけ</b>に保存されます（クラウド同期とは別）。</p>
+  <div class="apps main" style="grid-template-columns:1fr 1fr"><label class="app-t primary" for="boxIn">${icon("box")}とりあえず<br>入れる</label><button class="app-t" data-act="boxNew">${icon("plus")}メモ・リンクを<br>書く</button></div>
+  <input type="file" id="boxIn" multiple hidden>
+  <label class="f">箱の中をさがす<input type="search" id="box-q" placeholder="例：要項・領収書・仕入れ先"></label>
+  <div class="seg scrollx" role="group" aria-label="分類">${["すべて", ...cats].map(c => `<button data-act="boxCat" data-k="${esc(c)}" aria-pressed="${cat === c}">${esc(c)}（${c === "すべて" ? BOX.items.length : cnt(c)}）</button>`).join("")}<button data-act="boxCatAdd">＋ 分類を足す</button></div>
+  <div class="list" id="box-list" style="gap:8px">${list.map(boxRow).join("") || `<div class="empty">${BOX.items.length ? "この分類には何も入っていません。" : "まだ何も入っていません。「とりあえず入れる」から、写真やPDFを選んでください。"}</div>`}</div>
+  <section class="card list"><h3 style="font:700 18px var(--body)">箱を守る</h3><p class="note" style="margin:0">${esc(BOX.usage)}。スマホを替えるときや念のために、箱をまるごと1つのファイルにして、息子さんやGoogleドライブに送っておけます。</p>
+    <button class="btn wide" data-act="boxExport">箱をまるごとファイルに保存</button><label class="btn wide ghost" for="boxImp" style="cursor:pointer">保存したファイルから箱に戻す</label><input type="file" id="boxImp" accept=".json,application/json" hidden></section>`;
+};
+function boxSheet(it) {
+  const isNew = !it; it = it || { id: newId(), title: "", cat: BOX.cat !== "すべて" ? BOX.cat : "アイデア・メモ", note: "", link: "", files: [], pinned: false, createdAt: Date.now() };
+  const cats = boxCats();
+  openSheet(isNew ? "メモ・リンクを書く" : "保管箱の中身", `<input type="hidden" id="bx-id" value="${esc(it.id)}"><input type="hidden" id="bx-new" value="${isNew ? 1 : ""}">
+    <label class="f">題名<input type="text" id="bx-title" value="${esc(it.title)}" placeholder="例：冬のマルシェの要項"></label>
+    <div class="f">分類<div class="seg" role="group" id="bx-cat">${cats.map(c => `<button type="button" data-act="seg" data-v="${esc(c)}" aria-pressed="${c === it.cat}">${esc(c)}</button>`).join("")}</div></div>
+    ${(it.files || []).map(f => `<div class="card list" style="padding:10px 12px;gap:6px">${/^image\//.test(f.type) ? `<img data-boxfid="${esc(f.id)}" alt="${esc(f.name)}" style="width:100%;max-height:320px;object-fit:contain;border-radius:10px;background:var(--paper)">` : ""}
+      <div><b style="word-break:break-all">${esc(f.name)}</b><div class="note">${esc(fileKind(f.type))}・${fmtSize(f.size || 0)}</div></div>
+      <div class="row"><button class="btn small" data-act="boxFileOpen" data-fid="${esc(f.id)}">開く</button><button class="btn small" data-act="boxFileSave" data-fid="${esc(f.id)}">送る・保存</button><button class="btn small ghost danger" data-act="boxFileDel" data-fid="${esc(f.id)}">このファイルを外す</button></div></div>`).join("")}
+    ${isNew ? "" : `<label class="btn wide" for="boxAdd" style="cursor:pointer">＋ ファイルや写真を足す</label><input type="file" id="boxAdd" multiple hidden>`}
+    <label class="f">メモ<textarea id="bx-note" placeholder="例：申込締切 12/1、出展料4,000円">${esc(it.note)}</textarea></label>
+    ${dict ? `<div class="row">${micBtn("bx-note", "声で")}</div>` : ""}
+    <label class="f">リンク（なくてもOK）<input type="url" id="bx-link" value="${esc(it.link)}" placeholder="https://"></label>
+    ${it.link ? `<a class="btn wide" href="${esc(it.link)}" target="_blank" rel="noopener">リンクを開く</a>` : ""}
+    <label class="check"><input type="checkbox" id="bx-pin"${it.pinned ? " checked" : ""}> 📌 いちばん上に出す</label>
+    <button class="btn primary big wide" data-act="boxSave">保存する</button>
+    ${isNew ? "" : `<button class="btn ghost danger wide" data-act="boxDel">この中身を消す</button>`}`, () => hydrateBox());
+}
+const b64 = buf => { const u = new Uint8Array(buf); let s = ""; for (let i = 0; i < u.length; i += 0x8000) s += String.fromCharCode.apply(null, u.subarray(i, i + 0x8000)); return btoa(s); };
+const unb64 = t => { const s = atob(t), u = new Uint8Array(s.length); for (let i = 0; i < s.length; i++) u[i] = s.charCodeAt(i); return u.buffer; };
+document.addEventListener("input", e => { if (e.target.id !== "box-q") return; const q = normJa(e.target.value); document.querySelectorAll("#box-list .bxrow").forEach(r => { r.hidden = !!q && !r.dataset.bxtext.includes(q); }); });
+document.addEventListener("change", async e => {
+  const t = e.target;
+  if (t.id === "boxIn" && t.files && t.files.length) { const files = [...t.files]; t.value = ""; const cat = BOX.cat !== "すべて" ? BOX.cat : "とりあえず"; toast("入れています…", 8000); const n = await boxAddFiles(files, cat).catch(() => 0); boxUsage(); toast(n ? `${n}つを「${cat}」に入れました。押すと分類を変えられます` : "入れられませんでした", 3500); }
+  if (t.id === "boxAdd" && t.files && t.files.length) { const files = [...t.files]; t.value = ""; const id = ($("#bx-id") || {}).value; const n = await boxAddFiles(files, "", id).catch(() => 0); const it = BOX.items.find(x => x.id === id); if (it) boxSheet(it); toast(n ? `${n}つ足しました` : "足せませんでした"); }
+  if (t.id === "boxImp" && t.files && t.files[0]) {
+    const f = t.files[0]; t.value = "";
+    try { const j = JSON.parse(await f.text()); if (j.type !== "dfn-box") throw 0; let n = 0;
+      for (const x of j.files || []) await boxPutFile({ id: x.id, name: x.name, type: x.type, size: x.size, buf: unb64(x.b64) });
+      for (const it of j.items || []) { if (!BOX.items.some(y => y.id === it.id)) { await boxPutItem(it); n++; } }
+      const cs = boxCats(); const add = (j.cats || []).filter(c => !cs.includes(c)); if (add.length) LS.set("dfn-boxcats", [...cs, ...add]);
+      toast(`${n}件を箱に戻しました`); boxUsage(); render(true);
+    } catch { toast("このファイルは保管箱のファイルではないようです", 3500); }
+  }
+});
+/* ---------- さがす（アプリの中をまとめて検索） ---------- */
+const normJa = t => String(t || "").normalize("NFKC").toLowerCase().replace(/[ァ-ヶ]/g, c => String.fromCharCode(c.charCodeAt(0) - 0x60)).replace(/\s+/g, "");
+const SR_GROUPS = [
+  ["products", "商品", "bag", x => x.name, x => [x.price ? yen(x.price) : "", `在庫${num(x.stock)}`, x.category].filter(Boolean).join("・"), "openProduct"],
+  ["events", "出店・予定", "cal", x => x.title, x => [jpDate(x.date), x.place].filter(Boolean).join("・"), "openEv"],
+  ["todos", "やること", "help", x => x.title, x => [x.done ? "済み" : "", x.due ? jpDate(x.due) + "まで" : "", x.cat].filter(Boolean).join("・"), "tdEdit"],
+  ["orders", "オーダー", "chat", x => `${x.customer || "お客さま"}さんの${x.shape || "オーダー"}`, x => [x.use, x.due ? jpDate(x.due) + "お渡し" : ""].filter(Boolean).join("・"), "orderOpen"],
+  ["materials", "材料", "plus", x => x.name, x => `在庫${num(x.stock)}${x.unit || ""}`, "matEdit"],
+  ["drying", "乾燥中の花", "sale", x => x.name, x => [x.done ? "乾いた" : "乾燥中", x.start ? jpDate(x.start) + "から" : ""].filter(Boolean).join("・"), "srDry"],
+  ["__box", "保管箱", "box", x => x.title || "（題名なし）", x => [x.cat, ...(x.files || []).map(f => f.name)].filter(Boolean).join("・"), "boxOpen"],
+  ["expenses", "経費・レシート", "receipt", x => x.vendor || x.category || "経費", x => [jpDate(x.date), yen(x.amount), x.category].filter(Boolean).join("・"), "expOpen"]
+];
+function srText(x) { return normJa(Object.entries(x).filter(([k, v]) => typeof v === "string" && !/^data:|photo|blob/i.test(k) && v.length < 2000).map(([, v]) => v).join(" ") + " " + (x.lineup || []).map(l => l.name).join(" ")); }
+function srMark(t, q) {
+  const raw = String(t || ""), n = normJa(raw); const i = q ? n.indexOf(q) : -1;
+  if (i < 0 || n.length !== raw.replace(/\s+/g, "").length || /\s/.test(raw)) return esc(raw);
+  return esc(raw.slice(0, i)) + "<mark>" + esc(raw.slice(i, i + q.length)) + "</mark>" + esc(raw.slice(i + q.length));
+}
+function searchSheet() {
+  openSheet("さがす", `<div class="srbox"><label class="f">さがしたい言葉<input type="search" id="sq" enterkeyhint="search" placeholder="例：ミモザ・クリスマス・リボン" autocomplete="off"></label>
+    ${dict ? `<div class="row" style="margin-top:6px">${micBtn("sq", "声でさがす")}</div>` : ""}</div><div id="sq-res" aria-live="polite"></div>`, panel => {
+    const paint = () => {
+      const q = normJa(($("#sq") || {}).value); const box = panel.querySelector("#sq-res");
+      if (!q) { box.innerHTML = `<p class="note">商品・出店・やること・オーダー・材料・経費の中から、言葉が入っているものを出します。ひらがなでもカタカナでもさがせます。</p>`; return; }
+      let total = 0;
+      const html = SR_GROUPS.map(([col, label, ic, title, sub, act]) => {
+        const hits = (col === "__box" ? BOX.items.map(x => ({ ...x, fileNames: (x.files || []).map(f => f.name).join(" ") })) : state[col] || []).filter(x => srText(x).includes(q)).slice(0, 30); total += hits.length; if (!hits.length) return "";
+        return `<div class="srg"><h3>${label}（${hits.length}）</h3>${hits.map(x => `<button class="sri" data-act="srGo" data-go="${act}" data-id="${esc(x.id)}">${icon(ic)}<span><b>${srMark(title(x), q)}</b><span class="d">${esc(sub(x))}</span></span><span class="go" aria-hidden="true" style="color:var(--accent);font-weight:700">›</span></button>`).join("")}</div>`;
+      }).join("");
+      box.innerHTML = total ? html : `<div class="empty">「${esc(($("#sq") || {}).value)}」は見つかりませんでした。言葉を短くしてみてください（例：「ミモザのリース」→「ミモザ」）。</div>`;
+    };
+    panel.addEventListener("input", e => { if (e.target.id === "sq") paint(); });
+    paint(); setTimeout(() => { const i = $("#sq"); if (i) i.focus(); }, 60);
+  });
+}
 /* ---------- 使い方ガイド・困ったとき ---------- */
 const HELP = {
   home: { t: "ホーム", s: ["上の大きな数字が、今月の売上です。", "出店の日は、いちばん上に「🛍 レジを開く」が出ます。", "その下の四角いボタンが、よく使う機能です。「売れた！を記録」はBASE（ネット）などで売れたときに使います。", "「レシートを撮る」で、経費が自動で記録されます。", "下の「お知らせ」に、やること・少ない在庫・乾いた花などが出ます。", "いちばん下のボタンで画面を切りかえます。投稿・AI相談・分析は「メニュー」の中にあります。"] },
-  products: { t: "商品", s: ["「一覧」で商品を見ます。押すと詳しく見たり直したりできます。", "「在庫」で「＋」「−」を押すと、数が1つずつ変わります。長押しすると速く変わります。", "「オーダー」で、オーダーメイドのお客さまのメモを残せます。", "新しい商品はホームの「＋ 新作を登録」から。写真を入れるとAIが投稿の文章も作ります。"] },
+  products: { t: "商品", s: ["「一覧」で商品を見ます。押すと詳しく見たり直したりできます。", "「在庫」で「＋」「−」を押すと、数が1つずつ変わります。長押しすると速く変わります。", "「オーダー」で、オーダーメイドのお客さまのメモを残せます。", "新しい商品はホームの「新作を登録」から。写真を入れるとAIが投稿の文章も作ります。", "いらなくなった商品は、右上の「消す」を押します。まちがえたら、すぐ下に出る「取り消す」で元にもどります。"] },
   studio: { t: "投稿", s: ["インスタ用の写真・動画を選んで、AIに構成や仕上げをしてもらえます。", "「LINE・お知らせの文章」で、何のお知らせか・お得な情報を選ぶと、LINEの文章ができます。", "「LINEで送る」を押すと、LINEが開いて文章が入ります。送り先を選ぶだけです。", "「今やるといい宣伝」で、AIが季節や在庫から「今ならこれ」を考えます。"] },
   prep: { t: "準備", s: ["「やること」：期限つきのやることリスト。終わったら丸を押してチェック。", "「材料・買い物」：材料の在庫と買い物リスト。", "「乾燥中」：乾かしている花の記録。乾いたら「乾いた！」を押します。", "「くり返し」：月1回など、決まって来る予定を自動で入れます。"] },
   events: { t: "出店", s: ["「＋ 追加」で出店を登録します。要項のPDFやチラシの写真からも登録できます。", "出店を押すと、持っていく商品・当日のスケジュール・持ち物チェックが見られます。", "「持っていく商品」で、数を「＋」「−」で決めます。値引きもここで入れられます。", "当日は「🛍 レジを開く」。売れた商品を押して「会計する」だけで、売上が自動で計算されます。", "「カレンダー」に切り替えると、月の予定が見られます。"] },
   regi: { t: "レジ", s: ["売れた商品を押すと「かご」に入ります（2つなら2回押す）。", "下の「会計する」を押します。", "値引きするときは「100円引き」などを押します。", "現金なら「お預かり」の金額を押すと、おつりが大きく出ます。", "最後に「✓ ○円を会計する」。チャイムが鳴って記録されます。", "間違えたら、すぐ下に出る「取り消す」を押します。", "閉店したら「レジ締め」で、レジにあるはずのお金を確かめます。"] },
   analysis: { t: "分析", s: ["「売上・利益」：期間ごとの売上、よく売れた商品、出店の成績が見られます。", "「経費・確定申告」：レシートの記録と、確定申告用のまとめが見られます。", "表は「書き出す」でファイルにして、息子さんや税理士さんに送れます。"] },
+  box: { t: "保管箱", s: ["「とりあえず入れる」で写真やPDFを選ぶと、すぐしまえます。", "あとで中身を押すと、題名や分類を変えられます。", "上の分類のボタンで絞りこみ、「箱の中をさがす」で言葉でさがせます。", "保管箱はこの端末の中だけに保存されます。ときどき「箱をまるごとファイルに保存」をしておくと安心です。"] },
   menu: { t: "メニュー", s: ["投稿・AI相談・分析・使い方・設定は、ここから開きます。", "開いた画面の左上の「‹ メニューにもどる」で、ここにもどれます。"] },
   ai: { t: "AI相談", s: ["下の欄に聞きたいことを書くか、「声で」を押して話します。", "話題ごとに「部屋」を分けられます。", "写真を送って相談することもできます。"] }
 };
@@ -2906,6 +3161,9 @@ const FAQ = [
   ["ネット（BASE）で売れたときは？", "ホームの「売れた！を記録」を押して、商品と個数を選びます。在庫も1つ減ります。"],
   ["LINEで宣伝したい", "「投稿」→「LINE・お知らせの文章」。何のお知らせか・お得な情報を選んで「AIに文章を作ってもらう」→「LINEで送る」。"],
   ["在庫の数を直したい", "「商品」→「在庫」で「＋」「−」を押します。数字を押すと、数を直接入れることもできます。"],
+  ["商品を消したい", "「商品」の一覧で、その商品の右上の「消す」を押します。まちがえて消したときは、すぐ下に出る「取り消す」を押すと元にもどります。"],
+  ["前に入れたものをさがしたい", "右上の「さがす」を押して、言葉を入れます。商品・出店・やること・オーダー・材料・経費をまとめてさがせます。ひらがなでもカタカナでも大丈夫です。"],
+  ["書類や写真をとっておきたい", "「メニュー」→「保管箱」（ホームの「保管箱」でも開けます）。「とりあえず入れる」で選ぶだけでしまえます。分類はあとで変えられます。"],
   ["数字は自分で打たないといけない？", "ほとんどの数は「＋」「−」で変えられます。押したままにすると速く変わります。"],
   ["文字が小さくて読みにくい", "この画面のいちばん下の「文字の大きさ」で「大きめ」か「とても大きい」を選びます。"],
   ["画面がおかしい・動かない", "アプリを一度とじて、開き直してください。記録は消えません。直らないときは息子さんに連絡を。"],
@@ -2977,6 +3235,60 @@ function calView() {
   <section class="list"><div class="section-title"><h2>${jpDate(sel)}</h2><button class="btn small primary" data-act="newEvent" data-date="${sel}">＋ この日に追加</button></div>
     ${selEv.map(e => evCard(e)).join("")}${selTd.length ? `<div class="card">${selTd.map(todoRow).join("")}</div>` : ""}${!selEv.length && !selTd.length ? `<div class="empty">この日の予定はありません。</div>` : ""}</section>`;
 }
+/* ---------- 出店の画面の部品（準備・当日・結果） ---------- */
+const FOLDS = {};
+function fold(key, title, status, html, open) {
+  const o = FOLDS[key] ?? open;
+  return `<details class="card fold" data-fold="${esc(key)}"${o ? " open" : ""}><summary><b>${esc(title)}</b>${status ? `<span class="st">${esc(status)}</span>` : ""}</summary>${html}</details>`;
+}
+document.addEventListener("click", e => { const sm = e.target.closest && e.target.closest(".fold > summary"); if (!sm) return; const d = sm.parentElement; setTimeout(() => { FOLDS[d.dataset.fold] = d.open; }, 0); });
+const daysTo = d => Math.round((parseYmd(d) - parseYmd(todayStr())) / 86400000);
+function countdownHtml(e) {
+  if (!isBooth(e)) return "";
+  const n = daysTo(e.date);
+  if (n > 0) return `<div class="countdown"><span>本番まで あと</span><b>${n}</b><span>日</span></div>`;
+  if (n === 0) { const p = evPlan(e); if (p) { const now = new Date(), m = now.getHours() * 60 + now.getMinutes(); if (m < p.depart) return `<div class="countdown"><span>出発まで あと</span><b>${p.depart - m >= 60 ? Math.floor((p.depart - m) / 60) + "時間" + ((p.depart - m) % 60) + "分" : (p.depart - m) + "分"}</b><span>（${hmStr(p.depart)}出発）</span></div>`; } return `<div class="countdown"><b>今日</b><span>が本番です</span></div>`; }
+  return "";
+}
+const prevBooth = e => pastBoothEvents(e.id).filter(pe => pe.date < e.date).sort((a, b) => (b.place && b.place === e.place) - (a.place && a.place === e.place) || (a.date < b.date ? 1 : -1))[0];
+const REVIEW_TAGS = ["よく売れた商品があった", "売れ残りが多かった", "高いと言われた", "安いと言われた", "テーブル・什器が足りない", "釣り銭が足りない", "値札・POPが足りない", "雨・風で困った", "寒さ・暑さで困った", "お客さんが多かった", "お客さんが少なかった", "場所が良かった", "場所が悪かった", "搬入・駐車が大変"];
+function carryCard(e) {
+  const pe = prevBooth(e); if (!pe) return "";
+  const rv = pe.review || {}, lu = pe.lineup || [];
+  const stat = lu.map(l => ({ name: l.name, q: num(l.qty), s: soldOf(pe, l.pid) })).filter(x => x.q);
+  const good = stat.filter(x => x.s >= x.q || x.s / x.q >= 0.7).sort((a, b) => b.s - a.s).slice(0, 4), bad = stat.filter(x => x.s / x.q < 0.3).slice(0, 4);
+  if (!(rv.tags || []).length && !rv.memo && !good.length && !bad.length && !pe.note) return "";
+  return `<section class="card list carry"><div class="k">前回（${jpDate(pe.date)} ${esc(pe.title)}）からの引き継ぎ</div>
+    ${(rv.tags || []).length ? `<div class="row" style="gap:6px">${rv.tags.map(t => `<span class="chip">${esc(t)}</span>`).join("")}</div>` : ""}
+    ${rv.memo ? `<div style="white-space:pre-wrap">${esc(rv.memo)}</div>` : pe.note ? `<div class="note" style="white-space:pre-wrap">${esc(pe.note)}</div>` : ""}
+    ${good.length ? `<div><b>よく売れた：</b>${good.map(x => `${esc(x.name)}（${x.s}/${x.q}${x.s >= x.q ? " 完売" : ""}）`).join("、")}</div>` : ""}
+    ${bad.length ? `<div><b>売れ残り：</b>${bad.map(x => `${esc(x.name)}（${x.s}/${x.q}）`).join("、")}</div>` : ""}
+    ${lu.length ? `<button class="btn wide" data-act="copyFromEv" data-id="${esc(pe.id)}">前回と同じ商品・数で準備する</button>` : ""}</section>`;
+}
+function lastYearCard(e) {
+  const d = parseYmd(e.date), from = ymd(addD(d, -365 - 45)), to = ymd(addD(d, -365 + 45));
+  const ly = state.events.filter(x => isBooth(x) && x.id !== e.id && x.date >= from && x.date <= to).sort((a, b) => Math.abs(daysTo(a.date) + 365 - daysTo(e.date)) - Math.abs(daysTo(b.date) + 365 - daysTo(e.date)))[0];
+  if (!ly) return "";
+  const r = eventResult(ly);
+  return `<section class="card list"><div class="k" style="color:var(--accent);font-weight:700">去年の同じころ</div>
+    <div><b>${jpDate(ly.date)} ${esc(ly.title)}</b><div class="note num">売上 ${yen(r.total)}・${r.items}個${ly.weather ? "・" + esc(ly.weather) : ""}</div></div>
+    <div class="row">${(ly.lineup || []).length ? `<button class="btn small" data-act="copyFromEv" data-id="${esc(ly.id)}">持っていく商品をコピー</button>` : ""}${(ly.checklist || []).length ? `<button class="btn small" data-act="copyCheckFrom" data-id="${esc(ly.id)}">持ち物をコピー</button>` : ""}<button class="btn small ghost" data-act="openEv" data-id="${esc(ly.id)}">去年の記録を見る</button></div></section>`;
+}
+function reviewCard(e) {
+  const rv = e.review || {}, tags = rv.tags || [];
+  return `<section class="card list"><h2 style="font:700 19px var(--display)">ふりかえり（次の出店へ引き継ぎ）</h2>
+    <p class="note" style="margin:0">当てはまるものを押すだけでOKです。次の出店の「準備」に自動で出ます。</p>
+    <div class="seg" role="group" aria-label="ふりかえり">${REVIEW_TAGS.map(t => `<button data-act="rvTag" data-k="${esc(t)}" aria-pressed="${tags.includes(t)}">${esc(t)}</button>`).join("")}</div>
+    <label class="f">次の出店で気をつけること（なくてもOK）<textarea id="rv-memo" placeholder="例：テーブルクロスをもう1枚。ミモザは多めに">${esc(rv.memo || "")}</textarea></label>
+    <div class="row">${micBtn("rv-memo", "声で")}<button class="btn" data-act="rvSave">メモを保存</button></div></section>`;
+}
+function prevBoothCard(e) {
+  const pe = prevBooth(e); if (!pe) return "";
+  return `<section class="card list"><h2 style="font:700 19px var(--display)">前回のブース（並べ方の見本）</h2><div class="note">${jpDate(pe.date)} ${esc(pe.title)}</div>${photoStrip("events/" + pe.id, "booth", "", true)}</section>`;
+}
+function dayRegiNote(e) { const n = daysTo(e.date); return `<section class="card list todaybox"><div class="k">当日になると「レジを開く」が出ます</div><div class="note">本番まであと${n}日です。いまは「準備」で持っていく商品と持ち物を整えましょう。</div><button class="btn wide" data-act="evTab" data-k="prep">準備を見る</button></section>`; }
+function checkText(e) { return `【${e.title}】${jpDate(e.date)}の持ち物\n` + (e.checklist || []).map(x => `${x.d ? "✓" : "□"} ${x.t}`).join("\n"); }
+function schedText(e) { const p = evPlan(e); return p ? `【${e.title}】${jpDate(e.date)}の予定\n` + p.rows.map(r => `${hmStr(r.t)} ${r.l}`).join("\n") : ""; }
 /* ---------- 出店の日のスケジュール ---------- */
 const hm = v => { const m = /^(\d{1,2}):(\d{2})/.exec(String(v || "")); return m ? Number(m[1]) * 60 + Number(m[2]) : null; };
 const hmStr = n => { const x = ((Math.round(n) % 1440) + 1440) % 1440; return `${Math.floor(x / 60)}:${pad(x % 60)}`; };
@@ -3038,8 +3350,8 @@ function schedCard(e) {
     ${d.prev ? `<p class="note" style="margin:0">移動・設営・片付けの時間は、前の出店（${jpDate(d.prev.date)} ${esc(d.prev.title.slice(0, 12))}）と同じにしています。</p>` : ""}
     <button class="btn primary big wide" data-act="schedSave">スケジュールを作る</button>${p ? `<button class="btn ghost wide" data-act="schedCancel">やめる</button>` : ""}`;
   const tl = p ? `${p.warn.map(w => `<div class="warnbox">⚠ ${esc(w)}</div>`).join("")}
-    <ol class="tl">${p.rows.map((r, i) => `<li class="${r.key ? "key " : ""}${i === nextIdx ? "now " : ""}${isToday && nextIdx > i ? "gone" : ""}"><span class="tm">${hmStr(r.t)}</span><span class="dot" aria-hidden="true"></span><span class="tx"><b>${i === nextIdx ? "つぎ：" : ""}${esc(r.l)}</b>${r.d ? `<span>${esc(r.d)}</span>` : ""}</span></li>`).join("")}</ol>
-    <div class="list"><button class="btn wide" data-act="schedCal">📅 スマホのカレンダーに入れる（出発30分前に通知）</button>
+    <ol class="tl">${p.rows.map((r, i) => `<li class="${r.key ? "key " : ""}${i === nextIdx ? "now " : ""}${isToday && nextIdx > i ? "gone" : ""}"><span class="tm">${hmStr(r.t)}</span><span class="dot" aria-hidden="true"></span><span class="tx"><b>${i === nextIdx ? "つぎ：" : ""}${esc(r.l)}</b>${r.d && (!isToday || i === nextIdx) ? `<span>${esc(r.d)}</span>` : ""}</span></li>`).join("")}</ol>
+    <div class="list"><button class="btn wide" data-act="schedCal">📅 スマホのカレンダーに入れる（出発30分前に通知）</button><button class="btn wide" data-act="lineText" data-k="sched">この予定をLINEで送る</button>
     ${tts ? `<button class="btn wide" data-act="schedSpeak">🔊 読み上げる</button>` : ""}
     ${sample ? `<div id="sched-ai-${esc(e.id)}">${streamOr("sched-ai-" + e.id, e.schedAi ? `<div class="prose">${fmtAi(e.schedAi.text)}</div>` : "")}</div><button class="btn wide" data-act="schedAi">AIに見直してもらう（要項・メモもふまえて）</button>` : ""}</div>` : "";
   return `<section class="card list" id="sched-card"><div class="section-title"><h2 style="font:700 19px var(--display)">当日のスケジュール</h2>${p && !editing ? `<button class="btn small" data-act="schedEditBtn">時間を変える</button>` : ""}</div>
@@ -3059,24 +3371,27 @@ function lineupSheet() {
   const cur = new Map((e.lineup || []).map(l => [l.pid, l]));
   const prods = [...state.products].sort((a, b) => (cur.has(b.id) - cur.has(a.id)) || String(a.name).localeCompare(String(b.name), "ja"));
   const prev = pastBoothEvents(e.id).find(pe => (pe.lineup || []).length);
-  const html = `<p class="note" style="margin:0">「＋」「−」で持っていく数を決めます。0のものは持っていきません。値段と値引きは、この出店だけ変えられます。</p>
+  const html = `<p class="note" style="margin:0">「＋」で持っていく数を決めます。0のものは持っていきません。値段の下の「値段・値引き ›」で、この出店だけの値段にできます。</p>
   <div class="list">${prev ? `<button class="btn wide" data-act="lineupPrev">前回（${jpDate(prev.date)} ${esc(prev.title.slice(0, 10))}）と同じにする</button>` : ""}<button class="btn wide" data-act="lineupAll">在庫を全部持っていく</button></div>
   <details class="card" style="padding:12px 14px"><summary style="font-weight:700;cursor:pointer;min-height:44px;display:flex;align-items:center">全部まとめて値引きする</summary>
     <div class="row" style="margin-top:8px"><button class="btn small" data-act="lineupOff" data-v="100">全部 100円引き</button><button class="btn small" data-act="lineupOff" data-v="200">全部 200円引き</button><button class="btn small" data-act="lineupOff" data-v="10%">全部 10%引き</button><button class="btn small" data-act="lineupOff" data-v="0">値引きをやめる</button></div></details>
-  ${prods.map(p => { const l = cur.get(p.id); const price = l ? num(l.price) : num(p.price), off = l ? num(l.off) : 0; return `<div class="card lp-row list" data-pid="${esc(p.id)}" style="padding:12px 14px;gap:8px">
-    <div class="section-title"><b style="font-size:18px">${esc(p.name)}</b><span class="note">在庫 ${num(p.stock)}点</span></div>
-    <div class="f">持っていく数${numStep(`data-lp="${esc(p.id)}" data-k="qty"`, l ? num(l.qty) : 0, { label: p.name + "の持っていく数", unit: "個" })}</div>
-    <details><summary class="lp-sale" style="cursor:pointer;min-height:44px;display:flex;align-items:center;gap:8px;flex-wrap:wrap"></summary>
+  ${(() => { const row = p => { const l = cur.get(p.id); const price = l ? num(l.price) : num(p.price), off = l ? num(l.off) : 0; return `<div class="lp-row" data-pid="${esc(p.id)}">
+      <div class="lp-top"><div class="lp-nm"><b>${esc(p.name)}</b><span class="note num">在庫${num(p.stock)}</span></div>${numStep(`data-lp="${esc(p.id)}" data-k="qty"`, l ? num(l.qty) : 0, { label: p.name + "の持っていく数" })}</div>
+      <details><summary class="lp-sale"></summary>
       <div class="list" style="margin-top:8px;gap:8px"><div class="f">値段${numStep(`data-lp="${esc(p.id)}" data-k="price"`, price, { step: 100, label: p.name + "の値段", unit: "円" })}</div>
-      <div class="f">値引き${numStep(`data-lp="${esc(p.id)}" data-k="off"`, off, { step: 50, label: p.name + "の値引き", unit: "円引き" })}</div></div></details></div>`; }).join("") || `<div class="empty">先に商品を登録してください。</div>`}
+      <div class="f">値引き${numStep(`data-lp="${esc(p.id)}" data-k="off"`, off, { step: 50, label: p.name + "の値引き", unit: "円引き" })}</div></div></details></div>`; };
+    const chosen = prods.filter(p => cur.has(p.id) && num(cur.get(p.id).qty) > 0), rest = prods.filter(p => !chosen.includes(p));
+    if (!prods.length) return `<div class="empty">先に商品を登録してください。</div>`;
+    if (!chosen.length) return `<div class="lp-list">${prods.map(row).join("")}</div>`;
+    return `<div class="lp-list">${chosen.map(row).join("")}</div>${rest.length ? `<details class="faq"><summary>ほかの商品を足す（${rest.length}）</summary><div class="lp-list">${rest.map(row).join("")}</div></details>` : ""}`; })()}
   <button class="btn primary big wide" data-act="saveLineup">決定</button>`;
   openSheet("持っていく商品", html, panel => { panel.querySelectorAll(".lp-row").forEach(paintLp); panel.addEventListener("input", ev => { const r = ev.target.closest(".lp-row"); if (r) paintLp(r); }); });
 }
 function paintLp(row) {
   const v = k => num((row.querySelector(`[data-k="${k}"]`) || {}).value);
   const price = v("price"), off = Math.min(v("off"), price);
-  row.querySelector(".lp-sale").innerHTML = `<span class="num">売る値段 <b style="font-size:19px">${yen(price - off)}</b>${off ? `（${yen(price)}から${yen(off)}引き）` : ""}</span><span class="chipbtn" style="display:inline-flex;align-items:center">値段・値引きを変える</span>`;
-  row.style.borderColor = v("qty") > 0 ? "var(--accent)" : "";
+  row.querySelector(".lp-sale").innerHTML = `<span class="num">${yen(price - off)}${off ? `（${yen(off)}引き）` : ""}</span><span class="lp-chg">値段・値引き ›</span>`;
+  row.classList.toggle("on", v("qty") > 0);
 }
 function setLp(pid, k, val) { const inp = document.querySelector(`[data-lp="${pid}"][data-k="${k}"]`); if (inp) { inp.value = val; inp.dispatchEvent(new Event("input", { bubbles: true })); } }
 
@@ -3092,6 +3407,11 @@ function basketLines(e, b) {
 }
 function basketDisc(b, sub) { const d = String(b.disc || "0"); const v = d.endsWith("%") ? Math.round(sub * num(d) / 100) : num(d); return Math.max(0, Math.min(sub, v)); }
 function basketSum(e, b) { const lines = basketLines(e, b); const sub = lines.reduce((a, x) => a + x.sub, 0); const disc = basketDisc(b, sub); return { lines, sub, disc, total: sub - disc, count: lines.reduce((a, x) => a + x.qty, 0) }; }
+function regiOrder(e, lineup) {
+  const cnt = {}; for (const x of state.sales) if (x.eventId !== e.id && x.productId) cnt[x.productId] = (cnt[x.productId] || 0) + (num(x.qty) || 1);
+  return [...lineup].map((l, i) => ({ l, i })).sort((a, b) => (cnt[b.l.pid] || 0) - (cnt[a.l.pid] || 0) || a.i - b.i).map(x => x.l);
+}
+function regiPhoto(pid) { const p = state.products.find(x => x.id === pid); return p && p.photo ? `<img class="rph" src="${esc(p.photo)}" alt="" loading="lazy">` : ""; }
 function regiView(e) {
   const r = eventResult(e), b = basket(), bs = basketSum(e, b), lineup = e.lineup || [];
   const inB = pid => (b.items.find(i => i.pid === pid) || {}).qty || 0;
@@ -3102,8 +3422,8 @@ function regiView(e) {
     <div><span class="note">${e.date === todayStr() ? "今日" : jpDate(e.date)}の売上</span><div class="big">${yen(r.total)}</div><div class="note num">${r.items}個・お客さま${r.customers}組${r.disc ? `・値引き ${yen(r.disc)}` : ""}</div></div>
     ${goal ? `<div><div class="goalbar" role="progressbar" aria-valuemin="0" aria-valuemax="${goal}" aria-valuenow="${r.total}" aria-label="目標までの進み具合"><b style="width:${Math.min(100, Math.round(r.total / goal * 100))}%"></b></div><div class="note num" style="margin-top:4px">${r.total >= goal ? `🎉 目標の${yen(goal)}を達成しました！` : `目標 ${yen(goal)}まで あと <b>${yen(goal - r.total)}</b>`}<button class="chipbtn" style="margin-left:8px" data-act="regiGoal">変える</button></div></div>` : `<button class="btn small" data-act="regiGoal">今日の売上目標を決める</button>`}
   </section>
-  <p class="note" style="margin:0">売れた商品を押すと「かご」に入ります。最後に下の「会計する」を押すと記録されます。</p>
-  ${lineup.length ? `<div class="regi">${lineup.map(l => { const sold = soldOf(e, l.pid), n = inB(l.pid), left = num(l.qty) - sold - n; return `<button class="regibtn${left <= 0 && !n ? " out" : ""}${n ? " inbasket" : ""}" data-act="regiAdd" data-pid="${esc(l.pid)}" aria-label="${esc(l.name)}、${yen(lpPrice(l))}、残り${Math.max(0, left)}個${n ? "、かごに" + n + "個" : ""}"><span class="n">${esc(l.name)}</span><span class="p num">${num(l.off) ? `<s>${yen(l.price)}</s>` : ""}${yen(lpPrice(l))}</span><span class="l num"><span>残り ${Math.max(0, left)} / ${num(l.qty)}</span>${n ? `<span class="inb">かごに${n}</span>` : ""}</span></button>`; }).join("")}</div>`
+  <p class="note" style="margin:0">売れた商品を押すと「かご」に入ります。よく売れる商品ほど上に並びます。</p>
+  ${lineup.length ? `<div class="regi">${regiOrder(e, lineup).map(l => { const sold = soldOf(e, l.pid), n = inB(l.pid), left = num(l.qty) - sold - n; return `<button class="regibtn${left <= 0 && !n ? " out" : ""}${n ? " inbasket" : ""}" data-act="regiAdd" data-pid="${esc(l.pid)}" aria-label="${esc(l.name)}、${yen(lpPrice(l))}、残り${Math.max(0, left)}個${n ? "、かごに" + n + "個" : ""}">${regiPhoto(l.pid)}<span class="n">${esc(l.name)}</span><span class="p num">${num(l.off) ? `<s>${yen(l.price)}</s>` : ""}${yen(lpPrice(l))}</span><span class="l num"><span>残り ${Math.max(0, left)} / ${num(l.qty)}</span>${n ? `<span class="inb">かごに${n}</span>` : ""}</span></button>`; }).join("")}</div>`
     : `<div class="card"><b>持っていく商品がまだ決まっていません。</b><button class="btn primary wide" style="margin-top:8px" data-act="editLineup">持っていく商品を選ぶ</button></div>`}
   <div class="list"><button class="btn wide" data-act="evOtherSale">一覧にない商品・自由な金額で売れた</button>${lineup.length ? `<button class="btn wide ghost" data-act="editLineup">持っていく商品・値段を直す</button>` : ""}</div>
   <section class="card list">
@@ -3136,8 +3456,8 @@ function paintCheckout(panel) {
   body.innerHTML = `
     <div>${bs.lines.map(x => `<div class="ckrow"><div><b>${esc(x.l.name)}</b><div class="note num">${x.off ? `<s>${yen(x.unit)}</s> ` : ""}${yen(x.unit - x.off)} × ${x.qty} ＝ <b>${yen(x.sub)}</b></div></div>
       <div class="nstep" data-min="0" data-max=""><button type="button" class="nb" data-nd="-1" aria-label="${esc(x.l.name)}を1つ減らす">−</button><span class="nvw"><input type="number" inputmode="numeric" data-ckq="${esc(x.l.pid)}" value="${x.qty}" aria-label="${esc(x.l.name)}の数"></span><button type="button" class="nb" data-nd="1" aria-label="${esc(x.l.name)}を1つ増やす">＋</button></div></div>`).join("")}</div>
-    <div class="f">値引き<div class="seg" role="group" aria-label="値引き">${DISCS.map(([k, l]) => `<button data-act="ckDisc" data-v="${k}" aria-pressed="${!custom && String(b.disc || "0") === k}">${l}</button>`).join("")}<button data-act="ckDisc" data-v="custom" aria-pressed="${custom}">ほかの金額</button></div>
-      ${custom ? numStep(`id="ck-disc"`, num(b.disc), { step: 10, big: 100, label: "値引きの金額", unit: "円" }) : ""}</div>
+    <details class="faq ckdisc"${bs.disc || custom ? " open" : ""}><summary>値引き：${bs.disc ? `<b style="color:var(--bad)">${yen(bs.disc)}引き</b>` : "なし"}</summary><div class="f" style="padding-top:8px"><div class="seg" role="group" aria-label="値引き">${DISCS.map(([k, l]) => `<button data-act="ckDisc" data-v="${k}" aria-pressed="${!custom && String(b.disc || "0") === k}">${l}</button>`).join("")}<button data-act="ckDisc" data-v="custom" aria-pressed="${custom}">ほかの金額</button></div>
+      ${custom ? numStep(`id="ck-disc"`, num(b.disc), { step: 10, big: 100, label: "値引きの金額", unit: "円" }) : ""}</div></details>
     <div class="card list" style="gap:4px;padding:12px 14px">
       ${bs.disc ? `<div class="total" style="font-weight:500"><span>小計</span><span class="num">${yen(bs.sub)}</span></div><div class="total" style="font-weight:500;color:var(--bad)"><span>値引き</span><span class="num">−${yen(bs.disc)}</span></div>` : ""}
       <div class="total"><span>合計</span><b>${yen(bs.total)}</b></div></div>
@@ -3723,9 +4043,11 @@ VIEWS.studio = () => {
   const [W, H] = typeSize(), items = studio.items, st = S();
   const prods = [...state.products].sort((a, b) => String(a.name).localeCompare(String(b.name), "ja"));
   const nImg = items.filter(i => i.kind === "image").length, vids = items.filter(i => i.kind === "video");
+  const sv = studio.view || LS.get("dfn-stview", "photo");
   return `
-  <div class="section-title"><h2>投稿づくり</h2>${items.length ? `<button class="btn small ghost" data-act="stClear">素材を全部外す</button>` : ""}</div>
-  <section class="card list">
+  <div class="section-title"><h2>投稿づくり</h2>${items.length && sv === "photo" ? `<button class="btn small ghost" data-act="stClear">素材を全部外す</button>` : ""}</div>
+  <div class="seg evtabs" role="tablist" aria-label="投稿の画面の切りかえ">${[["photo", "写真・動画"], ["text", "文章・LINE"], ["more", "BGM・好み"]].map(([k, l]) => `<button role="tab" data-act="stView" data-k="${k}" aria-selected="${sv === k}" aria-pressed="${sv === k}">${l}</button>`).join("")}</div>
+  ${sv === "photo" ? `  <section class="card list">
     <h2 class="h">1. どこに投稿する？</h2>
     <div class="seg" role="group">${POST_TYPES.map(t => `<button data-act="stType" data-k="${t[0]}" aria-pressed="${studio.type === t[0]}">${t[1]}</button>`).join("")}</div>
     <div class="note">仕上がり ${W}×${H}（${isVertical() ? "縦長 9:16" : "縦長 4:5"}）</div>
@@ -3759,9 +4081,7 @@ VIEWS.studio = () => {
     <div class="note" id="st-vprog">${esc(studio.videoBusy)}</div>
     <p class="note" style="margin:0">保存した写真・動画をインスタで選び、投稿文はAIの構成案から「コピー」して貼ります。音楽はインスタで付けます。${canRecord() ? "" : "この端末では動画は作れません（写真は保存できます）。"}</p>
   </section>` : ""}
-  ${lineCard()}
-  ${promoCard()}
-  ${sample ? `<section class="card list">
+` : sv === "text" ? lineCard() + promoCard() : `  ${sample ? `<section class="card list">
     <h2 class="h">BGMだけ選ぶ</h2>
     <div class="seg" role="group">${MOODS.map(m => `<button data-act="stMood" data-k="${m}" aria-pressed="${studio.mood === m}">${m}</button>`).join("")}</div>
     <button class="btn wide" data-act="stBgm"${studio.bgmBusy ? " disabled" : ""}>${studio.bgmBusy ? "AIが選んでいます…" : "BGMを提案してもらう"}</button>
@@ -3777,7 +4097,7 @@ VIEWS.studio = () => {
     ${sample && state.imagesOK ? `<label class="btn wide" for="st-past" style="cursor:pointer">${studio.styleBusy ? "分析しています…" : st.styleProfile ? "過去の投稿でもう一度分析する" : "過去の投稿を分析する"}</label>
     <input type="file" id="st-past" accept="image/*,video/*" multiple hidden>
     <p class="note" style="margin:0">インスタの自分の投稿のスクリーンショットや、投稿した動画を${state.imgMax || 5}つまで選んでください。</p>` : ""}
-  </section>`;
+  </section>`}`;
 };
 function editSheet(it) {
   const p = { ...it.p }, isV = it.kind === "video";
@@ -3833,6 +4153,7 @@ const STUDIO_ACT = {
   edRemove: () => { const panel = $(".panel"); if (!panel) return; const it = panel._it; studio.items = studio.items.filter(x => x !== it); URL.revokeObjectURL(it.url); closeSheet(); render(true); }
 };
 const EVF = {};
+window.addEventListener("scroll", () => { const b = document.getElementById("toTop"); if (b) b.hidden = window.scrollY < window.innerHeight * 1.5 || !!document.querySelector(".panel"); }, { passive: true });
 document.addEventListener("change", e => { if (e.target && e.target.dataset && e.target.dataset.pref) { LS.set(e.target.dataset.pref, e.target.checked); applyZoom(); } });
 document.addEventListener("change", e => { if (e.target && e.target.dataset && e.target.dataset.lnev) lnS().evId = e.target.value; });
 document.addEventListener("change", e => {
@@ -4027,7 +4348,7 @@ VIEWS.prep = () => {
           <div class="note">${jpDate(d.start)}から・${jpDateD(ready)}ごろ${d.method ? "・" + esc(d.method) : ""}${d.memo ? "・" + esc(d.memo) : ""}</div>
           ${(() => { const last = dryPast(d.name)[0]; return last ? `<div class="note">前回は${num(last.actualDays) || num(last.days)}日で「${esc(last.result || "")}」（${esc(last.method || "")}）</div>` : ""; })()}
           ${photoStrip("drying/" + d.id, "before", "ビフォーの写真を貼る")}
-          <div class="row" style="margin-top:6px"><button class="btn small primary" data-act="dryDone" data-id="${esc(d.id)}">乾いた！</button><button class="btn small ghost" data-act="dryDel" data-id="${esc(d.id)}">消す</button></div></div>`; }).join("") || `<div class="empty">乾燥中の花材はありません。</div>`}
+          <div class="row" style="margin-top:6px"><button class="btn small primary" data-act="dryDone" data-id="${esc(d.id)}">乾いた！</button><button class="btn small" data-act="dryToProduct" data-id="${esc(d.id)}">新作として登録</button><button class="btn small ghost" data-act="dryDel" data-id="${esc(d.id)}">消す</button></div></div>`; }).join("") || `<div class="empty">乾燥中の花材はありません。</div>`}
     </section>
     ${dryHistoryHtml()}`;
   }
@@ -4133,7 +4454,7 @@ const PREP_ACT = {
     try { await store.add("todos", { title, due: $("#td-due").value || "", cat: $("#td-cat").value || "", done: false, createdAt: Date.now() }); $("#td-new").value = ""; $("#td-due").value = ""; toast("追加しました"); } catch {}
   },
   tdToggle: async el => { const t = state.todos.find(x => x.id === el.dataset.id); if (!t) return; const nowDone = !t.done; try { await store.update("todos", t.id, { done: nowDone, doneAt: nowDone ? Date.now() : null }); if (nowDone) toast("✓ できました！おつかれさまです"); } catch {} },
-  tdDel: async el => { if (el.dataset.sure !== "1") { el.dataset.sure = "1"; el.textContent = "消す"; el.style.color = "var(--bad)"; return; } try { await store.remove("todos", el.dataset.id); } catch {} },
+  tdDel: el => delUndo("todos", el.dataset.id),
   tdEdit: el => { const t = state.todos.find(x => x.id === el.dataset.id); if (t) todoSheet(t); },
   tdSave: async el => { const title = $("#te-title").value.trim(); if (!title) return; try { await store.update("todos", el.dataset.id, { title, due: $("#te-due").value || "", cat: $("#te-cat").value || "", memo: $("#te-memo").value.trim() }); closeSheet(); toast("保存しました"); } catch {} },
   tdClearDone: async () => { for (const t of state.todos.filter(x => x.done)) { try { await store.remove("todos", t.id); } catch { break; } } toast("終わったことを消しました"); },
@@ -4161,7 +4482,7 @@ const PREP_ACT = {
     const data = { name, cat: $("#mf-cat").value, unit: $("#mf-unit").value, stock: num($("#mf-stock").value), low: num($("#mf-low").value), price: num($("#mf-price").value), supplier: $("#mf-supplier").value.trim(), memo: $("#mf-memo").value.trim(), updatedAt: Date.now() };
     try { if (el.dataset.id) await store.update("materials", el.dataset.id, data); else await store.add("materials", { ...data, createdAt: Date.now() }); closeSheet(); toast("保存しました"); } catch {}
   },
-  matDel: async el => { if (el.dataset.sure !== "1") { el.dataset.sure = "1"; el.textContent = "もう一度押すと削除します"; return; } try { await store.remove("materials", el.dataset.id); closeSheet(); toast("削除しました"); } catch {} },
+  matDel: el => delUndo("materials", el.dataset.id, closeSheet),
   matStock: async el => { const m = state.materials.find(x => x.id === el.dataset.id); if (!m) return; const v = Math.max(0, num(m.stock) + Number(el.dataset.d)); try { await store.update("materials", m.id, { stock: v, updatedAt: Date.now() }); } catch {} },
   shopAdd: () => shopSheet(),
   shopSave: async () => {
@@ -4182,7 +4503,7 @@ const PREP_ACT = {
       else { await addToMaterialStock(s.name, s.qty, s.unit, s.cat); toast(`${s.name}を在庫に足しました`); }
     } catch {}
   },
-  shopDel: async el => { if (el.dataset.sure !== "1") { el.dataset.sure = "1"; el.textContent = "消す"; el.style.color = "var(--bad)"; return; } try { await store.remove("shopping", el.dataset.id); } catch {} },
+  shopDel: el => delUndo("shopping", el.dataset.id),
   dryNew: () => drySheet(),
   drySave: async () => {
     const name = $("#df-name").value.trim(); if (!name) { toast("花材を入れてください"); return; }
@@ -4190,7 +4511,7 @@ const PREP_ACT = {
     try { const id = await store.add("drying", { name, qty: num($("#df-qty").value), unit: $("#df-unit").value, method: $("#df-method").value, start: $("#df-start").value || todayStr(), days: num($("#df-days").value) || 14, memo: $("#df-memo").value.trim(), done: false, createdAt: Date.now() }); if (panel && panel._before) await photoStore.add("drying/" + id, "before", panel._before); closeSheet(); toast("記録しました"); } catch {}
   },
   dryDone: el => { const d = state.drying.find(x => x.id === el.dataset.id); if (d) dryFinishSheet(d); },
-  dryDel: async el => { if (el.dataset.sure !== "1") { el.dataset.sure = "1"; el.textContent = "もう一度押すと消します"; return; } try { await store.remove("drying", el.dataset.id); } catch {} },
+  dryDel: el => delUndo("drying", el.dataset.id),
   stPurpose: el => { studio.purpose = el.dataset.k; render(true); },
   stIdeas: () => aiIdeas(),
   stUseIdea: el => {
@@ -4220,10 +4541,8 @@ const ACT = {
   saveProduct: el => saveProduct(el.dataset.ai === "1"),
   genPost: () => generatePost(),
   usePrice: el => { $("#pf-price").value = el.dataset.v; $("#pf-price").dispatchEvent(new Event("input")); },
-  delProduct: async el => {
-    if (el.dataset.sure !== "1") { el.dataset.sure = "1"; el.textContent = "もう一度押すと削除します"; return; }
-    try { await store.remove("products", $(".panel").dataset.pid); } catch { return; } closeSheet(); toast("削除しました");
-  },
+  delProduct: async () => { const id = $(".panel") && $(".panel").dataset.pid; closeSheet(); await delProductUndo(id); },
+  quickDelProduct: el => delProductUndo(el.dataset.id),
   stock: async el => { try { await addStock(el.dataset.id, Number(el.dataset.d)); } catch {} },
   filter: el => { state.filter = el.dataset.k; render(); },
   newSale: () => saleSheet(),
@@ -4238,7 +4557,7 @@ const ACT = {
   importCsv: () => csvSheet(),
   doImport: el => doImport(el),
   newEvent: el => eventSheet(null, el && el.dataset && /^\d{4}-\d{2}-\d{2}$/.test(el.dataset.date || "") ? el.dataset.date : ""),
-  openEv: el => { state.evId = el.dataset.id; state.lastEvSale = null; showTab("events"); },
+  openEv: el => { state.evId = el.dataset.id; state.lastEvSale = null; state.regi = null; state.evTab = null; showTab("events"); },
   closeEv: () => { state.evId = null; render(true); toTop("events"); },
   openSplit: () => splitSheet(),
   openKey: () => keySheet(false),
@@ -4278,11 +4597,11 @@ ${past || "（まだありません）"}
   orderSave: el => orderSave(el),
   orderCopy: el => { const o = state.orders.find(x => x.id === el.dataset.id); if (o) orderSheet(null, o); },
   orderSale: async el => { const o = state.orders.find(x => x.id === el.dataset.id); if (!o) return; const sid = await store.add("sales", { date: o.due && o.due <= todayStr() ? o.due : todayStr(), productId: "", name: `オーダー：${o.customer}様 ${o.use || ""}`, qty: 1, price: num(o.price), channel: "オーダー", orderId: o.id, createdAt: Date.now() }); await store.update("orders", o.id, { saleId: sid }); closeSheet(); toast("売上に記録しました"); },
-  orderDel: async el => { if (el.dataset.sure !== "1") { el.dataset.sure = "1"; el.textContent = "もう一度押すと消します"; return; } await store.remove("orders", el.dataset.id); closeSheet(); toast("消しました"); },
+  orderDel: el => delUndo("orders", el.dataset.id, closeSheet),
   expNew: () => expenseSheet(null),
   expOpen: el => { const x = state.expenses.find(y => y.id === el.dataset.id); if (x) expenseSheet(x); },
   expSave: el => expSave(el),
-  expDel: async el => { if (el.dataset.sure !== "1") { el.dataset.sure = "1"; el.textContent = "もう一度押すと消します"; return; } await store.remove("expenses", el.dataset.id); closeSheet(); toast("消しました"); },
+  expDel: el => delUndo("expenses", el.dataset.id, closeSheet),
   taxYear: el => { state.taxYear = Number(el.dataset.k); render(true); },
   taxAi: () => taxAi(),
   openBulk: () => bulkSheet(),
@@ -4295,7 +4614,7 @@ ${past || "（まだありません）"}
   tplManage: () => tplManageSheet(),
   tplEdit: el => tplEditSheet(el.dataset.id),
   tplEditSave: async el => { const name = $("#tpe-name").value.trim(); if (!name) { toast("名前を入れてください"); return; } const items = $("#tpe-items").value.split("\n").map(x => x.trim()).filter(Boolean); if (el.dataset.id) await store.update("templates", el.dataset.id, { name, items, updatedAt: Date.now() }); else await store.add("templates", { name, items, createdAt: Date.now() }); tplManageSheet(); toast("保存しました"); },
-  tplDel: async el => { if (el.dataset.sure !== "1") { el.dataset.sure = "1"; el.textContent = "もう一度押すと消します"; return; } await store.remove("templates", el.dataset.id); tplManageSheet(); },
+  tplDel: el => delUndo("templates", el.dataset.id, () => setTimeout(tplManageSheet, 0)),
   pdfSave: el => pdfSave(el),
   openCloud: () => cloudSheet(),
   cloudLogin: el => cloudLogin(el),
@@ -4336,10 +4655,7 @@ ${past || "（まだありません）"}
   setSplit: el => { state.split = el.dataset.k; if (isSplit()) fixTab2(); saveSplit(); closeSheet(); render(true); window.scrollTo(0, 0); },
   editEv: () => eventSheet(curEv()),
   saveEvent: () => saveEvent(),
-  delEvent: async el => {
-    if (el.dataset.sure !== "1") { el.dataset.sure = "1"; el.textContent = "もう一度押すと削除します（売上の記録は残ります）"; return; }
-    const id = state.evId; try { await store.remove("events", id); } catch { return; } state.evId = null; render(true); toast("削除しました");
-  },
+  delEvent: () => { const id = state.evId; delUndo("events", id, () => { state.evId = null; render(true); }); },
   evField: el => { const e = curEv(); if (!e) return; const v = e[el.dataset.f] === el.dataset.v ? "" : el.dataset.v; evUpdate({ [el.dataset.f]: v }); },
   saveEvNote: () => evUpdate({ note: $("#ev-note").value.trim(), temp: $("#ev-temp").value === "" ? null : num($("#ev-temp").value) }).then(() => toast("メモを保存しました")),
   clToggle: el => { const e = curEv(); if (!e) return; const cl = (e.checklist || []).map((x, i) => i === Number(el.dataset.i) ? { ...x, d: !x.d } : x); evUpdate({ checklist: cl }); },
@@ -4354,10 +4670,10 @@ ${past || "（まだありません）"}
     const g = id => ($("#sc-" + id) || {}).value || "";
     const data = { tIn: g("tIn"), tOut: g("tOut"), tStart: g("tStart"), tEnd: g("tEnd"), travel: num(g("travel")), setup: num(g("setup")), teardown: num(g("teardown")), ready: num(g("ready")), schedAi: null };
     if (!data.tStart || !data.tEnd) { toast("販売の開始と終わりの時間を入れてください"); return; }
-    state.schedEdit = null; await evUpdate(data); toast("スケジュールを作りました");
+    state.schedEdit = null; ["prep", "day"].forEach(t => { FOLDS[`${state.evId}:${t}:sched`] = true; }); await evUpdate(data); toast("スケジュールを作りました");
     setTimeout(() => { const c = $("#sched-card"); if (c) c.scrollIntoView({ block: "start", behavior: "smooth" }); }, 50);
   },
-  schedEditBtn: () => { state.schedEdit = state.evId; render(); },
+  schedEditBtn: () => { state.schedEdit = state.evId; ["prep", "day"].forEach(t => { FOLDS[`${state.evId}:${t}:sched`] = true; }); render(); },
   schedCancel: () => { state.schedEdit = null; render(); },
   schedCal: () => {
     const e = curEv(); const p = e && evPlan(e); if (!p) return;
@@ -4441,7 +4757,51 @@ LINE・インスタ・Threadsで「今」やるとよい宣伝やお得な情報
     } catch (e) { L.ideasErr = aiError(e) || "うまく作れませんでした。もう一度お試しください。"; }
     L.ideasBusy = false; render();
   },
-  evAnnounce: () => { const e = curEv(); if (!e) return; const L = lnS(); L.purpose = "出店のお知らせ"; L.evId = e.id; location.hash = "#studio"; setTimeout(() => { const c = $("#line-card"); if (c) c.scrollIntoView({ block: "start" }); }, 120); },
+  evAnnounce: () => { const e = curEv(); if (!e) return; const L = lnS(); L.purpose = "出店のお知らせ"; L.evId = e.id; studio.view = "text"; location.hash = "#studio"; setTimeout(() => { const c = $("#line-card"); if (c) c.scrollIntoView({ block: "start" }); }, 120); },
+  evTab: el => { state.evTab = el.dataset.k; state.evTabFor = state.evId; render(true); toTop("events"); },
+  rvTag: async el => { const e = curEv(); if (!e) return; const rv = { ...(e.review || {}) }; const t = new Set(rv.tags || []); t.has(el.dataset.k) ? t.delete(el.dataset.k) : t.add(el.dataset.k); rv.tags = [...t]; buzz(); await evUpdate({ review: rv }); },
+  rvSave: async () => { const e = curEv(); if (!e) return; await evUpdate({ review: { ...(e.review || {}), memo: ($("#rv-memo").value || "").trim() } }); toast("ふりかえりを保存しました"); },
+  copyFromEv: async el => { const src = state.events.find(x => x.id === el.dataset.id); if (!src) return; const lu = (src.lineup || []).filter(l => state.products.some(p => p.id === l.pid)); await evUpdate({ lineup: lu.map(l => ({ ...l })) }); toast(`${lu.length}つの商品を入れました。数は「数・値段を変える」で直せます`, 3500); },
+  copyCheckFrom: async el => { const src = state.events.find(x => x.id === el.dataset.id); if (!src) return; const e = curEv(); const have = new Set((e.checklist || []).map(x => x.t)); const add = (src.checklist || []).filter(x => !have.has(x.t)).map(x => ({ t: x.t, d: false })); await evUpdate({ checklist: [...(e.checklist || []), ...add] }); toast(add.length ? `持ち物を${add.length}つ足しました` : "足す持ち物はありませんでした（もう全部入っています）"); },
+  lineText: el => { const e = curEv(); if (!e) return; const t = el.dataset.k === "sched" ? schedText(e) : checkText(e); if (t) window.open(lineUrl(t), "_blank", "noopener"); },
+  dryToProduct: async el => { const d = state.drying.find(x => x.id === el.dataset.id); if (!d) return; let photo = ""; try { const ph = await photoStore.list("drying/" + d.id); const pick = [...ph].reverse().find(x => x.kind === "after") || ph[ph.length - 1]; if (pick) photo = pick.data; } catch {} productSheet(null, { prefill: { name: d.name || "", memo: [d.name, d.memo].filter(Boolean).join("、"), photo } }); },
+  stView: el => { studio.view = el.dataset.k; LS.set("dfn-stview", el.dataset.k); render(true); toTop("studio"); },
+  goTop: () => { window.scrollTo({ top: 0, behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" }); },
+  boxCat: el => { BOX.cat = el.dataset.k; render(); },
+  boxNew: () => boxSheet(null),
+  boxOpen: el => { const it = BOX.items.find(x => x.id === el.dataset.id); if (it) boxSheet(it); },
+  boxSave: async () => {
+    const id = $("#bx-id").value, old = BOX.items.find(x => x.id === id) || {};
+    const pick = document.querySelector('#bx-cat [aria-pressed="true"]'), title = $("#bx-title").value.trim(), note = $("#bx-note").value.trim(), link = $("#bx-link").value.trim();
+    if (!title && !note && !link && !(old.files || []).length) { toast("題名かメモを入れてください"); return; }
+    await boxPutItem({ ...old, id, title: title || note.slice(0, 20) || link, cat: pick ? pick.dataset.v : (old.cat || "とりあえず"), note, link, pinned: $("#bx-pin").checked, files: old.files || [], createdAt: old.createdAt || Date.now(), updatedAt: Date.now() });
+    closeSheet(); toast("保管箱に入れました");
+  },
+  boxDel: async () => {
+    const id = $("#bx-id").value, it = BOX.items.find(x => x.id === id); if (!it) return; closeSheet();
+    await idbReq((await boxOS("items", "readwrite")).delete(id)); BOX.items = BOX.items.filter(x => x.id !== id); render();
+    let undone = false; setTimeout(() => { if (!undone) (it.files || []).forEach(f => boxDelFile(f.id).catch(() => {})); boxUsage(); }, 9500);
+    toastAct(`「${String(it.title).slice(0, 14)}」を消しました`, "取り消す", async () => { undone = true; await boxPutItem(it); toast("元にもどしました"); });
+  },
+  boxFileOpen: async el => { const u = await boxFileUrl(el.dataset.fid).catch(() => ""); if (u) window.open(u, "_blank"); },
+  boxFileSave: async el => { const f = await boxGetFile(el.dataset.fid).catch(() => null); if (f) saveFile(new Blob([f.buf], { type: f.type || "application/octet-stream" }), f.name); },
+  boxFileDel: async el => { const id = $("#bx-id").value, it = BOX.items.find(x => x.id === id); if (!it) return; await boxPutItem({ ...it, files: (it.files || []).filter(f => f.id !== el.dataset.fid), updatedAt: Date.now() }); await boxDelFile(el.dataset.fid).catch(() => {}); boxSheet(BOX.items.find(x => x.id === id)); toast("ファイルを外しました"); },
+  boxCatAdd: () => openSheet("分類を足す", `<label class="f">新しい分類の名前<input type="text" id="bc-name" placeholder="例：春のイベント"></label><button class="btn primary big wide" data-act="boxCatSave">足す</button>`),
+  boxCatSave: () => { const n = ($("#bc-name").value || "").trim(); if (!n || n === "すべて") return; const c = boxCats(); if (!c.includes(n)) LS.set("dfn-boxcats", [...c, n]); BOX.cat = n; closeSheet(); render(); toast(`分類「${n}」を足しました`); },
+  boxExport: async () => {
+    toast("ファイルにまとめています…", 8000);
+    try { const files = []; for (const it of BOX.items) for (const f of it.files || []) { const x = await boxGetFile(f.id); if (x) files.push({ id: x.id, name: x.name, type: x.type, size: x.size, b64: b64(x.buf) }); }
+      const blob = new Blob([JSON.stringify({ type: "dfn-box", v: 1, at: Date.now(), cats: boxCats(), items: BOX.items, files })], { type: "application/json" });
+      await saveFile(blob, `保管箱_${todayStr()}.json`);
+    } catch { toast("まとめられませんでした。中身が多すぎるかもしれません", 4000); }
+  },
+  openSearch: () => searchSheet(),
+  srGo: el => {
+    const go = el.dataset.go, id = el.dataset.id; closeSheet();
+    if (go === "srDry") { prep.seg = "dry"; showTab("prep"); return; }
+    if (go === "openEv") { state.regi = null; }
+    const fn = ACT[go]; if (fn) fn(el);
+  },
   openHelp: () => helpSheet(),
   hpAsk: () => {
     const q = (($("#hp-q") || {}).value || "").trim(); if (!q) { toast("聞きたいことを書いてください"); return; }
@@ -4475,6 +4835,7 @@ ${helpManual()}
   regiGoal: () => goalSheet(),
   goalSave: async el => { const v = el.dataset.clear ? 0 : num($("#gl-v").value); await evUpdate({ goal: v }); closeSheet(); toast(v ? `目標を${yen(v)}にしました` : "目標を消しました"); },
   saveLineup: async () => {
+    ["prep", "result"].forEach(t => { FOLDS[`${state.evId}:${t}:lineup`] = true; });
     const m = new Map();
     document.querySelectorAll("[data-lp]").forEach(inp => { const o = m.get(inp.dataset.lp) || {}; o[inp.dataset.k] = num(inp.value); m.set(inp.dataset.lp, o); });
     const lineup = []; for (const [pid, o] of m) { if (o.qty > 0) { const p = state.products.find(x => x.id === pid); lineup.push({ pid, name: p ? p.name : "", price: o.price || 0, off: Math.min(o.off || 0, o.price || 0), qty: o.qty }); } }
@@ -4623,15 +4984,16 @@ const TABS = [
   ["events", "出店",'<path d="M3 9l2-5h14l2 5"/><path d="M3 9h18v2a3 3 0 0 1-6 0 3 3 0 0 1-6 0 3 3 0 0 1-6 0z"/><path d="M5 13v8h14v-8"/>'],
   ["analysis", "分析", '<path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/>'],
   ["ai", "AI相談", '<path d="M21 12a8 8 0 0 1-11.6 7.1L4 21l1.9-5.4A8 8 0 1 1 21 12z"/>'],
+  ["box", "保管箱", '<path d="M3 7.5l9-4.5 9 4.5v9l-9 4.5-9-4.5z"/><path d="M3 7.5l9 4.5 9-4.5M12 12v9"/>'],
   ["menu", "メニュー", '<rect x="4" y="4" width="6.5" height="6.5" rx="1.5"/><rect x="13.5" y="4" width="6.5" height="6.5" rx="1.5"/><rect x="4" y="13.5" width="6.5" height="6.5" rx="1.5"/><rect x="13.5" y="13.5" width="6.5" height="6.5" rx="1.5"/>']
 ];
-const NAV_ORDER = ["home", "events", "products", "prep", "studio", "analysis", "ai", "menu"];
+const NAV_ORDER = ["home", "events", "products", "prep", "studio", "analysis", "ai", "box", "menu"];
 function route() { const h = location.hash.replace("#", ""); state.tab = TABS.some(t => t[0] === h) ? h : "home"; }
 
 /* ---------- 2画面（左右・上下） ---------- */
 const SPLIT_KEY = "dfn-split";
 const APP_URL = location.href.split("#")[0];
-const APP_VERSION = "2026-11-20-2";
+const APP_VERSION = "2026-11-20-4";
 window.__dfn = { get state() { return state; }, S: () => S(), ymd: d => ymd(d), repeatLabel: r => repeatLabel(r), occDate: (r, k) => occDate(r, k), rruleOf: r => rruleOf(r), alarmTrigger: (a, b) => alarmTrigger(a, b) }; // 動作確認用
 const SPLITS = { none: "1画面", lr: "左右に2つ", tb: "上下に2つ" };
 function loadSplit() { try { const o = JSON.parse(localStorage.getItem(SPLIT_KEY) || "{}"); if (SPLITS[o.split]) state.split = o.split; if (TABS.some(t => t[0] === o.tab2)) state.tab2 = o.tab2; } catch {} }
@@ -4683,7 +5045,7 @@ function renderPane(el, tab, n, force) {
 function render(force) {
   document.body.dataset.split = isSplit() ? state.split : "none";
   $("#shopName").textContent = S().shopName;
-  $("#todayLabel").textContent = `${new Date().getFullYear()}年${jpDateD(today())}`;
+  $("#todayLabel").innerHTML = `<span class="yr">${new Date().getFullYear()}年</span>${jpDateD(today())}`;
   const b = $("#banner");
   b.textContent = CLOUD.on && CLOUD.error === "permission-denied" ? "クラウドの記録を読む許可がありません。息子さんに知らせてください。"
     : CLOUD.on && !CLOUD.loaded.has("products") ? "クラウドから記録を読み込んでいます…"
@@ -4698,13 +5060,13 @@ function render(force) {
   $("#tabs").innerHTML = NAV_ORDER.map(k => TABS.find(t => t[0] === k)).map(([k, l, ic]) => { const cur = state.tab === k || (k === "menu" && SUB_TABS.includes(state.tab)); return `<a href="#${k}" class="${SUB_TABS.includes(k) ? "wide" : k === "menu" ? "narrow" : ""}"${cur ? ' aria-current="page"' : ""}><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">${ic}</svg></span>${l}</a>`; }).join("");
   $("#splitBtn").setAttribute("aria-label", `画面の分け方（いまは${SPLITS[isSplit() ? state.split : "none"]}）`);
   sizePanes();
-  hydratePhotos();
+  hydratePhotos(); hydrateBox();
 }
 
 /* ---------- 起動 ---------- */
 function isStandalone() { return (window.matchMedia && matchMedia("(display-mode: standalone)").matches) || window.navigator.standalone === true; }
 async function init() {
-  applyZoom(); loadSplit(); route(); if (isSplit()) fixTab2();
+  applyZoom(); boxLoad(); loadSplit(); route(); if (isSplit()) fixTab2();
   window.addEventListener("hashchange", () => { const prev = state.tab; route(); if (isSplit()) { fixTab2(prev); saveSplit(); } render(true); toTop(state.tab); });
   try { await IDB.open(); } catch { state.storageError = true; }
   let cloudUp = false;
