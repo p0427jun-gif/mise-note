@@ -435,7 +435,7 @@ a{color:var(--accent)}
 .app-t .ai svg{width:28px;height:28px;stroke:var(--accent);fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
 .app-t.primary .ai{background:var(--accent)} .app-t.primary .ai svg{stroke:#fff}
 /* メニューの一覧 */
-.mrow{display:grid;grid-template-columns:52px 1fr 20px;gap:12px;align-items:center;min-height:76px;padding:12px 14px;background:var(--surface);border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow);text-decoration:none;color:var(--ink);cursor:pointer;text-align:left;width:100%;font-family:inherit}
+.mrow{display:grid;grid-template-columns:52px 1fr auto;gap:12px;align-items:center;min-height:76px;padding:12px 14px;background:var(--surface);border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow);text-decoration:none;color:var(--ink);cursor:pointer;text-align:left;width:100%;font-family:inherit}
 .mrow .ai{width:52px;height:52px;border-radius:15px;background:var(--accent-soft);display:grid;place-items:center}
 .mrow .ai svg{width:28px;height:28px;stroke:var(--accent);fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
 .mrow b{display:block;font-size:19px;line-height:1.35}
@@ -583,6 +583,18 @@ body.simple .simple-hide{display:none !important}
 body.simple .apps.sub{grid-template-columns:repeat(3,1fr)}
 .netbar{position:fixed;left:0;right:0;top:0;z-index:60;background:#5C3D00;color:#fff;text-align:center;font-weight:700;font-size:16px;padding:calc(6px + env(safe-area-inset-top)) 12px 6px}
 .updbar{position:fixed;left:12px;right:12px;top:calc(10px + env(safe-area-inset-top));z-index:61;min-height:56px;border-radius:16px;border:0;background:var(--c-todo);color:#fff;font:700 17px var(--body);box-shadow:var(--shadow);cursor:pointer}
+.app-t span{display:block}
+.hbtns{display:grid;gap:10px}
+.herow{display:flex;align-items:center;gap:8px;min-height:56px;border-bottom:1px solid var(--line);padding:4px 0}
+.herow .ai{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;flex:none}
+.herow .ai svg{width:22px;height:22px}
+.nb.sm{width:48px;min-height:48px;border-radius:12px;border:2px solid var(--ctl);background:var(--surface);font-size:20px;font-weight:700;color:var(--ink);cursor:pointer;flex:none}
+.nb.sm.x{width:auto;padding:0 10px;font-size:16px}
+.nb.sm:disabled{opacity:.35}
+.heh{margin:0;font:700 18px var(--body)}
+.mgh{margin:12px 0 0;font:700 17px var(--body);color:var(--muted)}
+.onhome{display:inline-block;font-size:14px;font-weight:700;color:var(--accent);border:2px solid var(--accent);border-radius:999px;padding:0 8px;white-space:nowrap}
+.mrow .onhome{justify-self:end;font-size:13px;padding:1px 7px}
 /* くっきり表示（設定で切りかえ） */
 body.hc{--paper:#FFFFFF;--line:#6B727C;--muted:#30343A;--accent-soft:#F7DDE6}
 body.hc .card,body.hc .hero,body.hc .evcard,body.hc .pcard,body.hc .tile,body.hc .notice,body.hc .app-t,body.hc .mrow,body.hc details.faq{border:2px solid var(--ink);box-shadow:none}
@@ -2459,35 +2471,26 @@ VIEWS.home = () => {
   }
   const todoN = openTodos().filter(x => x.due && x.due <= todayStr()).length, todoAll = openTodos().length;
   const ex = state.expenses.filter(x => String(x.date).startsWith(key)).reduce((a, x) => a + num(x.amount), 0);
-  return `
-  ${todayEvCard()}
-  ${fold("home:todo", "やること", todoAll ? (todoN ? `今日までに ${todoN}件・ぜんぶで${todoAll}件` : `ぜんぶで${todoAll}件`) : "いまはありません", todayTodosCard(), true, "d-todo")}
-  <nav class="apps main" aria-label="毎日使う機能">
-    <button class="app-t primary" data-act="newSale">${icon("sale", "d-sale")}売れた！を<br>記録</button>
-    <label class="app-t primary" for="rcptIn">${icon("receipt", "d-sale")}レシートを<br>撮る</label>
-    <button class="app-t primary" data-act="openBulk">${icon("mic", "d-ai")}声で<br>記録</button>
-  </nav>
-  <nav class="apps sub" aria-label="追加する">
-    <button class="app-t" data-act="newProduct">${icon("plus", "d-product")}新作を<br>登録</button>
-    <button class="app-t" data-act="newEvent">${icon("cal", "d-event")}予定を<br>追加</button>
-    <button class="app-t" data-act="quickTodo">${icon("todo", "d-todo")}やることを<br>書く</button>
-    <a class="app-t simple-hide" href="#think">${icon("think", "d-ai")}頭を<br>整理する</a>
-    <label class="app-t simple-hide" for="boxInHome">${icon("box", "d-box")}保管箱に<br>入れる</label>
-    <a class="app-t simple-hide" href="#studio">${icon("post", "d-ai")}投稿を<br>つくる</a>
-  </nav>
-  <input type="file" id="boxInHome" multiple hidden>
-  ${fold("home:sales", `${Number(key.slice(5))}月の売上`, `${yen(sm.total)}${sm.total ? (profit >= 0 ? "・✓ 黒字" : "・まだ赤字") : ""}`, `<section class="hero">
+  const B = {
+    today: todayEvCard(),
+    todo: `${fold("home:todo", "やること", todoAll ? (todoN ? `今日までに ${todoN}件・ぜんぶで${todoAll}件` : `ぜんぶで${todoAll}件`) : "いまはありません", todayTodosCard(), true, "d-todo")}`,
+    notes: fold("home:notes", "お知らせ", notes.length ? `${notes.length}件` : "いまはありません", `<section class="list" style="padding:12px 14px">${notes.slice(0, 3).join("") || `<div class="empty">いまお知らせはありません。</div>`}${notes.length > 3 ? `<details class="faq"><summary>ほかのお知らせ（${notes.length - 3}件）</summary><div class="list">${notes.slice(3).join("")}</div></details>` : ""}</section>`, notes.length > 0, "d-notice"),
+    buttons: homeButtons(),
+    sales: `${fold("home:sales", `${Number(key.slice(5))}月の売上`, `${yen(sm.total)}${sm.total ? (profit >= 0 ? "・✓ 黒字" : "・まだ赤字") : ""}`, `<section class="hero">
     <div class="label">${Number(key.slice(5))}月の売上</div>
     <div class="big">${yen(sm.total)}</div>
     <div class="sub num">利益 約${yen(profit)}（原価・手数料・出展料を引いた額）・${sm.items}個</div>
     <div class="sub num">今月のレシート（経費） ${yen(ex)}</div>${sm.total ? `<div class="ok${profit < 0 ? " ng" : ""}">${profit >= 0 ? "✓ 今月は黒字です" : "今月はまだ赤字です"}</div>` : ""}
-  </section>`, true, "d-sale")}
+  </section>`, true, "d-sale")}`,
+    next: nextCard,
+    report: `${!apiKey() ? `<section class="card list"><b>AIの準備がまだです</b><div class="note">APIの鍵を入れると、文章づくりや相談、レポートが使えます。</div><button class="btn primary wide" data-act="openKey">APIの鍵を入れる</button></section>` : ""}${!LS.get("dfn-simple", false) && apiKey() && (!rep || daysBetween(parseYmd(rep.date), today()) >= 6) ? `<section class="card list"><b>${new Date().getDay() === 5 ? "金曜日です。今週のレポートを作りましょう" : rep ? "前のレポートから1週間たちました" : "はじめてのレポートを作りましょう"}</b><div class="note">お店のデータと、ネットで調べた流行・天気からまとめます（1〜3分、1回およそ20〜50円）。</div><button class="btn primary wide" data-act="makeReport"${state.reportBusy ? " disabled" : ""}>${state.reportBusy ? "レポートを作っています…" : "今週のレポートを作る"}</button></section>` : ""}${LS.get("dfn-simple", false) ? "" : rep ? fold("home:report", "今週のレポート", jpDate(rep.date), `<section class="card"><div class="section-title"><h2>今週のレポート</h2><span class="note">${jpDate(rep.date)}</span></div><div class="prose">${fmtAi(String(rep.summary || "").slice(0, 300))}</div><button class="btn wide" style="margin-top:10px" data-act="openReport" data-id="${esc(rep.id)}">続きを読む</button></section>`, false, "d-ai") : ""}`
+  };
+  const L = homeLayout();
+  return `
   ${state.products.length ? "" : `<div class="card"><b>まずは商品を1つ登録してみましょう。</b><div class="note" style="margin-top:4px">写真と材料費、作業時間を入れると、値段のめやすとインスタ用の文章ができます。</div></div>`}
-  ${nextCard}
-  ${!apiKey() ? `<section class="card list"><b>AIの準備がまだです</b><div class="note">APIの鍵を入れると、文章づくりや相談、レポートが使えます。</div><button class="btn primary wide" data-act="openKey">APIの鍵を入れる</button></section>` : ""}
-  ${!LS.get("dfn-simple", false) && apiKey() && (!rep || daysBetween(parseYmd(rep.date), today()) >= 6) ? `<section class="card list"><b>${new Date().getDay() === 5 ? "金曜日です。今週のレポートを作りましょう" : rep ? "前のレポートから1週間たちました" : "はじめてのレポートを作りましょう"}</b><div class="note">お店のデータと、ネットで調べた流行・天気からまとめます（1〜3分、1回およそ20〜50円）。</div><button class="btn primary wide" data-act="makeReport"${state.reportBusy ? " disabled" : ""}>${state.reportBusy ? "レポートを作っています…" : "今週のレポートを作る"}</button></section>` : ""}
-  ${LS.get("dfn-simple", false) ? "" : rep ? fold("home:report", "今週のレポート", jpDate(rep.date), `<section class="card"><div class="section-title"><h2>今週のレポート</h2><span class="note">${jpDate(rep.date)}</span></div><div class="prose">${fmtAi(String(rep.summary || "").slice(0, 300))}</div><button class="btn wide" style="margin-top:10px" data-act="openReport" data-id="${esc(rep.id)}">続きを読む</button></section>`, false, "d-ai") : ""}
-  ${fold("home:notes", "お知らせ", notes.length ? `${notes.length}件` : "いまはありません", `<section class="list" style="padding:12px 14px">${notes.join("") || `<div class="empty">いまお知らせはありません。</div>`}</section>`, notes.length > 0 && notes.length <= 4, "d-notice")}`;
+  ${L.order.filter(k => !L.hidden.includes(k)).map(k => B[k] || "").join("\n")}
+  <input type="file" id="boxInHome" multiple hidden>
+  <button class="btn wide ghost" data-act="homeEdit" style="margin-top:4px">⚙ ホームの並びとボタンを変える</button>`;
 };
 
 const IC = {
@@ -2512,18 +2515,17 @@ const IC = {
 };
 const icon = (k, d) => `<span class="ai${d ? " " + d : ""}" aria-hidden="true"><svg viewBox="0 0 24 24">${IC[k]}</svg></span>`;
 const SUB_TABS = ["studio", "analysis", "ai", "think", "box"];
-VIEWS.menu = () => `<div class="section-title"><h2>メニュー</h2></div>
-  <div class="list">
-    <a class="mrow" href="#studio">${icon("post", "d-post")}<span><b>投稿をつくる</b><span class="d">インスタ・Threads・LINEの文章と写真</span></span><span class="go" aria-hidden="true">›</span></a>
-    <a class="mrow" href="#ai">${icon("chat", "d-ai")}<span><b>AIに相談</b><span class="d">声でも文字でも聞けます</span></span><span class="go" aria-hidden="true">›</span></a>
-    <a class="mrow" href="#think">${icon("think", "d-ai")}<span><b>頭の整理</b><span class="d">思いついたことを書き出すと、AIがまとめます（履歴つき）</span></span><span class="go" aria-hidden="true">›</span></a>
-    <a class="mrow" href="#box">${icon("box", "d-box")}<span><b>保管箱</b><span class="d">書類・写真・メモを分類してしまっておく</span></span><span class="go" aria-hidden="true">›</span></a>
-    <a class="mrow" href="#analysis">${icon("chart", "d-sale")}<span><b>分析・確定申告</b><span class="d">売上と利益、経費、確定申告のまとめ</span></span><span class="go" aria-hidden="true">›</span></a>
-    <button class="mrow" data-act="openHelp">${icon("help")}<span><b>使い方・困ったとき</b><span class="d">画面の説明・よくある質問・AIに聞く</span></span><span class="go" aria-hidden="true">›</span></button>
-    <button class="mrow" data-act="openSettings">${icon("gear")}<span><b>設定</b><span class="d">文字の大きさ・お店の情報・AIの鍵・バックアップ</span></span><span class="go" aria-hidden="true">›</span></button>
-    <button class="mrow" data-act="openTrash">${icon("trash", "d-product")}<span><b>最近消したもの</b><span class="d">消したものは30日間ここから戻せます</span></span><span class="go" aria-hidden="true">›</span></button>
-    <button class="mrow simple-hide" data-act="openSplit">${icon("split")}<span><b>2画面で使う</b><span class="d">タブレット・パソコンで2つの画面を並べる</span></span><span class="go" aria-hidden="true">›</span></button>
-  </div>`;
+VIEWS.menu = () => {
+  const L = homeLayout(), G = [["rec", "記録する・追加する"], ["see", "見る・考える"], ["set", "困ったとき・設定"]];
+  const row = k => { const f = FUNCS[k], onHome = L.btns.includes(k); const inner = `${icon(f.ic, f.d)}<span><b>${esc(f.l)}</b><span class="d">${esc(f.desc)}</span></span>${onHome ? `<span class="onhome" title="ホームにも置いてあります">ホーム</span>` : `<span class="go" aria-hidden="true">›</span>`}`;
+    const cls = `mrow${k === "split" ? " simple-hide" : ""}`;
+    return f.href ? `<a class="${cls}" href="${f.href}">${inner}</a>` : f.label ? `<label class="${cls}" for="${f.label}">${inner}</label>` : `<button class="${cls}" data-act="${f.act}">${inner}</button>`; };
+  return `<div class="section-title"><h2>メニュー（すべての機能）</h2></div>
+  <p class="note" style="margin:0">アプリの機能は全部ここにあります。よく使うものは「ホーム」にも置けます（<span class="onhome">ホーム</span> の印がついているもの）。</p>
+  <button class="btn wide" data-act="homeEdit">⚙ ホームに置くボタンを選ぶ</button>
+  ${G.map(([g, t]) => `<section class="list" style="gap:8px"><h3 class="mgh">${t}</h3>${Object.keys(FUNCS).filter(k => FUNCS[k].g === g).map(row).join("")}</section>`).join("")}
+  <input type="file" id="boxInHome" multiple hidden>`;
+};
 /* ---------- 画面: 商品 ---------- */
 VIEWS.products = () => {
   const seg = state.prodSeg || "list";
@@ -3302,9 +3304,65 @@ function searchSheet() {
     paint(); setTimeout(() => { const i = $("#sq"); if (i) i.focus(); }, 60);
   });
 }
+/* ---------- ホームの並び・ボタン（メニュー＝すべての機能、ホーム＝自分で選んだもの） ---------- */
+const FUNCS = {
+  sale: { l: "売れた！を記録", ic: "sale", d: "d-sale", act: "newSale", g: "rec", desc: "BASE・ネットなどで売れたとき" },
+  receipt: { l: "レシートを撮る", ic: "receipt", d: "d-sale", label: "rcptIn", g: "rec", desc: "経費が自動で記録されます" },
+  voice: { l: "声で記録", ic: "mic", d: "d-ai", act: "openBulk", g: "rec", desc: "話すだけで売上・やることに分けます" },
+  product: { l: "新作を登録", ic: "plus", d: "d-product", act: "newProduct", g: "rec", desc: "写真から投稿の文章も作れます" },
+  event: { l: "予定を追加", ic: "cal", d: "d-event", act: "newEvent", g: "rec", desc: "出店・ワークショップなど" },
+  todo: { l: "やることを書く", ic: "todo", d: "d-todo", act: "quickTodo", g: "rec", desc: "期限をボタンで選べます" },
+  boxin: { l: "保管箱に入れる", ic: "box", d: "d-box", label: "boxInHome", g: "rec", desc: "写真・PDFをとりあえずしまう" },
+  think: { l: "頭を整理する", ic: "think", d: "d-ai", href: "#think", g: "see", desc: "書き出すとAIがまとめます" },
+  post: { l: "投稿をつくる", ic: "post", d: "d-ai", href: "#studio", g: "see", desc: "インスタ・Threads・LINEの文章と写真" },
+  ai: { l: "AIに相談", ic: "chat", d: "d-ai", href: "#ai", g: "see", desc: "声でも文字でも聞けます" },
+  analysis: { l: "分析・確定申告", ic: "chart", d: "d-sale", href: "#analysis", g: "see", desc: "売上と利益、経費のまとめ" },
+  box: { l: "保管箱を見る", ic: "box", d: "d-box", href: "#box", g: "see", desc: "書類・写真・メモを分類して保存" },
+  search: { l: "さがす", ic: "search", d: "", act: "openSearch", g: "see", desc: "アプリの中をまとめてさがす" },
+  help: { l: "使い方", ic: "help", d: "", act: "openHelp", g: "set", desc: "画面の説明・よくある質問・AIに聞く" },
+  settings: { l: "設定", ic: "gear", d: "", act: "openSettings", g: "set", desc: "文字の大きさ・お店の情報・AIの鍵・バックアップ" },
+  trash: { l: "最近消したもの", ic: "trash", d: "d-product", act: "openTrash", g: "set", desc: "30日以内なら元にもどせます" },
+  split: { l: "2画面で使う", ic: "split", d: "", act: "openSplit", g: "set", desc: "タブレット・パソコン向け" }
+};
+const HOME_BLOCKS = { today: "今日・明日の出店", todo: "やること", notes: "お知らせ", buttons: "よく使うボタン", sales: "今月の売上", next: "次の出店", report: "週のレポート・AI" };
+const HOME_DEF = { order: ["today", "todo", "notes", "buttons", "sales", "next", "report"], hidden: [], btns: ["sale", "receipt", "voice", "product", "event", "todo", "think", "boxin", "post"] };
+function homeLayout() {
+  const v = LS.get("dfn-home", null) || {};
+  const order = (Array.isArray(v.order) ? v.order.filter(k => HOME_BLOCKS[k]) : []).concat(HOME_DEF.order.filter(k => !(v.order || []).includes(k)));
+  const btns = Array.isArray(v.btns) ? v.btns.filter(k => FUNCS[k]) : HOME_DEF.btns.slice();
+  return { order, hidden: Array.isArray(v.hidden) ? v.hidden : [], btns };
+}
+const saveHome = L => LS.set("dfn-home", L);
+function funcBtn(k, big) {
+  const f = FUNCS[k]; const inner = `${icon(f.ic, f.d)}<span>${esc(f.l)}</span>`;
+  const cls = `app-t${big ? " primary" : ""}`;
+  return f.href ? `<a class="${cls}" href="${f.href}">${inner}</a>` : f.label ? `<label class="${cls}" for="${f.label}">${inner}</label>` : `<button class="${cls}" data-act="${f.act}">${inner}</button>`;
+}
+function homeButtons() {
+  let b = homeLayout().btns; if (LS.get("dfn-simple", false)) b = b.slice(0, 6);
+  if (!b.length) return "";
+  const main = b.slice(0, 3), sub = b.slice(3);
+  return `<section class="hbtns" aria-label="よく使うボタン">${main.length ? `<nav class="apps main">${main.map(k => funcBtn(k, true)).join("")}</nav>` : ""}${sub.length ? `<nav class="apps sub">${sub.map(k => funcBtn(k)).join("")}</nav>` : ""}</section>`;
+}
+function homeEditSheet() {
+  openSheet("ホームの並びとボタン", `<div id="he-body" class="list" style="gap:14px"></div>`, panel => { panel._paint = () => paintHomeEdit(panel); panel._paint(); });
+}
+function paintHomeEdit(panel) {
+  const L = homeLayout(), body = panel.querySelector("#he-body");
+  const mv = (kind, k, i, n) => `<button class="nb sm" data-act="heMove" data-kind="${kind}" data-k="${k}" data-d="-1" aria-label="${esc((HOME_BLOCKS[k] || FUNCS[k].l))}を上へ"${i === 0 ? " disabled" : ""}>↑</button><button class="nb sm" data-act="heMove" data-kind="${kind}" data-k="${k}" data-d="1" aria-label="下へ"${i === n - 1 ? " disabled" : ""}>↓</button>`;
+  const off = Object.keys(FUNCS).filter(k => !L.btns.includes(k));
+  body.innerHTML = `<p class="note" style="margin:0">ホームには、自分がよく使うものだけを置けます。ここで外しても、機能そのものは「メニュー」にいつでも全部あります。</p>
+    <section class="card list" style="gap:6px"><h3 class="heh">ホームの枠の順番</h3><p class="note" style="margin:0">「↑」「↓」で順番を変えます。チェックを外すと、その枠はホームに出なくなります。</p>
+      ${L.order.map((k, i) => `<div class="herow"><label class="check" style="flex:1;min-height:52px"><input type="checkbox" data-hehide="${k}"${L.hidden.includes(k) ? "" : " checked"}> ${esc(HOME_BLOCKS[k])}</label>${mv("block", k, i, L.order.length)}</div>`).join("")}</section>
+    <section class="card list" style="gap:6px"><h3 class="heh">よく使うボタン（${L.btns.length}こ）</h3><p class="note" style="margin:0">上から3つは大きなボタンになります。9こまでがおすすめです。</p>
+      ${L.btns.map((k, i) => `<div class="herow">${icon(FUNCS[k].ic, FUNCS[k].d)}<b style="flex:1">${esc(FUNCS[k].l)}</b>${mv("btn", k, i, L.btns.length)}<button class="nb sm x" data-act="heBtn" data-k="${k}" aria-label="${esc(FUNCS[k].l)}をホームから外す">外す</button></div>`).join("") || `<div class="empty">ボタンは置いていません。</div>`}
+      ${off.length ? `<details class="faq"${L.btns.length < 3 ? " open" : ""}><summary>ボタンを足す（${off.length}）</summary><div class="list" style="gap:6px;padding-top:8px">${off.map(k => `<div class="herow">${icon(FUNCS[k].ic, FUNCS[k].d)}<span style="flex:1"><b>${esc(FUNCS[k].l)}</b><span class="note" style="display:block">${esc(FUNCS[k].desc)}</span></span><button class="btn small" data-act="heBtn" data-k="${k}">＋ 置く</button></div>`).join("")}</div></details>` : ""}</section>
+    <button class="btn primary big wide" data-act="closeSheet">できあがり</button>
+    <button class="btn ghost wide" data-act="heReset">はじめの並びにもどす</button>`;
+}
 /* ---------- 使い方ガイド・困ったとき ---------- */
 const HELP = {
-  home: { t: "ホーム", s: ["上の大きな数字が、今月の売上です。", "出店の日は、いちばん上に「🛍 レジを開く」が出ます。", "その下の四角いボタンが、よく使う機能です。「売れた！を記録」はBASE（ネット）などで売れたときに使います。", "「レシートを撮る」で、経費が自動で記録されます。", "下の「お知らせ」に、やること・少ない在庫・乾いた花などが出ます。", "いちばん下のボタンで画面を切りかえます。投稿・AI相談・分析は「メニュー」の中にあります。"] },
+  home: { t: "ホーム", s: ["上の大きな数字が、今月の売上です。", "出店の日は、いちばん上に「🛍 レジを開く」が出ます。", "その下の四角いボタンが、よく使う機能です。「売れた！を記録」はBASE（ネット）などで売れたときに使います。", "「レシートを撮る」で、経費が自動で記録されます。", "下の「お知らせ」に、やること・少ない在庫・乾いた花などが出ます。", "いちばん下のボタンで画面を切りかえます。「メニュー」にはすべての機能があり、ホームには自分で選んだものだけが出ます。", "ホームのいちばん下の「ホームの並びとボタンを変える」で、枠の順番とボタンを自由に変えられます。"] },
   products: { t: "商品", s: ["「一覧」で商品を見ます。押すと詳しく見たり直したりできます。", "「在庫」で「＋」「−」を押すと、数が1つずつ変わります。長押しすると速く変わります。", "「オーダー」で、オーダーメイドのお客さまのメモを残せます。", "新しい商品はホームの「新作を登録」から。写真を入れるとAIが投稿の文章も作ります。", "いらなくなった商品は、右上の「消す」を押します。まちがえたら、すぐ下に出る「取り消す」で元にもどります。"] },
   studio: { t: "投稿", s: ["インスタ用の写真・動画を選んで、AIに構成や仕上げをしてもらえます。", "「LINE・お知らせの文章」で、何のお知らせか・お得な情報を選ぶと、LINEの文章ができます。", "「LINEで送る」を押すと、LINEが開いて文章が入ります。送り先を選ぶだけです。", "「今やるといい宣伝」で、AIが季節や在庫から「今ならこれ」を考えます。"] },
   prep: { t: "準備", s: ["「やること」：期限つきのやることリスト。終わったら丸を押してチェック。", "「材料・買い物」：材料の在庫と買い物リスト。", "「乾燥中」：乾かしている花の記録。乾いたら「乾いた！」を押します。", "「くり返し」：月1回など、決まって来る予定を自動で入れます。"] },
@@ -3313,7 +3371,7 @@ const HELP = {
   analysis: { t: "分析", s: ["「売上・利益」：期間ごとの売上、よく売れた商品、出店の成績が見られます。", "「経費・確定申告」：レシートの記録と、確定申告用のまとめが見られます。", "表は「書き出す」でファイルにして、息子さんや税理士さんに送れます。"] },
   think: { t: "頭の整理", s: ["思いついたことを、順番を気にせず書き出します（「声で書く」も使えます）。", "「AIにまとめてもらう」で、やること・決めること・アイデア・気がかりに分かれます。", "やることは、チェックして「やることに入れる」を押すと、期限つきで入ります。", "書きかけは自動で残ります。前の書き出しは下の「これまでの書き出し」から開けます。"] },
   box: { t: "保管箱", s: ["「とりあえず入れる」で写真やPDFを選ぶと、すぐしまえます。", "あとで中身を押すと、題名や分類を変えられます。", "上の分類のボタンで絞りこみ、「箱の中をさがす」で言葉でさがせます。", "保管箱はこの端末の中だけに保存されます。ときどき「箱をまるごとファイルに保存」をしておくと安心です。"] },
-  menu: { t: "メニュー", s: ["投稿・AI相談・分析・使い方・設定は、ここから開きます。", "開いた画面の左上の「‹ メニューにもどる」で、ここにもどれます。"] },
+  menu: { t: "メニュー", s: ["アプリのすべての機能が、ここに並んでいます。", "「ホーム」の印がついているものは、ホームにも置いてあります。", "「ホームに置くボタンを選ぶ」で、ホームのボタンを足したり外したりできます。", "開いた画面の左上の「‹ メニューにもどる」で、ここにもどれます。"] },
   ai: { t: "AI相談", s: ["下の欄に聞きたいことを書くか、「声で」を押して話します。", "話題ごとに「部屋」を分けられます。", "写真を送って相談することもできます。"] }
 };
 const FAQ = [
@@ -3334,6 +3392,8 @@ const FAQ = [
   ["まちがえて消してしまった", "「メニュー」→「最近消したもの」から、30日以内なら元にもどせます。"],
   ["声の入力が動かない", "キーボードにあるマイクのボタンを押して話しても、文字で入ります。こちらはいつでも使えます。"],
   ["ボタンが多くて迷う", "「設定」→「見やすさ・音」の「かんたん表示」にチェックを入れると、よく使うボタンだけになります。"],
+  ["ホームとメニューのちがいは？", "メニューにはすべての機能があります。ホームには、よく使うものだけを自分で選んで置けます。ホームに見当たらないときは、メニューをさがしてください。"],
+  ["ホームの並びを変えたい", "ホームのいちばん下の「ホームの並びとボタンを変える」を押して、「↑」「↓」で順番を変えます。チェックを外すと、その枠はホームに出なくなります。"],
   ["数字は自分で打たないといけない？", "ほとんどの数は「＋」「−」で変えられます。押したままにすると速く変わります。"],
   ["文字が小さくて読みにくい", "この画面のいちばん下の「文字の大きさ」で「大きめ」か「とても大きい」を選びます。"],
   ["画面がおかしい・動かない", "アプリを一度とじて、開き直してください。記録は消えません。直らないときは息子さんに連絡を。"],
@@ -4359,6 +4419,7 @@ async function wakeOn() { try { if (!WL && "wakeLock" in navigator && document.v
 function wakeOff() { try { if (WL) WL.release(); } catch {} WL = null; }
 document.addEventListener("visibilitychange", () => { if (document.visibilityState === "visible") { checkUpdate(); if (state.regi) wakeOn(); } });
 window.addEventListener("scroll", () => { const b = document.getElementById("toTop"); if (b) b.hidden = window.scrollY < window.innerHeight * 1.5 || !!document.querySelector(".panel"); }, { passive: true });
+document.addEventListener("change", e => { const k = e.target && e.target.dataset && e.target.dataset.hehide; if (!k) return; const L = homeLayout(); L.hidden = e.target.checked ? L.hidden.filter(x => x !== k) : [...new Set([...L.hidden, k])]; saveHome(L); render(); });
 document.addEventListener("change", e => { if (e.target && e.target.dataset && e.target.dataset.pref) { LS.set(e.target.dataset.pref, e.target.checked); applyZoom(); } });
 document.addEventListener("change", e => { if (e.target && e.target.dataset && e.target.dataset.evcopy && e.target.value) { const src = state.events.find(x => x.id === e.target.value); const d = ($("#ef-date") || {}).value; if (src) eventSheet(null, d && d !== todayStr() ? d : "", src); } });
 document.addEventListener("change", e => { if (e.target && e.target.dataset && e.target.dataset.lnev) lnS().evId = e.target.value; });
@@ -5040,6 +5101,10 @@ LINE・インスタ・Threadsで「今」やるとよい宣伝やお得な情報
     const note = [r.summary, (r.todos || []).length ? "【やること】\n" + r.todos.map(x => "・" + x.title).join("\n") : "", (r.decide || []).length ? "【決めること】\n" + r.decide.map(x => "・" + x).join("\n") : "", (r.ideas || []).length ? "【アイデア】\n" + r.ideas.map(x => "・" + x).join("\n") : "", "【もとの書き出し】\n" + d.text].filter(Boolean).join("\n\n");
     await boxPutItem({ id: newId(), title: r.title || String(d.text).slice(0, 20), cat: "アイデア・メモ", note, link: "", files: [], pinned: false, createdAt: Date.now(), updatedAt: Date.now() }); toast("保管箱（アイデア・メモ）にしまいました");
   },
+  homeEdit: () => homeEditSheet(),
+  heMove: el => { const L = homeLayout(), key = el.dataset.kind === "block" ? "order" : "btns", arr = L[key], i = arr.indexOf(el.dataset.k), j = i + Number(el.dataset.d); if (i < 0 || j < 0 || j >= arr.length) return; [arr[i], arr[j]] = [arr[j], arr[i]]; saveHome(L); buzz(); const p = $(".panel"); if (p && p._paint) p._paint(); render(); },
+  heBtn: el => { const L = homeLayout(), k = el.dataset.k; L.btns = L.btns.includes(k) ? L.btns.filter(x => x !== k) : [...L.btns, k]; saveHome(L); buzz(); const p = $(".panel"); if (p && p._paint) p._paint(); render(); },
+  heReset: () => { LS.set("dfn-home", null); const p = $(".panel"); if (p && p._paint) p._paint(); render(); toast("はじめの並びにもどしました"); },
   openSearch: () => searchSheet(),
   srHist: el => { const i = $("#sq"); if (!i) return; i.value = el.dataset.q; addSqHist(el.dataset.q); const p = $(".panel"); if (p && p._repaint) p._repaint(); },
   srHistClear: () => { LS.set("dfn-sqhist", []); const p = $(".panel"); if (p && p._repaint) p._repaint(); },
@@ -5242,7 +5307,7 @@ function route() { const h = location.hash.replace("#", ""); state.tab = TABS.so
 /* ---------- 2画面（左右・上下） ---------- */
 const SPLIT_KEY = "dfn-split";
 const APP_URL = location.href.split("#")[0];
-const APP_VERSION = "2026-11-23-3";
+const APP_VERSION = "2026-11-23-4";
 window.__dfn = { get state() { return state; }, S: () => S(), ymd: d => ymd(d), repeatLabel: r => repeatLabel(r), occDate: (r, k) => occDate(r, k), rruleOf: r => rruleOf(r), alarmTrigger: (a, b) => alarmTrigger(a, b) }; // 動作確認用
 const SPLITS = { none: "1画面", lr: "左右に2つ", tb: "上下に2つ" };
 function loadSplit() { try { const o = JSON.parse(localStorage.getItem(SPLIT_KEY) || "{}"); if (SPLITS[o.split]) state.split = o.split; if (TABS.some(t => t[0] === o.tab2)) state.tab2 = o.tab2; } catch {} }
