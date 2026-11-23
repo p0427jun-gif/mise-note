@@ -553,6 +553,7 @@ body:has(.basketbar) .totop{bottom:calc(176px + env(safe-area-inset-bottom))}
 .fold.d-sale > .hero .label{display:none}
 .fold > .card{border:0 !important;box-shadow:none !important;margin:0 !important;border-radius:0}
 .fold > .card > .section-title > h2{display:none}
+.fold h2.keep{display:block !important}
 .notice.accent{border-left-color:var(--c-event) !important}.notice.warn{border-left-color:var(--c-product) !important}.notice.good{border-left-color:var(--c-sale) !important}
 .todo-row,.check-item{border-left-color:var(--c-todo)}
 .cal .d i.t{color:var(--c-todo);border-color:var(--c-todo)}
@@ -3631,7 +3632,7 @@ function calView() {
     <div class="cal">${WD.map((w, i) => `<span class="wd${i === 0 ? " su" : i === 6 ? " sa" : ""}">${w}</span>`).join("")}${cells.join("")}</div>
     <div class="note"><span class="chip" style="background:var(--accent);color:#fff">出店</span> <span class="chip" style="background:var(--c-event-s);color:var(--c-event);border:1px solid var(--c-event)">委託</span> <span class="chip" style="background:#5E6B3B;color:#fff">そのほかの予定</span> <span class="chip warn">やること</span></div>
   </section>
-  <section class="list"><div class="section-title"><h2>${jpDate(sel)}</h2><button class="btn small primary" data-act="newEvent" data-date="${sel}">＋ この日に追加</button></div>
+  <section class="list"><div class="section-title"><h2 class="keep">${jpDate(sel)}</h2><button class="btn small primary" data-act="newEvent" data-date="${sel}">＋ この日に追加</button></div>
     ${selEv.map(e => evCard(e, isSpan(e) ? evSub(e) : "")).join("")}${selTd.length ? `<div class="card">${selTd.map(todoRow).join("")}</div>` : ""}${!selEv.length && !selTd.length ? `<div class="empty">この日の予定はありません。</div>` : ""}</section>`;
 }
 function quickTodoSheet() {
@@ -5480,7 +5481,7 @@ function route() { const h = location.hash.replace("#", ""); state.tab = TABS.so
 /* ---------- 2画面（左右・上下） ---------- */
 const SPLIT_KEY = "dfn-split";
 const APP_URL = location.href.split("#")[0];
-const APP_VERSION = "2026-11-23-5";
+const APP_VERSION = "2026-11-23-6";
 window.__dfn = { get state() { return state; }, S: () => S(), ymd: d => ymd(d), repeatLabel: r => repeatLabel(r), occDate: (r, k) => occDate(r, k), rruleOf: r => rruleOf(r), alarmTrigger: (a, b) => alarmTrigger(a, b) }; // 動作確認用
 const SPLITS = { none: "1画面", lr: "左右に2つ", tb: "上下に2つ" };
 function loadSplit() { try { const o = JSON.parse(localStorage.getItem(SPLIT_KEY) || "{}"); if (SPLITS[o.split]) state.split = o.split; if (TABS.some(t => t[0] === o.tab2)) state.tab2 = o.tab2; } catch {} }
