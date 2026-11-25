@@ -644,6 +644,11 @@ body.simple .apps.sub{grid-template-columns:repeat(3,1fr)}
 .sft[aria-pressed="true"]{border-color:var(--accent);background:var(--accent-soft);box-shadow:inset 0 0 0 2px var(--accent)}
 .sft[aria-pressed="true"] b::before{content:"✓ "}
 .sft.other{border-style:dashed}
+.postlog{display:flex;gap:10px;align-items:center;padding:12px 14px;border-left:6px solid var(--c-ai)}
+.postlog b{font-size:17px}
+.chip.warn{background:#FFF1DC;color:var(--c-product);border:1px solid var(--c-product)}
+.notice .row .btn,.notice > .btn{text-decoration:none}
+.notice .row{flex-wrap:wrap;gap:6px}.notice .row .btn{flex:0 0 auto;width:auto;min-height:44px}
 /* くっきり表示（設定で切りかえ） */
 body.hc{--paper:#FFFFFF;--line:#6B727C;--muted:#30343A;--accent-soft:#F7DDE6}
 body.hc .card,body.hc .hero,body.hc .evcard,body.hc .pcard,body.hc .tile,body.hc .notice,body.hc .app-t,body.hc .mrow,body.hc details.faq{border:2px solid var(--ink);box-shadow:none}
@@ -703,7 +708,7 @@ const shiftMonth = (key, n) => { const [y, m] = key.split("-").map(Number); cons
 const monthLabel = key => `${Number(key.slice(0, 4))}年${Number(key.slice(5, 7))}月`;
 const compact = v => Math.abs(v) >= 10000 ? (v / 10000).toFixed(1).replace(/\.0$/, "") + "万" : Math.round(v).toLocaleString("ja-JP");
 
-const DEFAULTS = { notifyTime: "08:00", notifyBooth: [1, 7], notifyPlan: [0], notifyTodo: [0], homeEvents: true, homeDry: true, homeLowMat: true, homeLowStock: true, homeSeason: true, shopName: "わたしのお店", wage: 1200, margin: 30, packing: 150, feeRate: 6.6, feeFixed: 40, lowStock: 1,
+const DEFAULTS = { agedMonths: 6, snsDays: 7, homeAged: true, homeSns: true, notifyTime: "08:00", notifyBooth: [1, 7], notifyPlan: [0], notifyTodo: [0], homeEvents: true, homeDry: true, homeLowMat: true, homeLowStock: true, homeSeason: true, shopName: "わたしのお店", wage: 1200, margin: 30, packing: 150, feeRate: 6.6, feeFixed: 40, lowStock: 1,
   shopIntro: "", fixedText: "", samplePosts: "", baseTags: "#ドライフラワー #スワッグ #ハンドメイド",
   checklist: "テーブル\nテーブルクロス\n値札・POP\n釣り銭\n手さげ袋・包装紙\nショップカード\n電卓\nディスプレイ用の什器\n養生テープ・ハサミ\n雨よけのビニール" };
 const CATS = ["スワッグ","リース","ブーケ","アレンジ","小物","その他"];
@@ -1192,10 +1197,18 @@ function cloudSheet() {
       <label class="f">Firebase の設定（firebaseConfig の中身）<textarea id="cl-cfg" style="font-family:monospace;font-size:14px" placeholder='apiKey: "AIza...", authDomain: "...", projectId: "...", appId: "..."'></textarea></label>
       <button class="btn wide" data-act="saveFbCfg">この設定を使う</button></details>`);
 }
+const madeOf = p => p.madeAt || (p.createdAt ? ymd(new Date(p.createdAt)) : "");
+const stockPatch = (p, v) => ({ stock: v, updatedAt: Date.now(), ...(num(p.stock) <= 0 && v > 0 ? { madeAt: todayStr(), agedSnooze: "" } : {}) });
+const monthsSince = d => { if (!d) return 0; const a = parseYmd(d), b = today(); return (b.getFullYear() - a.getFullYear()) * 12 + b.getMonth() - a.getMonth() - (b.getDate() < a.getDate() ? 1 : 0); };
+function agedProducts() { const m = num(S().agedMonths); if (!m) return []; const t = todayStr(); return state.products.filter(p => num(p.stock) > 0 && madeOf(p) && monthsSince(madeOf(p)) >= m && !(p.agedSnooze && p.agedSnooze > t)); }
+const lastPost = () => S().lastPostAt || "";
+function snsGap() { const n = num(S().snsDays); if (!n) return null; const lp = lastPost(); const gap = lp ? daysBetween(parseYmd(lp), today()) : null; return gap == null || gap >= n ? { gap, n } : null; }
+function postIdea() { const ag = agedProducts()[0]; if (ag) return `作ってから時間のたった「${ag.name}」を、値下げや「残りわずか」で紹介`; const pr = state.products.filter(p => num(p.stock) > 0).sort((a, b) => num(b.stock) - num(a.stock))[0]; if (pr) return `在庫の多い「${pr.name}」（${num(pr.stock)}点）を紹介`; return "制作の様子やアトリエの花を紹介"; }
+async function markPosted() { try { await store.settings({ ...S(), lastPostAt: todayStr() }); toast("✓ 今日の投稿を記録しました"); } catch {} }
 async function addStock(pid, delta) {
   const p = state.products.find(x => x.id === pid); if (!p) return;
   const v = Math.max(0, num(p.stock) + delta); if (v === num(p.stock)) return;
-  await store.update("products", pid, { stock: v, updatedAt: Date.now() });
+  await store.update("products", pid, stockPatch(p, v));
 }
 
 /* ---------- 画像 ---------- */
@@ -1575,7 +1588,9 @@ function notifySheet() {
     <div class="f">そのほかの予定${dayPick("notifyPlan", NOTIFY_DAYS)}</div>
     <div class="f">やることの期限${dayPick("notifyTodo", NOTIFY_DAYS.slice(0, 3))}</div>
     <div class="f">アプリを開いたとき、ホームの「お知らせ」に出すもの
-      <div class="pick" style="margin-top:6px">${[["homeEvents", "近い予定"], ["homeDry", "乾燥のできあがり"], ["homeLowMat", "材料が少ない"], ["homeLowStock", "商品が残りわずか"], ["homeSeason", "季節の準備"]].map(([k, l]) => `<label><input type="checkbox" id="nt-${k}"${st[k] !== false ? " checked" : ""}>${l}</label>`).join("")}</div></div>
+      <div class="pick" style="margin-top:6px">${HOME_NOTES.map(([k, l]) => `<label><input type="checkbox" id="nt-${k}"${st[k] !== false ? " checked" : ""}>${l}</label>`).join("")}</div></div>
+    <div class="f">作ってから時間がたった商品を知らせる<span class="hint">いちばん古い在庫を作った日から数えます</span><div class="seg" role="group" id="nt-aged">${[[3, "3か月"], [6, "6か月"], [9, "9か月"], [12, "1年"], [0, "知らせない"]].map(([v, l]) => `<button type="button" data-act="seg" data-v="${v}" aria-pressed="${num(st.agedMonths) === v}">${l}</button>`).join("")}</div></div>
+    <div class="f">インスタの投稿があいたら知らせる<div class="seg" role="group" id="nt-sns">${[[3, "3日"], [5, "5日"], [7, "7日"], [14, "2週間"], [0, "知らせない"]].map(([v, l]) => `<button type="button" data-act="seg" data-v="${v}" aria-pressed="${num(st.snsDays) === v}">${l}</button>`).join("")}</div></div>
     <button class="btn primary big wide" data-act="saveNotify">保存する</button>
     <section class="card list" style="background:var(--paper)">
       <b>カレンダーに入れる</b>
@@ -1583,10 +1598,13 @@ function notifySheet() {
       <button class="btn wide" data-act="calAll">まとめてカレンダーに入れる</button>
     </section>`);
 }
+const HOME_NOTES = [["homeEvents", "近い予定"], ["homeDry", "乾燥のできあがり"], ["homeLowMat", "材料が少ない"], ["homeLowStock", "商品が残りわずか"], ["homeAged", "作ってから時間がたった商品"], ["homeSns", "投稿があいている"], ["homeSeason", "季節の準備"]];
 async function saveNotify() {
   const pick = k => [...document.querySelectorAll(`[data-pick="${k}"] input:checked`)].map(i => Number(i.value));
   const data = { ...S(), notifyTime: $("#nt-time").value || "08:00", notifyBooth: pick("notifyBooth"), notifyPlan: pick("notifyPlan"), notifyTodo: pick("notifyTodo") };
-  for (const k of ["homeEvents", "homeDry", "homeLowMat", "homeLowStock", "homeSeason"]) data[k] = $("#nt-" + k).checked;
+  for (const [k] of HOME_NOTES) data[k] = $("#nt-" + k).checked;
+  const sv = id => { const b = $(`#${id} [aria-pressed="true"]`); return b ? num(b.dataset.v) : null; };
+  if (sv("nt-aged") != null) data.agedMonths = sv("nt-aged"); if (sv("nt-sns") != null) data.snsDays = sv("nt-sns");
   try { await store.settings(data); closeSheet(); toast("保存しました"); } catch {}
 }
 /* カレンダー用のファイル（.ics） */
@@ -1659,7 +1677,7 @@ async function madeOne(pid) {
   const mk = canMake(p);
   if (mk.n === 0 && !confirmTwice("made-" + pid)) { toast(`材料の在庫が足りません（${mk.short.join("、")}）。もう一度押すと、そのまま記録します`, 4500); return; }
   for (const r of p.recipe || []) { const m = state.materials.find(x => x.id === r.mid); if (m) await store.update("materials", m.id, { stock: Math.max(0, num(m.stock) - num(r.qty)), updatedAt: Date.now() }); }
-  await store.update("products", pid, { stock: num(p.stock) + 1, updatedAt: Date.now() });
+  await store.update("products", pid, stockPatch(p, num(p.stock) + 1));
   toast(`${p.name}の在庫が${num(p.stock)}になりました。材料も減らしました`, 3500);
 }
 const TWICE = {};
@@ -2516,9 +2534,13 @@ VIEWS.home = () => {
   const hs = S();
   if (hs.homeEvents !== false) for (const e of evs) { const d = daysBetween(t, parseYmd(e.date)); notes.push(`<div class="notice accent"><div><div class="t">${d === 0 ? "今日" : d === 1 ? "明日" : d + "日後"}：${esc(e.title)}</div><div class="d">${jpDate(e.date)}・${esc(e.kind || "予定")}</div></div></div>`); }
   for (const o of state.orders.filter(o => o.status !== "お渡し済み" && o.due && daysBetween(t, parseYmd(o.due)) <= 7)) { const d = daysBetween(t, parseYmd(o.due)); notes.push(`<div class="notice accent"><div><div class="t">オーダーのお渡し${d < 0 ? "日がすぎています" : d === 0 ? "は今日" : d === 1 ? "は明日" : "まで" + d + "日"}：${esc(o.customer)}様</div><div class="d">${esc(o.use || "")}${o.colors ? "・" + esc(o.colors) : ""}・いまは「${esc(o.status || "受付")}」</div></div></div>`); }
-  if (hs.homeLowStock !== false) for (const p of low) notes.push(`<div class="notice warn"><div><div class="t">${esc(p.name)}：${num(p.stock) <= 0 ? "売り切れ" : "残り" + num(p.stock) + "点"}</div><div class="d">追加で作るか、BASEの在庫表示を確認しましょう</div></div></div>`);
+  const soldM = {}; for (const x of monthSales(key)) if (x.productId) soldM[x.productId] = (soldM[x.productId] || 0) + (num(x.qty) || 1);
+  if (hs.homeLowStock !== false) for (const p of low.sort((a, b) => (soldM[b.id] || 0) - (soldM[a.id] || 0))) { const planned = state.todos.some(x => !x.done && x.makePid === p.id);
+    notes.push(`<div class="notice warn"><div style="flex:1"><div class="t">${esc(p.name)}：${num(p.stock) <= 0 ? "売り切れ" : "残り" + num(p.stock) + "点"}</div><div class="d">${soldM[p.id] ? `今月${soldM[p.id]}個売れています。` : ""}${planned ? "作る予定がやることに入っています" : "BASEの在庫表示も確かめましょう"}</div></div>${planned ? "" : `<button class="btn small" data-act="planMake" data-id="${esc(p.id)}">作る予定に入れる</button>`}</div>`); }
+  if (hs.homeAged !== false) for (const p of agedProducts().slice(0, 3)) notes.push(`<div class="notice warn"><div style="flex:1"><div class="t">${esc(p.name)}：作ってから${monthsSince(madeOf(p))}か月です（在庫${num(p.stock)}）</div><div class="d">色あせや花の落ちを確かめましょう。値下げや「残りわずか」の投稿で売り切るのも手です。</div><div class="row" style="margin-top:6px"><button class="btn small" data-act="agedRemade" data-id="${esc(p.id)}">作り直した</button><button class="btn small ghost" data-act="agedSnooze" data-id="${esc(p.id)}">1か月後にまた</button></div></div></div>`);
+  if (hs.homeSns !== false) { const g = snsGap(); if (g) notes.push(`<div class="notice accent"><div style="flex:1"><div class="t">${g.gap == null ? "投稿の記録がまだありません" : `インスタの投稿が${g.gap}日あいています`}</div><div class="d">ネタ：${esc(postIdea())}</div><div class="row" style="margin-top:6px"><a class="btn small" href="#studio">投稿をつくる</a><button class="btn small ghost" data-act="markPosted">今日投稿した</button></div></div></div>`); }
   if (hs.homeDry !== false) for (const d of state.drying.filter(d => !d.done && dryReady(d) <= t)) notes.push(`<div class="notice good"><div><div class="t">${esc(d.name)}が乾いたころです</div><div class="d">「準備」の「乾燥中」で、在庫に入れましょう</div></div></div>`);
-  if (hs.homeLowMat !== false && lowMaterials().length) notes.push(`<div class="notice warn"><div><div class="t">少なくなった材料が${lowMaterials().length}つあります</div><div class="d">${esc(lowMaterials().slice(0, 4).map(m => m.name).join("、"))}　「準備」から買い物リストに入れられます</div></div></div>`);
+  if (hs.homeLowMat !== false && lowMaterials().length) notes.push(`<div class="notice warn"><div><div class="t">少なくなった材料が${lowMaterials().length}つあります</div><div class="d">${esc(lowMaterials().slice(0, 4).map(m => m.name).join("、"))}　</div><button class="btn small" data-act="shopFromLow" style="margin-top:6px">買い物リストに入れる</button></div></div>`);
   const lastB = LS.get("dfn-lastBackup", 0), hasData = state.products.length + state.sales.length > 0;
   if (hasData && (!lastB || Date.now() - lastB > 30 * 864e5)) notes.unshift(`<div class="notice warn"><div style="flex:1"><div class="t">${lastB ? "前のバックアップから1か月たちました" : "まだバックアップがありません"}</div><div class="d">スマホの故障や機種変更にそなえて、保存しておきましょう</div><button class="btn small" style="margin-top:6px" data-act="exportBackup">バックアップを保存する・送る</button></div></div>`);
   for (const e of state.events.filter(e => isConsign(e) && !e.returned && e.date <= todayStr())) { const d = daysBetween(t, parseYmd(evEnd(e))); if (d <= 3 && d >= -30) notes.unshift(`<div class="notice warn"><div style="flex:1"><div class="t">${d > 0 ? `あと${d}日で引き上げ・精算です` : d === 0 ? "今日は引き上げ・精算の日です" : "引き上げ・精算がまだです"}：${esc(e.title)}</div><div class="d">${evRange(e)}・「売れた数」を入れると売上になります</div></div><button class="btn small" data-act="openEv" data-id="${esc(e.id)}">開く</button></div>`); }
@@ -2615,7 +2637,7 @@ function productListView() {
       <button data-act="openProduct" data-id="${esc(p.id)}" style="padding:0;border:0;background:none;cursor:pointer" aria-label="${esc(p.name)}を開く">${thumb(p)}</button>
       <div>
         <button class="name" data-act="openProduct" data-id="${esc(p.id)}">${esc(p.name)}</button>
-        <div class="meta num"><span>${p.price ? yen(p.price) : "価格未設定"}</span>${stockChip(p)}${p.ai ? `<span class="chip muted">文章あり</span>` : ""}</div>
+        <div class="meta num"><span>${p.price ? yen(p.price) : "価格未設定"}</span>${stockChip(p)}${num(p.stock) > 0 && num(S().agedMonths) && monthsSince(madeOf(p)) >= num(S().agedMonths) ? `<span class="chip warn">作って${monthsSince(madeOf(p))}か月</span>` : ""}${p.ai ? `<span class="chip muted">文章あり</span>` : ""}</div>
         <div class="stepper" aria-label="在庫">
           <button data-act="stock" data-id="${esc(p.id)}" data-d="-1" aria-label="在庫を1減らす">−</button>
           <span class="v">在庫 ${num(p.stock)}</span>
@@ -2773,19 +2795,19 @@ function csPlan(e, w) {
     R.push({ t: depart - d.ready, l: "起きる・身支度" }, { t: depart - 20, l: "車に積み込み", d: cl.length ? `持ち物チェック（${cl.filter(x => x.d).length}/${cl.length}）を見ながら` : "持ち物を見ながら" }, { t: depart, l: "出発", d: `移動 ${d.travel}分＋10分の余裕` },
       { t, l: "お店に着く・あいさつ", key: 1 }, { t: t + 5, l: "設置スタート", d: "置く商品の数を、納品書と一緒に確かめてもらう" }, { t: t + d.work, l: "設置おわり", d: "並べた様子を写真に撮る（委託の画面の「写真を貼る」）", key: 1 }, { t: t + d.work + d.travel, l: "帰宅" });
   } else {
-    R.push({ t: depart, l: "出発", d: `移動 ${d.travel}分＋10分の余裕` }, { t, l: "お店に着く・あいさつ", key: 1 }, { t: t + 5, l: "売れた数の確認・精算", d: "アプリの「売れた数を入れる（精算）」で入れる" },
+    R.push({ t: depart - d.ready, l: "起きる・身支度" }, { t: depart - 15, l: "車に積み込み", d: "空き箱・緩衝材・納品書の控え・電卓を持つ" }, { t: depart, l: "出発", d: `移動 ${d.travel}分＋10分の余裕` }, { t, l: "お店に着く・あいさつ", key: 1 }, { t: t + 5, l: "売れた数の確認・精算", d: "アプリの「売れた数を入れる（精算）」で入れる" },
       { t: t + d.work, l: "引き上げおわり", d: "残った商品の数を確かめて持ち帰る", key: 1 }, { t: t + d.work + d.travel, l: "帰宅", d: "委託の画面の「✓ 引き上げが終わった」を押す" });
   }
   return { rows: R.sort((a, b) => a.t - b.t), depart, home: t + d.work + d.travel, d };
 }
 function csSchedCard(e, w) {
   const p = csPlan(e, w), d = csDefaults(e, w), ed = !p || state.csEdit === e.id + w, day = w === "in" ? e.date : evEnd(e);
-  const nm = w === "in" ? "設置" : "引き上げ";
-  const form = `<p class="note" style="margin:0">お店に着く時間を入れると、${w === "in" ? "起きる時間" : "出発"}から帰るまでの予定を作ります。</p>
+  const nm = w === "in" ? "設置" : "引き上げ（撤収）";
+  const form = `<p class="note" style="margin:0">お店に着く時間を入れると、起きる時間から帰るまでの予定を作ります。</p>
     <label class="f">お店に着く時間<input type="time" id="cs-${w}-t" value="${esc(d.t || "10:00")}"></label>
     <div class="f">家からお店まで${numStep(`id="cs-${w}-travel"`, d.travel, { step: 10, big: 60, label: "移動時間", fmt: "hm" })}</div>
     <div class="f">${nm}にかかる時間${numStep(`id="cs-${w}-work"`, d.work, { step: 10, big: 60, label: nm + "の時間", fmt: "hm" })}</div>
-    ${w === "in" ? `<div class="f">起きてから出発まで${numStep(`id="cs-${w}-ready"`, d.ready, { step: 10, big: 60, label: "支度の時間", fmt: "hm" })}</div>` : ""}
+    <div class="f">起きてから出発まで${numStep(`id="cs-${w}-ready"`, d.ready, { step: 10, big: 60, label: "支度の時間", fmt: "hm" })}</div>
     ${d.prev ? `<p class="note" style="margin:0">時間は、前の委託（${esc(d.prev.title.slice(0, 12))}）と同じにしています。</p>` : ""}
     <button class="btn primary big wide" data-act="csSchedSave" data-w="${w}">スケジュールを作る</button>${p ? `<button class="btn ghost wide" data-act="csSchedEdit" data-w="">やめる</button>` : ""}`;
   const isT = day === todayStr(), now = new Date(), nowM = now.getHours() * 60 + now.getMinutes(), nx = p && isT ? p.rows.findIndex(r => r.t >= nowM - 5) : -1;
@@ -2828,7 +2850,7 @@ function consignDetail(e) {
   ${showPrep ? fold(e.id + ":cs:prep", "前の日までの準備", (() => { const nx = prepRows(e).find(x => x.date >= t); return nx ? `次：${nx.n}日前 ${nx.l}` : ""; })(), prepCard(e), dIn <= 7, "d-todo") : ""}
   ${!started || dIn >= -1 ? fold(e.id + ":cs:in", "設置の日のスケジュール", csPlan(e, "in") ? `出発 ${hmStr(csPlan(e, "in").depart)}・${mdW(e.date)}` : "まだ作っていません", csSchedCard(e, "in"), !started && dIn <= 3, "d-event") : ""}
   ${!e.returned ? fold(e.id + ":cs:check", "持ち物チェック", cl.length ? `${cl.filter(x => x.d).length}/${cl.length} 済み` : "まだありません", checkCard(e), !started && dIn <= 3) : ""}
-  ${started && !e.returned ? fold(e.id + ":cs:out", "引き上げの日のスケジュール", csPlan(e, "out") ? `出発 ${hmStr(csPlan(e, "out").depart)}・${mdW(end)}` : "まだ作っていません", csSchedCard(e, "out"), dEnd <= 3, "d-event") : ""}
+  ${!e.returned ? fold(e.id + ":cs:out", "引き上げ（撤収）の日のスケジュール", csPlan(e, "out") ? `出発 ${hmStr(csPlan(e, "out").depart)}・${mdW(end)}` : "まだ作っていません", csSchedCard(e, "out"), started && dEnd <= 3, "d-event") : ""}
   ${started ? fold(e.id + ":cs:result", "売上と利益", r.total ? `売上 ${yen(r.total)}・利益 ${yen(r.profit)}` : "まだ売れた数を入れていません", `<section class="card">${tiles}</section>`, r.total > 0, "d-sale") : ""}
   ${started ? `<section class="card list">${e.returned ? `<button class="btn wide" data-act="csReturn" data-v="0">「引き上げ済み」を取り消す</button>` : `<button class="btn wide" data-act="csReturn" data-v="1">✓ 引き上げが終わった</button><div class="note">押すと「引き上げ・精算」のお知らせが止まります。売れ残った商品は、在庫のままです。</div>`}</section>` : ""}
   <section class="card list"><h2 style="font:700 19px var(--display)">写真・メモ</h2><p class="note" style="margin:0">置いた様子や、委託先の書類を撮っておけます。</p>${photoStrip("events/" + e.id, "booth", "写真を貼る")}</section>
@@ -3092,6 +3114,7 @@ function productSheet(p, opts = {}) {
   </div>
   <label class="f">商品名<input type="text" id="pf-name" value="${esc(p.name)}" placeholder="例：ユーカリのクリスマススワッグ"></label>
   <div class="f">在庫（いまある数）${numStep('id="pf-stock"', num(p.stock), { label: "在庫", unit: "点" })}</div>
+  <label class="f">いちばん古い在庫を作った日<span class="hint">ここから${num(S().agedMonths) || "○"}か月たつと、ホームでお知らせします</span><input type="date" id="pf-made" value="${esc(madeOf(p) || todayStr())}"></label>
   <div class="f">作業時間（1つ作るのにかかる時間）${numStep('id="pf-minutes"', num(p.minutes), { step: 5, big: 30, label: "作業時間", fmt: "hm" })}</div>
   <label class="f">種類<select id="pf-cat">${CATS.map(c => `<option${c === p.category ? " selected" : ""}>${c}</option>`).join("")}</select></label>
   <label class="f">花材やメモ<span class="hint">AIの文章はここに書いた花材だけを使います</span><textarea id="pf-memo" placeholder="例：ユーカリ、コットンフラワー、ヒムロスギ。玄関向き。">${esc(p.memo)}</textarea></label>
@@ -3159,7 +3182,7 @@ async function saveProduct(withAi) {
   const local = panel._local;
   const data = { name, category: $("#pf-cat").value, memo: $("#pf-memo").value.trim(),
     material: num($("#pf-material").value), minutes: num($("#pf-minutes").value), packing: num($("#pf-packing").value),
-    stock: num($("#pf-stock").value), price: num($("#pf-price").value), photo: local.photo || "", recipe: (panel._recipe || []).filter(r => r.mid && num(r.qty) > 0), updatedAt: Date.now() };
+    stock: num($("#pf-stock").value), madeAt: ($("#pf-made") || {}).value || todayStr(), agedSnooze: "", price: num($("#pf-price").value), photo: local.photo || "", recipe: (panel._recipe || []).filter(r => r.mid && num(r.qty) > 0), updatedAt: Date.now() };
   let id = panel.dataset.pid;
   try { if (id) await store.update("products", id, data); else { data.createdAt = Date.now(); id = await store.add("products", data); } } catch { return; }
   toast("保存しました");
@@ -3621,6 +3644,9 @@ const FAQ = [
   ["声の入力が動かない", "キーボードにあるマイクのボタンを押して話しても、文字で入ります。こちらはいつでも使えます。"],
   ["ボタンが多くて迷う", "「設定」→「見やすさ・音」の「かんたん表示」にチェックを入れると、よく使うボタンだけになります。"],
   ["委託（お店に長く置く）はどう記録する？", "「予定を追加」で種類を「委託」にして、置きはじめる日と引き上げの日、手数料（売上の何%）を入れます。置いた商品と数を選んでおき、委託先から聞いた「売れた数」を入れると、売上と利益が自動で計算されます。引き上げの3日前からホームにお知らせが出ます。"],
+  ["古くなった商品を知らせてほしい", "「設定」→「通知の設定」の「作ってから時間がたった商品を知らせる」で、3か月・6か月・9か月・1年から選びます。商品の画面の「いちばん古い在庫を作った日」から数えます。在庫が0から増えたときは、その日に自動で変わります。"],
+  ["投稿を忘れてしまう", "投稿したら「メニュー」→「投稿をつくる」の上の「✓ 今日投稿した」を押しておくと、決めた日数あいたときにホームで知らせて、次のネタも出します。日数は「設定」→「通知の設定」で変えられます。"],
+  ["残りわずかの商品を作る予定を立てたい", "ホームのお知らせの「作る予定に入れる」を押すと、「○○を2つ作る」が3日後の期限でやることに入ります。"],
   ["委託で売れた数はどう入れる？", "委託の画面の「売れた数を入れる（精算）」を押して、委託先の明細にある「今回売れた数」を「＋」で入れ、「保存する」。前に入れた分は自動で足されます。まちがえて入れたときは、同じ画面の「まちがえて入れた数を直す」で直せます。"],
   ["引き上げのお知らせを止めたい", "委託の画面の「✓ 引き上げが終わった」を押すと、お知らせが止まります。"],
   ["「委託中」の表示を消したい", "委託の画面の「期間中ずっと、ホームとカレンダーに出す」のチェックを外します。カレンダーには、はじめと終わりの日だけ出ます。"],
@@ -4557,6 +4583,7 @@ VIEWS.studio = () => {
   const sv = studio.view || LS.get("dfn-stview", "photo");
   return `
   <div class="section-title"><h2>投稿づくり</h2>${items.length && sv === "photo" ? `<button class="btn small ghost" data-act="stClear">素材を全部外す</button>` : ""}</div>
+  <section class="card postlog"><div style="flex:1;min-width:0"><b>${lastPost() ? `前回の投稿：${mdW(lastPost())}（${daysBetween(parseYmd(lastPost()), today()) === 0 ? "今日" : daysBetween(parseYmd(lastPost()), today()) + "日前"}）` : "投稿したら、ここを押して記録しましょう"}</b><span class="note" style="display:block">次のネタ：${esc(postIdea())}</span></div><button class="btn small" data-act="markPosted"${lastPost() === todayStr() ? " disabled" : ""}>✓ 今日投稿した</button></section>
   <div class="seg evtabs" role="tablist" aria-label="投稿の画面の切りかえ">${[["photo", "写真・動画"], ["text", "文章・LINE"], ["more", "BGM・好み"]].filter(x => !(LS.get("dfn-simple", false) && x[0] === "more")).map(([k, l]) => `<button role="tab" data-act="stView" data-k="${k}" aria-selected="${sv === k}" aria-pressed="${sv === k}">${l}</button>`).join("")}</div>
   ${sv === "photo" ? `  <section class="card list">
     <h2 class="h">1. どこに投稿する？</h2>
@@ -5096,9 +5123,9 @@ const ACT = {
   boothAi: () => boothAi(),
   prodSeg: el => { state.prodSeg = el.dataset.k; render(true); },
   anaSeg: el => { state.anaSeg = el.dataset.k; render(true); },
-  qstep: async el => { const k = el.dataset.kind, x = state[k].find(y => y.id === el.dataset.id); if (!x) return; const v = Math.max(0, num(x.stock) + Number(el.dataset.d)); if (v === num(x.stock)) return; await store.update(k, x.id, { stock: v, updatedAt: Date.now() }); },
+  qstep: async el => { const k = el.dataset.kind, x = state[k].find(y => y.id === el.dataset.id); if (!x) return; const v = Math.max(0, num(x.stock) + Number(el.dataset.d)); if (v === num(x.stock)) return; await store.update(k, x.id, k === "products" ? stockPatch(x, v) : { stock: v, updatedAt: Date.now() }); },
   qset: el => qsetSheet(el.dataset.kind, el.dataset.id),
-  qsetSave: async el => { const v = Math.max(0, num($("#qs-v").value)); await store.update(el.dataset.kind, el.dataset.id, { stock: v, updatedAt: Date.now() }); closeSheet(); toast("在庫を直しました"); },
+  qsetSave: async el => { const v = Math.max(0, num($("#qs-v").value)), k = el.dataset.kind, x = (state[k] || []).find(y => y.id === el.dataset.id); await store.update(k, el.dataset.id, k === "products" && x ? stockPatch(x, v) : { stock: v, updatedAt: Date.now() }); closeSheet(); toast("在庫を直しました"); },
   madeOne: el => madeOne(el.dataset.id),
   planShop: async () => { const plan = state.plan || {}; const need = new Map(); for (const p of state.products) { const n = num(plan[p.id]); if (!n) continue; for (const r of p.recipe || []) need.set(r.mid, (need.get(r.mid) || 0) + num(r.qty) * n); } let c = 0; for (const [mid, q] of need) { const m = state.materials.find(x => x.id === mid); if (!m) continue; const lack = q - num(m.stock); if (lack > 0) { await store.add("shopping", { name: m.name, qty: Math.ceil(lack), unit: m.unit || "", supplier: m.supplier || "", memo: "制作の計画から", done: false, createdAt: Date.now() }); c++; } } toast(`買い物リストに${c}品入れました`); },
   rcAdd: () => { const panel = $(".panel"); if (!panel || !panel._recipe) return; panel._recipe.push({ mid: "", qty: 1 }); panel._paintRecipe(); },
@@ -5368,7 +5395,7 @@ LINE・インスタ・Threadsで「今」やるとよい宣伝やお得な情報
   csSchedEdit: el => { state.csEdit = el.dataset.w ? state.evId + el.dataset.w : null; render(); },
   csSchedSave: async el => { const w = el.dataset.w, g = f => ($(`#cs-${w}-${f}`) || {}).value || ""; const e = curEv(); if (!e) return;
     const t = g("t"); if (!t) { toast("お店に着く時間を入れてください"); return; }
-    const v = { t, travel: num(g("travel")), work: num(g("work")), ready: w === "in" ? num(g("ready")) : num((e.csOut || {}).ready ?? 60) };
+    const v = { t, travel: num(g("travel")), work: num(g("work")), ready: num(g("ready")) };
     state.csEdit = null; FOLDS[e.id + ":cs:" + w] = true; await evUpdate({ [w === "in" ? "csIn" : "csOut"]: v }); toast("スケジュールを作りました"); },
   csSchedCal: el => { const e = curEv(), w = el.dataset.w, p = e && csPlan(e, w); if (!p) return; const day = w === "in" ? e.date : evEnd(e), nm = w === "in" ? "設置" : "引き上げ";
     const dt = n => `${icsDate(day)}T${pad(Math.floor(((n % 1440) + 1440) % 1440 / 60))}${pad(((n % 60) + 60) % 60)}00`;
@@ -5381,6 +5408,11 @@ LINE・インスタ・Threadsで「今」やるとよい宣伝やお得な情報
   csSold: () => csSoldSheet(),
   csSave: () => csSave(),
   csReturn: async el => { await evUpdate({ returned: el.dataset.v === "1" }); toast(el.dataset.v === "1" ? "引き上げ済みにしました" : "取り消しました"); },
+  markPosted: () => markPosted(),
+  planMake: async el => { const p = state.products.find(x => x.id === el.dataset.id); if (!p) return; const n = Math.max(1, num(S().lowStock) + 2 - num(p.stock));
+    try { await store.add("todos", { title: `${p.name}を${n}つ作る`, due: ymd(addD(today(), 3)), cat: "制作", memo: (p.recipe || []).length ? "作ったら「商品」の「1つ作った！」で在庫と材料が自動で動きます" : "", done: false, makePid: p.id, createdAt: Date.now() }); toast(`やることに「${p.name}を${n}つ作る」を入れました（3日後まで）`, 3500); } catch {} },
+  agedRemade: async el => { const p = state.products.find(x => x.id === el.dataset.id); if (!p) return; const old = { madeAt: p.madeAt || "", agedSnooze: p.agedSnooze || "" }; try { await store.update("products", p.id, { madeAt: todayStr(), agedSnooze: "" }); toastAct(`${p.name}の作った日を今日にしました`, "取り消す", () => store.update("products", p.id, old)); } catch {} },
+  agedSnooze: async el => { const p = state.products.find(x => x.id === el.dataset.id); if (!p) return; try { await store.update("products", p.id, { agedSnooze: ymd(addD(today(), 30)) }); toast("1か月後にまたお知らせします"); } catch {} },
   homeEdit: () => homeEditSheet(),
   heMove: el => { const L = homeLayout(), key = el.dataset.kind === "block" ? "order" : "btns", arr = L[key], i = arr.indexOf(el.dataset.k), j = i + Number(el.dataset.d); if (i < 0 || j < 0 || j >= arr.length) return; [arr[i], arr[j]] = [arr[j], arr[i]]; saveHome(L); buzz(); const p = $(".panel"); if (p && p._paint) p._paint(); render(); },
   heBtn: el => { const L = homeLayout(), k = el.dataset.k; L.btns = L.btns.includes(k) ? L.btns.filter(x => x !== k) : [...L.btns, k]; saveHome(L); buzz(); const p = $(".panel"); if (p && p._paint) p._paint(); render(); },
@@ -5587,7 +5619,7 @@ function route() { const h = location.hash.replace("#", ""); state.tab = TABS.so
 /* ---------- 2画面（左右・上下） ---------- */
 const SPLIT_KEY = "dfn-split";
 const APP_URL = location.href.split("#")[0];
-const APP_VERSION = "2026-11-25-2";
+const APP_VERSION = "2026-11-25-3";
 window.__dfn = { get state() { return state; }, S: () => S(), ymd: d => ymd(d), repeatLabel: r => repeatLabel(r), occDate: (r, k) => occDate(r, k), rruleOf: r => rruleOf(r), alarmTrigger: (a, b) => alarmTrigger(a, b) }; // 動作確認用
 const SPLITS = { none: "1画面", lr: "左右に2つ", tb: "上下に2つ" };
 function loadSplit() { try { const o = JSON.parse(localStorage.getItem(SPLIT_KEY) || "{}"); if (SPLITS[o.split]) state.split = o.split; if (TABS.some(t => t[0] === o.tab2)) state.tab2 = o.tab2; } catch {} }
