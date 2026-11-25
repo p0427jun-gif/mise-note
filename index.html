@@ -630,6 +630,20 @@ body.simple .apps.sub{grid-template-columns:repeat(3,1fr)}
 .panebody[data-view="events"]{--dom:var(--c-event)}.panebody[data-view="products"]{--dom:var(--c-product)}.panebody[data-view="prep"]{--dom:var(--c-todo)}
 .panebody[data-view="studio"],.panebody[data-view="ai"],.panebody[data-view="think"]{--dom:var(--c-ai)}.panebody[data-view="analysis"]{--dom:var(--c-sale)}.panebody[data-view="box"]{--dom:var(--c-box)}.panebody[data-view="menu"]{--dom:#3F4652}
 .panebody[data-view] > .section-title:first-child h2,.panebody[data-view] > .back + .section-title h2,.panebody[data-view] > .back.narrow + .section-title h2,.panebody[data-view="products"] > .seg + .section-title h2{border-left:7px solid var(--dom,transparent);padding-left:10px;color:var(--dom,var(--ink))}
+.nstep:has(.nb.x) .nb{width:48px}
+.nstep:has(.nb.x) .nb.x{width:auto;padding:0 6px;font-size:15px}
+.nstep .hmv{white-space:nowrap;font-size:clamp(15px,4.4vw,20px)}
+.sr-only{position:absolute !important;width:1px !important;height:1px !important;padding:0 !important;margin:-1px !important;overflow:hidden !important;clip:rect(0,0,0,0) !important;white-space:nowrap !important;border:0 !important}
+.seg.kinds{flex-wrap:wrap}
+.seg.kinds button{flex:1 1 40%;white-space:nowrap;font-size:16px;padding:0 8px}
+.cs-after{font-weight:700;color:var(--c-sale);min-height:0}
+.sfgrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:4px}
+.sft{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;min-height:84px;padding:8px 4px;border:2px solid var(--ctl);border-radius:14px;background:var(--surface);color:var(--ink);font:inherit;cursor:pointer;text-align:center}
+.sft b{font-size:16px;line-height:1.3;word-break:break-all}.sft span{font-size:13px;color:var(--muted)}
+.sft img{width:44px;height:44px;border-radius:10px;object-fit:cover}
+.sft[aria-pressed="true"]{border-color:var(--accent);background:var(--accent-soft);box-shadow:inset 0 0 0 2px var(--accent)}
+.sft[aria-pressed="true"] b::before{content:"✓ "}
+.sft.other{border-style:dashed}
 /* くっきり表示（設定で切りかえ） */
 body.hc{--paper:#FFFFFF;--line:#6B727C;--muted:#30343A;--accent-soft:#F7DDE6}
 body.hc .card,body.hc .hero,body.hc .evcard,body.hc .pcard,body.hc .tile,body.hc .notice,body.hc .app-t,body.hc .mrow,body.hc details.faq{border:2px solid var(--ink);box-shadow:none}
@@ -2044,7 +2058,8 @@ function tplSources(exceptId) {
   const out = state.templates.slice().sort((a, b) => String(a.name).localeCompare(String(b.name), "ja")).map(t => ({ key: "t:" + t.id, name: t.name, items: clItems(t.items), note: "テンプレート" }));
   const base = String(S().checklist || "").split("\n").map(x => x.trim()).filter(Boolean);
   if (base.length) out.push({ key: "base", name: "いつもの持ち物", items: base, note: "設定に入れた持ち物" });
-  for (const pe of state.events.filter(x => isBooth(x) && x.id !== exceptId && (x.checklist || []).length).sort((a, b) => a.date < b.date ? 1 : -1).slice(0, 5))
+  out.push({ key: "cs", name: "委託の持ち物（基本）", items: CS_CL, note: "委託に持っていくもの" });
+  for (const pe of state.events.filter(x => (isBooth(x) || isConsign(x)) && x.id !== exceptId && (x.checklist || []).length).sort((a, b) => a.date < b.date ? 1 : -1).slice(0, 5))
     out.push({ key: "e:" + pe.id, name: `${jpDate(pe.date)} ${pe.title}`, items: clItems(pe.checklist), note: "前の出店の持ち物" });
   return out;
 }
@@ -2689,12 +2704,7 @@ function eventDetail(e) {
   </section>`;
   const S_sched = !past ? schedCard(e) : "";
   const S_prep = !past && !isToday && prepRows(e).some(r => r.date >= todayStr()) ? prepCard(e) : "";
-  const S_check = `  <section class="card">
-    <div class="section-title"><h2>持ち物チェック</h2><span class="note">${cl.filter(x => x.d).length}/${cl.length}</span></div>
-    ${cl.map((x, i) => `<label class="check-item${x.d ? " done" : ""}"><input type="checkbox" data-act="clToggle" data-i="${i}"${x.d ? " checked" : ""}><span>${esc(x.t)}</span><button class="del x" data-act="clDel" data-i="${i}" aria-label="${esc(x.t)}を消す">消す</button></label>`).join("") || `<div class="empty">まだありません。</div>`}
-    <div class="row" style="margin-top:8px"><input type="text" id="cl-new" placeholder="持ち物を追加" style="flex:1 1 160px"><button class="btn small" data-act="clAdd">追加</button></div>
-    <div class="list" style="margin-top:8px">${cl.length ? `<button class="btn wide" data-act="lineText" data-k="check">持ち物リストをLINEで送る</button>` : ""}<button class="btn wide" data-act="tplPick">📋 テンプレートから呼び出す</button>${cl.length ? `<button class="btn wide" data-act="tplSave">💾 この持ち物をテンプレートに保存</button>` : ""}</div>
-  </section>`;
+  const S_check = checkCard(e);
   const S_status = `  <section class="card list">
     <h2 style="font:700 19px var(--display)">当日の状況</h2>
     <div><div class="note">天気</div>${segs("weather", WEATHER)}</div>
@@ -2741,6 +2751,48 @@ function eventDetail(e) {
   <button class="btn ghost danger wide" data-act="delEvent">この予定を消す（売上の記録は残ります）</button>`;
 }
 
+/* ---------- 持ち物チェック（出店・委託） ---------- */
+function checkCard(e) { const cl = e.checklist || []; return `  <section class="card">
+    <div class="section-title"><h2>持ち物チェック</h2><span class="note">${cl.filter(x => x.d).length}/${cl.length}</span></div>
+    ${cl.map((x, i) => `<label class="check-item${x.d ? " done" : ""}"><input type="checkbox" data-act="clToggle" data-i="${i}"${x.d ? " checked" : ""}><span>${esc(x.t)}</span><button class="del x" data-act="clDel" data-i="${i}" aria-label="${esc(x.t)}を消す">消す</button></label>`).join("") || `<div class="empty">まだありません。</div>`}
+    <div class="row" style="margin-top:8px"><input type="text" id="cl-new" placeholder="持ち物を追加" style="flex:1 1 160px"><button class="btn small" data-act="clAdd">追加</button></div>
+    <div class="list" style="margin-top:8px">${cl.length ? `<button class="btn wide" data-act="lineText" data-k="check">持ち物リストをLINEで送る</button>` : ""}<button class="btn wide" data-act="tplPick">📋 テンプレートから呼び出す</button>${cl.length ? `<button class="btn wide" data-act="tplSave">💾 この持ち物をテンプレートに保存</button>` : ""}</div>
+  </section>`; }
+/* ---------- 委託：設置・引き上げの日のスケジュール ---------- */
+const CS_DEF = { in: { travel: 30, work: 30, ready: 60 }, out: { travel: 30, work: 20, ready: 60 } };
+function csDefaults(e, w) {
+  const k = w === "in" ? "csIn" : "csOut", cur = e[k] || {};
+  const prev = state.events.filter(x => isConsign(x) && x.id !== e.id && x[k] && x[k].t).sort((a, b) => (a.place && a.place === e.place) - (b.place && b.place === e.place) || (a.date < b.date ? -1 : 1)).pop();
+  const o = {}; for (const f of ["travel", "work", "ready"]) o[f] = cur[f] != null && cur[f] !== "" ? num(cur[f]) : prev && prev[k][f] != null ? num(prev[k][f]) : CS_DEF[w][f];
+  return { ...o, t: cur.t || "", prev };
+}
+function csPlan(e, w) {
+  const d = csDefaults(e, w), t = hm(d.t); if (t == null) return null;
+  const cl = e.checklist || [], depart = t - 10 - d.travel, R = [];
+  if (w === "in") {
+    R.push({ t: depart - d.ready, l: "起きる・身支度" }, { t: depart - 20, l: "車に積み込み", d: cl.length ? `持ち物チェック（${cl.filter(x => x.d).length}/${cl.length}）を見ながら` : "持ち物を見ながら" }, { t: depart, l: "出発", d: `移動 ${d.travel}分＋10分の余裕` },
+      { t, l: "お店に着く・あいさつ", key: 1 }, { t: t + 5, l: "設置スタート", d: "置く商品の数を、納品書と一緒に確かめてもらう" }, { t: t + d.work, l: "設置おわり", d: "並べた様子を写真に撮る（委託の画面の「写真を貼る」）", key: 1 }, { t: t + d.work + d.travel, l: "帰宅" });
+  } else {
+    R.push({ t: depart, l: "出発", d: `移動 ${d.travel}分＋10分の余裕` }, { t, l: "お店に着く・あいさつ", key: 1 }, { t: t + 5, l: "売れた数の確認・精算", d: "アプリの「売れた数を入れる（精算）」で入れる" },
+      { t: t + d.work, l: "引き上げおわり", d: "残った商品の数を確かめて持ち帰る", key: 1 }, { t: t + d.work + d.travel, l: "帰宅", d: "委託の画面の「✓ 引き上げが終わった」を押す" });
+  }
+  return { rows: R.sort((a, b) => a.t - b.t), depart, home: t + d.work + d.travel, d };
+}
+function csSchedCard(e, w) {
+  const p = csPlan(e, w), d = csDefaults(e, w), ed = !p || state.csEdit === e.id + w, day = w === "in" ? e.date : evEnd(e);
+  const nm = w === "in" ? "設置" : "引き上げ";
+  const form = `<p class="note" style="margin:0">お店に着く時間を入れると、${w === "in" ? "起きる時間" : "出発"}から帰るまでの予定を作ります。</p>
+    <label class="f">お店に着く時間<input type="time" id="cs-${w}-t" value="${esc(d.t || "10:00")}"></label>
+    <div class="f">家からお店まで${numStep(`id="cs-${w}-travel"`, d.travel, { step: 10, big: 60, label: "移動時間", fmt: "hm" })}</div>
+    <div class="f">${nm}にかかる時間${numStep(`id="cs-${w}-work"`, d.work, { step: 10, big: 60, label: nm + "の時間", fmt: "hm" })}</div>
+    ${w === "in" ? `<div class="f">起きてから出発まで${numStep(`id="cs-${w}-ready"`, d.ready, { step: 10, big: 60, label: "支度の時間", fmt: "hm" })}</div>` : ""}
+    ${d.prev ? `<p class="note" style="margin:0">時間は、前の委託（${esc(d.prev.title.slice(0, 12))}）と同じにしています。</p>` : ""}
+    <button class="btn primary big wide" data-act="csSchedSave" data-w="${w}">スケジュールを作る</button>${p ? `<button class="btn ghost wide" data-act="csSchedEdit" data-w="">やめる</button>` : ""}`;
+  const isT = day === todayStr(), now = new Date(), nowM = now.getHours() * 60 + now.getMinutes(), nx = p && isT ? p.rows.findIndex(r => r.t >= nowM - 5) : -1;
+  const tl = p ? `<ol class="tl">${p.rows.map((r, i) => `<li class="${r.key ? "key " : ""}${i === nx ? "now " : ""}${isT && nx > i ? "gone" : ""}"><span class="tm">${hmStr(r.t)}</span><span class="dot" aria-hidden="true"></span><span class="tx"><b>${i === nx ? "つぎ：" : ""}${esc(r.l)}</b>${r.d ? `<span>${esc(r.d)}</span>` : ""}</span></li>`).join("")}</ol>
+    <div class="list"><button class="btn wide" data-act="csSchedCal" data-w="${w}">📅 スマホのカレンダーに入れる（出発30分前に通知）</button><button class="btn small" data-act="csSchedEdit" data-w="${w}">時間を変える</button></div>` : "";
+  return `<section class="card list"><div class="section-title"><h2 style="font:700 19px var(--display)">${nm}の日（${mdW(day)}）</h2></div>${ed ? form : tl}</section>`;
+}
 /* ---------- 委託 ---------- */
 function consignDetail(e) {
   const t = todayStr(), end = evEnd(e), r = eventResult(e), lineup = e.lineup || [];
@@ -2757,6 +2809,7 @@ function consignDetail(e) {
       <div class="tile"><div class="l">売れた数</div><div class="v">${r.items}個</div></div>
       <div class="tile"><div class="l">販売率</div><div class="v">${placed ? Math.round(r.items / placed * 100) + "%" : "―"}</div></div>
     </div><p class="note" style="margin:8px 0 0">受け取る金額＝売上−手数料。利益＝売上−手数料−商品の原価${r.costs ? "−出展料・交通費など（" + yen(r.costs) + "）" : ""}。${r.unknown ? `原価が分からない売上が${yen(r.unknown)}あります。` : ""}</p>`;
+  const dIn = daysBetween(today(), parseYmd(e.date)), cl = e.checklist || [], showPrep = !started && prepRows(e).some(x => x.date >= t);
   return `<button class="back" data-act="closeEv">‹ 一覧にもどる</button>
   <section class="card">
     <div class="section-title"><h2>${esc(e.title)}</h2><button class="btn small" data-act="editEv">編集</button></div>
@@ -2764,42 +2817,57 @@ function consignDetail(e) {
     <div class="cstate${hot ? " hot" : e.returned ? " done" : ""}">${st}</div>
     <div class="meta num">手数料 売上の${rate}%${num(e.fee) ? "・出展料など " + yen(e.fee) : ""}${num(e.transport) ? "・交通費 " + yen(e.transport) : ""}</div>
     ${e.memo ? `<div class="note" style="margin-top:6px;white-space:pre-wrap">${esc(e.memo)}</div>` : ""}
+    <div class="row" style="margin-top:8px"><button class="btn small" data-act="calEvent" data-id="${esc(e.id)}">📅 カレンダーに入れる</button><button class="btn small" data-act="evAnnounce">📣 告知の文章をつくる</button></div>
     <label class="check" style="margin-top:8px"><input type="checkbox" data-evflag="showOngoing"${e.showOngoing !== false ? " checked" : ""}> 期間中ずっと、ホームとカレンダーに出す</label>
   </section>
-  <section class="card list todaybox">
+  ${started ? `<section class="card list todaybox">
     <button class="btn primary big wide" data-act="csSold"${lineup.length ? "" : " disabled"}>売れた数を入れる（精算）</button>
-    <div class="note">${lineup.length ? "委託先から聞いた「売れた数」を入れるだけで、売上・手数料・利益が計算されます。途中で何回入れてもだいじょうぶです。" : "先に下の「置いている商品」で、置く商品と数を選んでください。"}</div>
-  </section>
-  ${fold(e.id + ":cs:lineup", "置いている商品", lineup.length ? `${lineup.length}種類・${placed}個・売れた${r.items}個` : "まだ選んでいません", `<section class="card"><div class="section-title"><h2>置いている商品</h2><button class="btn small" data-act="editLineup">${lineup.length ? "数・値段を変える" : "選ぶ"}</button></div>${table}</section>`, !lineup.length || !r.items, "d-product")}
-  ${fold(e.id + ":cs:result", "売上と利益", r.total ? `売上 ${yen(r.total)}・利益 ${yen(r.profit)}` : "まだ売れた数を入れていません", `<section class="card">${tiles}</section>`, r.total > 0, "d-sale")}
-  <section class="card list">${e.returned ? `<button class="btn wide" data-act="csReturn" data-v="0">「引き上げ済み」を取り消す</button>` : `<button class="btn wide" data-act="csReturn" data-v="1">✓ 引き上げが終わった</button><div class="note">押すと「引き上げ・精算」のお知らせが止まります。売れ残った商品は、在庫のままです。</div>`}</section>
+    <div class="note">${lineup.length ? "委託先から聞いた「今回売れた数」を「＋」で入れるだけで、売上・手数料・利益が計算されます。" : "先に下の「置いている商品」で、置く商品と数を選んでください。"}</div>
+  </section>` : ""}
+  ${fold(e.id + ":cs:lineup", "置いている商品", lineup.length ? `${lineup.length}種類・${placed}個・売れた${r.items}個` : "まだ選んでいません", `<section class="card"><div class="section-title"><h2>置いている商品</h2><button class="btn small" data-act="editLineup">${lineup.length ? "数・値段を変える" : "選ぶ"}</button></div>${table}</section>`, !lineup.length || (!started && dIn <= 7), "d-product")}
+  ${showPrep ? fold(e.id + ":cs:prep", "前の日までの準備", (() => { const nx = prepRows(e).find(x => x.date >= t); return nx ? `次：${nx.n}日前 ${nx.l}` : ""; })(), prepCard(e), dIn <= 7, "d-todo") : ""}
+  ${!started || dIn >= -1 ? fold(e.id + ":cs:in", "設置の日のスケジュール", csPlan(e, "in") ? `出発 ${hmStr(csPlan(e, "in").depart)}・${mdW(e.date)}` : "まだ作っていません", csSchedCard(e, "in"), !started && dIn <= 3, "d-event") : ""}
+  ${!e.returned ? fold(e.id + ":cs:check", "持ち物チェック", cl.length ? `${cl.filter(x => x.d).length}/${cl.length} 済み` : "まだありません", checkCard(e), !started && dIn <= 3) : ""}
+  ${started && !e.returned ? fold(e.id + ":cs:out", "引き上げの日のスケジュール", csPlan(e, "out") ? `出発 ${hmStr(csPlan(e, "out").depart)}・${mdW(end)}` : "まだ作っていません", csSchedCard(e, "out"), dEnd <= 3, "d-event") : ""}
+  ${started ? fold(e.id + ":cs:result", "売上と利益", r.total ? `売上 ${yen(r.total)}・利益 ${yen(r.profit)}` : "まだ売れた数を入れていません", `<section class="card">${tiles}</section>`, r.total > 0, "d-sale") : ""}
+  ${started ? `<section class="card list">${e.returned ? `<button class="btn wide" data-act="csReturn" data-v="0">「引き上げ済み」を取り消す</button>` : `<button class="btn wide" data-act="csReturn" data-v="1">✓ 引き上げが終わった</button><div class="note">押すと「引き上げ・精算」のお知らせが止まります。売れ残った商品は、在庫のままです。</div>`}</section>` : ""}
   <section class="card list"><h2 style="font:700 19px var(--display)">写真・メモ</h2><p class="note" style="margin:0">置いた様子や、委託先の書類を撮っておけます。</p>${photoStrip("events/" + e.id, "booth", "写真を貼る")}</section>
   ${started ? `<button class="btn wide" data-act="evCopy" data-id="${esc(e.id)}">この委託をもう一度（コピーして登録）</button>` : ""}
   <button class="btn ghost danger wide" data-act="delEvent">この予定を消す（売上の記録は残ります）</button>`;
 }
-function csSoldSheet() {
+function csSoldSheet(fix) {
   const e = curEv(); if (!e) return;
   const t = todayStr(), def = t < e.date ? e.date : t;
-  const rows = (e.lineup || []).map(l => { const sold = soldOf(e, l.pid); return `<div class="lp-row"><div class="lp-top"><div class="lp-nm"><b>${esc(l.name)}</b><span class="note num">置いた${num(l.qty)}個・${yen(num(l.price) - num(l.off))}</span></div>${numStep(`data-cs="${esc(l.pid)}"`, sold, { min: 0, max: Math.max(num(l.qty), sold), label: l.name + "の売れた数" })}</div></div>`; }).join("");
-  openSheet("売れた数を入れる", `<p class="note" style="margin:0">いままでに<b>売れた数の合計</b>を入れます（前に入れた分もふくめた数）。いまの数が最初から入っています。</p>
+  const rows = (e.lineup || []).map(l => { const sold = soldOf(e, l.pid), left = Math.max(0, num(l.qty) - sold);
+    return `<div class="lp-row"><div class="lp-top"><div class="lp-nm"><b>${esc(l.name)}</b><span class="note num">${fix ? `置いた${num(l.qty)}個・${yen(num(l.price) - num(l.off))}` : `これまで${sold}個・残り${left}個`}</span></div>${fix
+      ? numStep(`data-cs="${esc(l.pid)}"`, sold, { min: 0, max: Math.max(num(l.qty), sold), label: l.name + "の売れた数の合計" })
+      : numStep(`data-csadd="${esc(l.pid)}" data-have="${sold}"`, 0, { min: 0, max: Math.max(left, 0) || 999, label: l.name + "の今回売れた数" })}</div><div class="note num cs-after" data-after="${esc(l.pid)}"></div></div>`; }).join("");
+  openSheet(fix ? "これまでの売れた数を直す" : "売れた数を入れる", `<p class="note" style="margin:0">${fix ? "まちがえて入れたときに使います。<b>これまでの合計</b>の数に直してください。" : "委託先の明細にある<b>今回売れた数</b>を「＋」で入れます。前に入れた分は、自動で足されます。"}</p>
     <label class="f">精算の日<span class="hint">この日の売上として記録します</span><input type="date" id="cs-date" value="${def}"></label>
     <div class="lp-list">${rows}</div>
     <div class="calc" id="cs-calc"></div>
-    <button class="btn primary big wide" data-act="csSave">決定</button>`, panel => { const p = () => paintCs(panel); panel.addEventListener("input", p); p(); });
+    <button class="btn primary big wide" data-act="csSave">保存する</button>
+    ${fix ? `<button class="btn ghost wide" data-act="csSold">‹ 今回売れた数を入れる画面にもどる</button>` : `<button class="btn ghost wide" data-act="csFix">まちがえて入れた数を直す</button>`}`, panel => { const p = () => paintCs(panel); panel.addEventListener("input", p); panel.addEventListener("click", () => setTimeout(p, 0)); p(); });
+}
+function csWant(panel, l) {
+  const a = panel.querySelector(`[data-csadd="${CSS.escape(l.pid)}"]`); if (a) return Number(a.dataset.have) + Math.max(0, num(a.value));
+  const f = panel.querySelector(`[data-cs="${CSS.escape(l.pid)}"]`); return f ? Math.max(0, num(f.value)) : null;
 }
 function paintCs(panel) {
   const e = curEv(), out = panel.querySelector("#cs-calc"); if (!e || !out) return;
-  let tot = 0, n = 0; for (const l of e.lineup || []) { const inp = panel.querySelector(`[data-cs="${CSS.escape(l.pid)}"]`); const q = inp ? num(inp.value) : 0; n += q; tot += q * (num(l.price) - num(l.off)); }
+  let tot = 0, n = 0, add = 0, addAmt = 0;
+  for (const l of e.lineup || []) { const q = csWant(panel, l); if (q == null) continue; const pr = num(l.price) - num(l.off), d = q - soldOf(e, l.pid); n += q; tot += q * pr; add += d; addAmt += d * pr;
+    const af = panel.querySelector(`[data-after="${CSS.escape(l.pid)}"]`); if (af) af.textContent = d ? `合計 ${q}個になります` : ""; }
   const fee = tot * num(e.rate) / 100;
-  out.innerHTML = `<div class="line"><span>売れた数</span><b>${n}個</b></div><div class="line"><span>売上</span><b>${yen(tot)}</b></div><div class="line"><span>手数料（${num(e.rate)}%）</span><b>−${yen(fee)}</b></div><div class="line rec"><span>受け取る金額</span><b>${yen(tot - fee)}</b></div>`;
+  out.innerHTML = `${add ? `<div class="line"><span>今回${add > 0 ? "売れた" : "へらす"}分</span><b>${add > 0 ? "" : ""}${add}個・${yen(addAmt)}</b></div>` : ""}<div class="line"><span>これまでの合計</span><b>${n}個・${yen(tot)}</b></div><div class="line"><span>手数料（${num(e.rate)}%）</span><b>−${yen(fee)}</b></div><div class="line rec"><span>受け取る金額（合計）</span><b>${yen(tot - fee)}</b></div>`;
 }
 async function csSave() {
   const e = curEv(); if (!e) return; const date = $("#cs-date").value || todayStr();
   const added = [], removed = [], updated = [], stock = [];
   try {
     for (const l of e.lineup || []) {
-      const inp = document.querySelector(`[data-cs="${CSS.escape(l.pid)}"]`); if (!inp) continue;
-      const want = Math.max(0, Math.round(num(inp.value))), have = soldOf(e, l.pid), d = want - have;
+      const pn = $(".panel"), w0 = pn ? csWant(pn, l) : null; if (w0 == null) continue;
+      const want = Math.max(0, Math.round(w0)), have = soldOf(e, l.pid), d = want - have;
       if (d > 0) { const id = await store.add("sales", { date, productId: l.pid, name: l.name, qty: d, price: num(l.price), discount: num(l.off) * d, channel: "委託", eventId: e.id, createdAt: Date.now() }); added.push(id); }
       else if (d < 0) {
         let left = -d;
@@ -3122,12 +3190,14 @@ async function generatePost() {
 }
 
 /* 売れた記録 */
+function sfOrder(prods) { const c = {}; for (const x of state.sales) if (x.productId) c[x.productId] = (c[x.productId] || 0) + (num(x.qty) || 1); return prods.slice().sort((a, b) => (c[b.id] || 0) - (c[a.id] || 0) || (num(b.stock) > 0) - (num(a.stock) > 0)); }
 function saleSheet(preset = {}) {
   const prods = [...state.products].sort((a, b) => String(a.name).localeCompare(String(b.name), "ja"));
   const ev = preset.eventId ? state.events.find(e => e.id === preset.eventId) : null;
   const html = `
   ${ev ? `<div class="note">出店：${esc(ev.title)}（${jpDate(ev.date)}）の売上として記録します</div>` : ""}
-  <label class="f">売れた商品<select id="sf-product"><option value="">（一覧にない商品）</option>${prods.map(p => `<option value="${esc(p.id)}">${esc(p.name)}（在庫${num(p.stock)}）</option>`).join("")}</select></label>
+  <div class="f">売れた商品<span class="hint">押して選びます（よく売れる順）</span><div class="sfgrid" role="group" aria-label="売れた商品">${sfOrder(prods).map(p => `<button type="button" class="sft" data-act="sfPick" data-id="${esc(p.id)}" aria-pressed="false">${p.photo ? `<img src="${esc(p.photo)}" alt="" loading="lazy">` : ""}<b>${esc(p.name)}</b><span class="num">${yen(p.price)}<br>在庫${num(p.stock)}</span></button>`).join("")}<button type="button" class="sft other" data-act="sfPick" data-id="" aria-pressed="false"><b>一覧にない商品</b><span>名前を入れる</span></button></div>
+  <select id="sf-product" class="sr-only" tabindex="-1" aria-hidden="true"><option value="">（一覧にない商品）</option>${prods.map(p => `<option value="${esc(p.id)}">${esc(p.name)}</option>`).join("")}</select></div>
   <label class="f" id="sf-name-wrap">商品名<input type="text" id="sf-name" placeholder="例：ミニブーケ"></label>
   <div class="grid2">
     <div class="f">個数${numStep('id="sf-qty"', 1, { min: 1, label: "個数", unit: "個" })}</div>
@@ -3140,15 +3210,17 @@ function saleSheet(preset = {}) {
   <button class="btn primary big wide" data-act="saveSale">記録する</button>`;
   openSheet("売れた！を記録", html, panel => {
     panel._ev = ev;
-    const sync = () => { const p = state.products.find(x => x.id === $("#sf-product").value); $("#sf-name-wrap").hidden = !!p; $("#sf-dec-wrap").hidden = !p; if (p) $("#sf-price").value = p.price || ""; };
-    $("#sf-product").addEventListener("change", sync); sync();
+    const sync = () => { const v = $("#sf-product").value, p = state.products.find(x => x.id === v), other = panel._picked && !p; $("#sf-name-wrap").hidden = !other; $("#sf-dec-wrap").hidden = !p; if (p) $("#sf-price").value = p.price || ""; if (other) setTimeout(() => { const n = $("#sf-name"); if (n && !n.value) n.focus(); }, 30);
+      panel.querySelectorAll(".sft").forEach(b => b.setAttribute("aria-pressed", String(!!panel._picked && b.dataset.id === v))); };
+    panel._sync = sync; $("#sf-product").addEventListener("change", () => { panel._picked = true; sync(); }); if (!state.products.length) panel._picked = true; sync();
   });
 }
 async function saveSale() {
   const panel = $(".panel"); const ev = panel._ev;
+  if (!panel._picked) { toast("売れた商品を押して選んでください"); return; }
   const p = state.products.find(x => x.id === $("#sf-product").value);
   const name = p ? p.name : $("#sf-name").value.trim();
-  if (!name) { toast("商品名を入れてください"); return; }
+  if (!name) { toast("商品名を入れてください"); $("#sf-name").focus(); return; }
   const qty = Math.max(1, num($("#sf-qty").value) || 1);
   const ch = ev ? "イベント" : (($("#sf-ch [aria-pressed=true]") || {}).dataset?.v || "BASE");
   const data = { date: ev ? ev.date : ($("#sf-date").value || todayStr()), productId: p ? p.id : "", name, qty, price: num($("#sf-price").value), channel: ch, createdAt: Date.now() };
@@ -3165,7 +3237,7 @@ function eventSheet(e, date, src) {
   ${src ? `<div class="tipbox"><b>「${esc(src.title)}」（${jpDate(src.date)}）をコピーします。</b><br>場所・出展料・メモ・持っていく商品・持ち物・当日の時間がそのまま入ります。<b>日付だけ</b>選んでください。</div>` : ""}
   ${pastB.length ? `<label class="f">前と同じ出店なら<select id="ef-copy" data-evcopy="1"><option value="">コピーしない（新しく入れる）</option>${pastB.map(x => `<option value="${esc(x.id)}">${esc(x.title)}（前回 ${jpDate(x.date)}）</option>`).join("")}</select></label>` : ""}
   <label class="f">名前<input type="text" id="ef-title" value="${esc(e.title)}" placeholder="例：○○公園のクリスマスマルシェ"></label>
-  <label class="f">種類<select id="ef-kind">${KINDS.map(k => `<option${k === e.kind ? " selected" : ""}>${k}</option>`).join("")}</select></label>
+  <div class="f">種類<div class="seg kinds" role="group" aria-label="種類">${KINDS.map(k => `<button type="button" data-act="efKind" data-k="${k}" aria-pressed="${k === (e.kind || KINDS[0])}">${k}</button>`).join("")}</div><select id="ef-kind" class="sr-only" tabindex="-1" aria-hidden="true">${KINDS.map(k => `<option${k === e.kind ? " selected" : ""}>${k}</option>`).join("")}</select></div>
   <div class="f">日にち<div class="seg" role="group" aria-label="日にちの決め方"><button type="button" data-act="efSpan" data-v="0" id="ef-sp0">1日だけ</button><button type="button" data-act="efSpan" data-v="1" id="ef-sp1">期間あり（委託など）</button></div></div>
   <div class="list" style="gap:12px"><label class="f"><span id="ef-date-l">日付</span><input type="date" id="ef-date" value="${esc(e.date)}"></label>
   <label class="f" id="ef-end-w"><span id="ef-end-l">終わりの日</span><input type="date" id="ef-end" value="${esc(isSpan(e) ? e.endDate : "")}"></label></div>
@@ -3182,6 +3254,7 @@ function eventSheet(e, date, src) {
   </div>
   ${isNew && !src ? `<label class="f" id="ef-tpl-w">持ち物<select id="ef-tpl">${tplSources().filter(s => !s.key.startsWith("e:")).map(s => `<option value="${esc(s.key)}">${esc(s.name)}（${s.items.length}こ）</option>`).join("")}<option value="">あとで入れる</option></select></label>` : ""}
   <label class="f">メモ<textarea id="ef-memo" placeholder="例：9時搬入、テーブル持参">${esc(e.memo || "")}</textarea></label>
+  <div class="tipbox" id="ef-sum" hidden></div>
   <button class="btn primary big wide" data-act="saveEvent">保存する</button>
   ${isNew ? `<label class="btn wide" for="pdfIn" style="cursor:pointer" data-pdf-target="">📄 要項のPDF・チラシの写真から読み取る</label>` : `<label class="btn wide" for="pdfIn" style="cursor:pointer" data-pdf-target="${esc(e.id)}">📄 要項のPDFから読み取って足す</label>`}`;
   openSheet(isNew ? "出店・予定を追加" : "出店・予定を編集", html, panel => {
@@ -3196,8 +3269,10 @@ function eventSheet(e, date, src) {
       $("#ef-end-w").hidden = !sp; $("#ef-show-w").hidden = !sp; $("#ef-rate-w").hidden = !c;
       $("#ef-date-l").textContent = sp ? (c ? "置きはじめる日" : "始まりの日") : "日付"; $("#ef-end-l").textContent = c ? "引き上げの日" : "終わりの日";
       $("#ef-fee-l").textContent = c ? "出展料・場所代など（円）" : "出展料（円）";
-      $("#ef-booth").hidden = !(b || c); if ($("#ef-tpl-w")) $("#ef-tpl-w").hidden = !b; };
-    panel._sync = sync; $("#ef-end").addEventListener("change", () => { panel._endAuto = false; }); $("#ef-kind").addEventListener("change", sync); $("#ef-date").addEventListener("change", sync); sync();
+      $("#ef-booth").hidden = !(b || c); if ($("#ef-tpl-w")) { $("#ef-tpl-w").hidden = !(b || c); if (!panel._tplTouched) $("#ef-tpl").value = c ? "cs" : ($("#ef-tpl").querySelector('option[value="base"]') ? "base" : $("#ef-tpl").value); }
+      panel.querySelectorAll('[data-act="efKind"]').forEach(x => x.setAttribute("aria-pressed", String(x.dataset.k === k)));
+      const sum = $("#ef-sum"); if (sum) { const d0 = $("#ef-date").value, d1 = $("#ef-end").value; sum.hidden = !(sp && d0 && d1); if (!sum.hidden) sum.innerHTML = `<b>${c ? "置く" : "期間"}：${mdW(d0)} 〜 ${c ? "引き上げ " : ""}${mdW(d1)}</b>（${daysBetween(parseYmd(d0), parseYmd(d1)) + 1}日間）`; } };
+    panel._sync = sync; $("#ef-end").addEventListener("change", () => { panel._endAuto = false; sync(); }); if ($("#ef-tpl")) $("#ef-tpl").addEventListener("change", () => { panel._tplTouched = true; }); $("#ef-kind").addEventListener("change", sync); $("#ef-date").addEventListener("change", sync); sync();
   });
 }
 async function saveEvent() {
@@ -3216,7 +3291,7 @@ async function saveEvent() {
     if (id) await store.update("events", id, data);
     else {
       if (src) { data.checklist = (src.checklist || []).map(x => ({ t: x.t, d: false })); data.lineup = (src.lineup || []).filter(l => state.products.some(p => p.id === l.pid)).map(l => ({ ...l })); for (const k of ["tIn", "tStart", "tEnd", "tOut", "travel", "setup", "teardown", "ready", "goal", "float", "rate"]) if (src[k] != null && src[k] !== "") data[k] = src[k]; data.copiedFrom = src.id; }
-      else if (isBooth(data)) { const k = $("#ef-tpl") ? $("#ef-tpl").value : "base"; const s = tplSources().find(x => x.key === k); data.checklist = (s ? s.items : []).map(t => ({ t, d: false })); }
+      else if (isBooth(data) || isConsign(data)) { const k = $("#ef-tpl") ? $("#ef-tpl").value : isConsign(data) ? "cs" : "base"; const s = tplSources().find(x => x.key === k); data.checklist = (s ? s.items : []).map(t => ({ t, d: false })); }
       id = await store.add("events", { ...data, createdAt: Date.now() });
     }
   } catch { return; }
@@ -3519,7 +3594,7 @@ const HELP = {
   studio: { t: "投稿", s: ["インスタ用の写真・動画を選んで、AIに構成や仕上げをしてもらえます。", "「LINE・お知らせの文章」で、何のお知らせか・お得な情報を選ぶと、LINEの文章ができます。", "「LINEで送る」を押すと、LINEが開いて文章が入ります。送り先を選ぶだけです。", "「今やるといい宣伝」で、AIが季節や在庫から「今ならこれ」を考えます。"] },
   prep: { t: "準備", s: ["「やること」：期限つきのやることリスト。終わったら丸を押してチェック。", "「材料・買い物」：材料の在庫と買い物リスト。", "「乾燥中」：乾かしている花の記録。乾いたら「乾いた！」を押します。", "「くり返し」：月1回など、決まって来る予定を自動で入れます。"] },
   events: { t: "出店", s: ["「＋ 追加」で出店や委託の予定を登録します。要項のPDFやチラシの写真からも登録できます。", "同じマルシェにまた出るときは、「＋ 追加」の「前と同じ出店なら」で選ぶと、場所や持っていく商品がコピーされます。", "2日以上続く出店や委託は、「日にち」で「期間あり」を選んで、終わりの日も入れます。", "出店を押すと、持っていく商品・当日のスケジュール・持ち物チェックが見られます。", "当日は「🛍 レジを開く」。売れた商品を押して「会計する」だけで、売上が自動で計算されます。", "「カレンダー」に切り替えると、月の予定が見られます。期間のある予定は、1本の線でつながって出ます。"] },
-  consign: { t: "委託", s: ["「置いている商品」の「選ぶ」で、委託先に置く商品と数を「＋」で決めます。", "委託先から聞いたら「売れた数を入れる（精算）」を押して、商品ごとの売れた数の合計を入れます。いまの数が最初から入っているので、増えた分だけ「＋」を押します。", "売上・手数料・受け取る金額・利益は、自動で計算されます。", "引き上げの3日前から、ホームのお知らせに出ます。引き上げたら「✓ 引き上げが終わった」を押すと、お知らせが止まります。", "ホームやカレンダーに出したくないときは、「期間中ずっと、ホームとカレンダーに出す」のチェックを外します。"] },
+  consign: { t: "委託", s: ["「置いている商品」の「選ぶ」で、委託先に置く商品と数を「＋」で決めます。", "置きに行く前は「前の日までの準備」「設置の日のスケジュール」「持ち物チェック」を使います。出店と同じやり方です。", "委託先から聞いたら「売れた数を入れる（精算）」を押して、明細にある「今回売れた数」を「＋」で入れます。前の分は自動で足されます。", "引き上げの日が近づいたら「引き上げの日のスケジュール」で出発の時間がわかります。", "売上・手数料・受け取る金額・利益は、自動で計算されます。", "引き上げの3日前から、ホームのお知らせに出ます。引き上げたら「✓ 引き上げが終わった」を押すと、お知らせが止まります。", "ホームやカレンダーに出したくないときは、「期間中ずっと、ホームとカレンダーに出す」のチェックを外します。"] },
   regi: { t: "レジ", s: ["売れた商品を押すと「かご」に入ります（2つなら2回押す）。", "下の「会計する」を押します。", "値引きするときは「100円引き」などを押します。", "現金なら「お預かり」の金額を押すと、おつりが大きく出ます。", "最後に「✓ ○円を会計する」。チャイムが鳴って記録されます。", "間違えたら、すぐ下に出る「取り消す」を押します。", "閉店したら「レジ締め」で、レジにあるはずのお金を確かめます。"] },
   analysis: { t: "分析", s: ["「売上・利益」：期間ごとの売上、よく売れた商品、出店の成績が見られます。", "「経費・確定申告」：レシートの記録と、確定申告用のまとめが見られます。", "表は「書き出す」でファイルにして、息子さんや税理士さんに送れます。"] },
   think: { t: "頭の整理", s: ["思いついたことを、順番を気にせず書き出します（「声で書く」も使えます）。", "「AIにまとめてもらう」で、やること・決めること・アイデア・気がかりに分かれます。", "やることは、チェックして「やることに入れる」を押すと、期限つきで入ります。", "書きかけは自動で残ります。前の書き出しは下の「これまでの書き出し」から開けます。"] },
@@ -3546,7 +3621,7 @@ const FAQ = [
   ["声の入力が動かない", "キーボードにあるマイクのボタンを押して話しても、文字で入ります。こちらはいつでも使えます。"],
   ["ボタンが多くて迷う", "「設定」→「見やすさ・音」の「かんたん表示」にチェックを入れると、よく使うボタンだけになります。"],
   ["委託（お店に長く置く）はどう記録する？", "「予定を追加」で種類を「委託」にして、置きはじめる日と引き上げの日、手数料（売上の何%）を入れます。置いた商品と数を選んでおき、委託先から聞いた「売れた数」を入れると、売上と利益が自動で計算されます。引き上げの3日前からホームにお知らせが出ます。"],
-  ["委託で売れた数はどう入れる？", "委託の画面の「売れた数を入れる（精算）」を押します。いまの数が最初から入っているので、委託先の明細で増えた分だけ「＋」を押して「決定」。まちがえたら、すぐ下に出る「取り消す」を押します。"],
+  ["委託で売れた数はどう入れる？", "委託の画面の「売れた数を入れる（精算）」を押して、委託先の明細にある「今回売れた数」を「＋」で入れ、「保存する」。前に入れた分は自動で足されます。まちがえて入れたときは、同じ画面の「まちがえて入れた数を直す」で直せます。"],
   ["引き上げのお知らせを止めたい", "委託の画面の「✓ 引き上げが終わった」を押すと、お知らせが止まります。"],
   ["「委託中」の表示を消したい", "委託の画面の「期間中ずっと、ホームとカレンダーに出す」のチェックを外します。カレンダーには、はじめと終わりの日だけ出ます。"],
   ["2日以上続くマルシェに出る", "予定を作るときに「日にち」で「期間あり」を押して、始まりの日と終わりの日を選びます。レジで売れた分は、その日の日付で記録されます。"],
@@ -3762,7 +3837,14 @@ const PREP_STEPS = [
   [2, "釣り銭の両替（千円札・百円玉）", "レジ締めのために、用意した金額をメモ"],
   [1, "持ち物チェック・積み込み・スマホとモバイルバッテリーの充電・前日の告知", "「明日出店します」の投稿も"]
 ];
-const prepRows = e => PREP_STEPS.map(([n, l, d]) => ({ n, l, d, date: ymd(addD(parseYmd(e.date), -n)) }));
+const CS_PREP = [
+  [7, "委託先に置く商品と数を決める", "委託の画面の「置いている商品」で＋−を押すだけ"],
+  [5, "値札・納品書の準備", "納品書は2枚（お店に渡す分と、手元の控え）"],
+  [3, "告知（「○○に置きます」）", "委託の画面の「告知の文章をつくる」で下書きできます"],
+  [1, "持ち物チェック・梱包", "「持ち物チェック」を見ながら。こわれやすい物は箱に"]
+];
+const CS_CL = ["置く商品（梱包して）", "納品書（2枚）", "値札・POP", "ショップカード", "ディスプレイ用のかご・什器", "緩衝材・箱", "委託の条件のメモ（手数料・期間）", "ペン・テープ・ハサミ"];
+const prepRows = e => (isConsign(e) ? CS_PREP : PREP_STEPS).map(([n, l, d]) => ({ n, l, d, date: ymd(addD(parseYmd(e.date), -n)) }));
 function schedCard(e) {
   const p = evPlan(e), editing = !p || state.schedEdit === e.id, d = schedDefaults(e);
   const isToday = e.date === todayStr(), now = new Date(), nowM = now.getHours() * 60 + now.getMinutes();
@@ -4594,6 +4676,7 @@ async function wakeOn() { try { if (!WL && "wakeLock" in navigator && document.v
 function wakeOff() { try { if (WL) WL.release(); } catch {} WL = null; }
 document.addEventListener("visibilitychange", () => { if (document.visibilityState === "visible") { checkUpdate(); if (state.regi) wakeOn(); } });
 window.addEventListener("scroll", () => { const b = document.getElementById("toTop"); if (b) b.hidden = window.scrollY < window.innerHeight * 1.5 || !!document.querySelector(".panel"); }, { passive: true });
+document.addEventListener("keydown", e => { if (e.key !== "Enter" || e.isComposing || e.keyCode === 229) return; const id = e.target && e.target.id; const m = { "td-new": "tdAdd", "qt-title": "quickTodoSave", "cl-new": "clAdd" }[id]; if (m && ACT[m]) { e.preventDefault(); ACT[m](e.target); } });
 document.addEventListener("change", e => { const f = e.target && e.target.dataset && e.target.dataset.evflag; if (f) { evUpdate({ [f]: e.target.checked }); toast(e.target.checked ? "ホームとカレンダーに出します" : "ホームとカレンダーには出しません（はじめと終わりの日だけ出ます）"); } });
 document.addEventListener("change", e => { const k = e.target && e.target.dataset && e.target.dataset.hehide; if (!k) return; const L = homeLayout(); L.hidden = e.target.checked ? L.hidden.filter(x => x !== k) : [...new Set([...L.hidden, k])]; saveHome(L); render(); });
 document.addEventListener("change", e => { if (e.target && e.target.dataset && e.target.dataset.pref) { LS.set(e.target.dataset.pref, e.target.checked); applyZoom(); } });
@@ -4633,7 +4716,7 @@ function lnCopyBlock(title, key, line) {
   return `<div class="aiblock"><div class="h"><b>${title}</b><button class="copy" data-act="copy" data-key="${key}">コピー</button></div><div class="txt">${esc(COPY[key])}</div>${line ? `<div class="row" style="margin-top:8px"><button class="btn" data-act="lineSend" data-key="${key}">LINEで送る</button>${navigator.share ? `<button class="btn" data-act="shareText" data-key="${key}">ほかのアプリで送る</button>` : ""}</div>` : ""}</div>`;
 }
 function lineCard() {
-  const L = lnS(), evs = state.events.filter(e => isBooth(e) && e.date >= todayStr()).sort((a, b) => a.date < b.date ? -1 : 1);
+  const L = lnS(), evs = state.events.filter(e => (isBooth(e) || isConsign(e)) && evEnd(e) >= todayStr()).sort((a, b) => a.date < b.date ? -1 : 1);
   if (L.purpose === "出店のお知らせ" && !L.evId && evs[0]) L.evId = evs[0].id;
   const r = L.res; if (r) { COPY.ln_line = r.line || ""; COPY.ln_ig = r.instagram || ""; COPY.ln_th = r.threads || ""; }
   const needV = L.offer === "円引き" || L.offer === "%引き" || L.offer === "先着特典", needT = L.offer === "プレゼント" || L.offer === "先着特典" || L.offer === "LINEを見せると特典";
@@ -4641,7 +4724,7 @@ function lineCard() {
     <h2 class="h">LINE・お知らせの文章</h2>
     <p class="note" style="margin:0">LINEで送る宣伝の文章を作ります。同じ内容のインスタ・Threads用も一緒にできます。</p>
     <div class="f">何のお知らせ？<div class="seg" role="group">${LN_PURPOSES.map(p => `<button data-act="lnPurpose" data-k="${p}" aria-pressed="${L.purpose === p}">${p}</button>`).join("")}</div></div>
-    ${L.purpose === "出店のお知らせ" ? (evs.length ? `<label class="f">どの出店？<select id="ln-ev" data-lnev="1">${evs.map(e => `<option value="${esc(e.id)}"${e.id === L.evId ? " selected" : ""}>${jpDate(e.date)} ${esc(e.title)}</option>`).join("")}</select></label>` : `<div class="note">これからの出店が登録されていません。「出店」から追加すると、日付や場所が自動で入ります。</div>`) : ""}
+    ${L.purpose === "出店のお知らせ" ? (evs.length ? `<label class="f">どの出店？<select id="ln-ev" data-lnev="1">${evs.map(e => `<option value="${esc(e.id)}"${e.id === L.evId ? " selected" : ""}>${isSpan(e) ? evRange(e) : jpDate(e.date)} ${esc(e.title)}${isConsign(e) ? "（委託）" : ""}</option>`).join("")}</select></label>` : `<div class="note">これからの出店が登録されていません。「出店」から追加すると、日付や場所が自動で入ります。</div>`) : ""}
     <div class="f">お得な情報をつける<div class="seg" role="group">${LN_OFFERS.map(o => `<button data-act="lnOffer" data-k="${o}" aria-pressed="${L.offer === o}">${o === "円引き" ? "○円引き" : o === "%引き" ? "○%引き" : o}</button>`).join("")}</div></div>
     ${needV ? `<div class="f">${L.offer === "先着特典" ? "先着の人数" : "どれくらい引く？"}${numStep(`id="ln-ov"`, L.offer === "円引き" ? 100 : L.offer === "%引き" ? 10 : 5, { step: L.offer === "円引き" ? 50 : L.offer === "%引き" ? 5 : 1, min: 1, label: "お得の大きさ", unit: L.offer === "円引き" ? "円" : L.offer === "%引き" ? "%" : "名" })}</div>` : ""}
     ${needT ? `<label class="f">特典の中身<input type="text" id="ln-ot" placeholder="例：ミニスワッグ・ポストカード"></label>` : ""}
@@ -4753,7 +4836,8 @@ VIEWS.prep = () => {
     const group = (title, list) => list.length ? `<div><div class="note" style="font-weight:700;margin-top:6px">${title}</div>${list.map(todoRow).join("")}</div>` : "";
     body = `<section class="card list">
       <div class="row" style="flex-wrap:nowrap"><input type="text" id="td-new" placeholder="やることを入れる" style="flex:1">${micBtn("td-new", "声で入力")}</div>
-      <div class="row"><input type="date" id="td-due" style="flex:1 1 140px"><select id="td-cat" style="flex:1 1 120px"><option value="">種類なし</option>${TODO_CATS.map(c => `<option>${c}</option>`).join("")}</select><button class="btn primary" data-act="tdAdd">追加</button></div>
+      <div class="seg" role="group" aria-label="いつまで" id="td-dueq">${[["", "決めない"], [todayStr(), "今日"], [ymd(addD(today(), 1)), "明日"], [ymd(addD(today(), (7 - today().getDay()) % 7)), "今週中"], [ymd(addD(today(), 7)), "1週間後"]].map(([v, l], i) => `<button type="button" data-act="tdDue" data-v="${v}" aria-pressed="${i === 0}">${l}</button>`).join("")}</div>
+      <div class="row"><input type="date" id="td-due" style="flex:1 1 140px" aria-label="日付を自分で選ぶ"><select id="td-cat" style="flex:1 1 120px"><option value="">種類なし</option>${TODO_CATS.map(c => `<option>${c}</option>`).join("")}</select><button class="btn primary" data-act="tdAdd">追加</button></div>
       <button class="btn small ghost" data-act="prepSeg" data-k="rep" style="align-self:flex-start">🔁 くり返すことは「くり返し」へ</button>
       ${sample ? `<button class="btn wide" data-act="tdAi"${prep.todoBusy ? " disabled" : ""}>${prep.todoBusy ? "AIが考えています…" : "AIにやることを考えてもらう"}</button>` : ""}
       ${prep.todoErr ? `<div style="color:var(--bad)">${esc(prep.todoErr)}</div>` : ""}
@@ -4897,9 +4981,11 @@ async function addToMaterialStock(name, qty, unit, cat) {
 }
 const PREP_ACT = {
   prepSeg: el => { prep.seg = el.dataset.k; render(true); },
+  tdDue: el => { const d = $("#td-due"); if (d) d.value = el.dataset.v; el.parentElement.querySelectorAll("button").forEach(b => b.setAttribute("aria-pressed", String(b === el))); },
+  sfPick: el => { const p = $(".panel"), sel = $("#sf-product"); if (!p || !sel) return; p._picked = true; sel.value = el.dataset.id; p._sync && p._sync(); buzz(); },
   tdAdd: async () => {
     const title = $("#td-new").value.trim(); if (!title) { toast("やることを入れてください"); return; }
-    try { await store.add("todos", { title, due: $("#td-due").value || "", cat: $("#td-cat").value || "", done: false, createdAt: Date.now() }); $("#td-new").value = ""; $("#td-due").value = ""; toast("追加しました"); } catch {}
+    try { await store.add("todos", { title, due: $("#td-due").value || "", cat: $("#td-cat").value || "", done: false, createdAt: Date.now() }); $("#td-new").value = ""; $("#td-due").value = ""; document.querySelectorAll("#td-dueq button").forEach((b, i) => b.setAttribute("aria-pressed", String(i === 0))); toast("追加しました"); $("#td-new").focus(); } catch {}
   },
   tdToggle: async el => { const t = state.todos.find(x => x.id === el.dataset.id); if (!t) return; const nowDone = !t.done; try { await store.update("todos", t.id, { done: nowDone, doneAt: nowDone ? Date.now() : null }); if (nowDone) toast("✓ できました！おつかれさまです"); } catch {} },
   tdDel: el => delUndo("todos", el.dataset.id),
@@ -5165,7 +5251,7 @@ ${p.rows.map(r => `${hmStr(r.t)} ${r.l}${r.d ? "（" + r.d + "）" : ""}`).join(
 お店の名前: ${st.shopName}／雰囲気: ${st.shopMood || "ナチュラル"}／紹介: ${st.shopIntro || "なし"}
 今日: ${jpDate(todayStr())}
 お知らせの目的: ${L.purpose}
-${ev ? `出店: ${jpDate(ev.date)} ${ev.title}／場所: ${ev.place || "（未定・空欄で残す）"}／時間: ${ev.tStart ? ev.tStart + "〜" + (ev.tEnd || "") : "（未定・空欄で残す）"}／持っていく主な商品: ${(ev.lineup || []).slice(0, 8).map(l => l.name + " " + yen(lpPrice(l))).join("、") || "未定"}` : ""}
+${ev && isConsign(ev) ? `委託販売（お店に商品を置いてもらう）: ${evRange(ev)} ${ev.title}／置いてもらうお店・場所: ${ev.place || "（未定・空欄で残す）"}／置く主な商品: ${(ev.lineup || []).slice(0, 8).map(l => l.name + " " + yen(lpPrice(l))).join("、") || "未定"}。「○○さんで期間限定で置いてもらっています」という告知にする` : ""}${ev && !isConsign(ev) ? `出店: ${jpDate(ev.date)} ${ev.title}／場所: ${ev.place || "（未定・空欄で残す）"}／時間: ${ev.tStart ? ev.tStart + "〜" + (ev.tEnd || "") : "（未定・空欄で残す）"}／持っていく主な商品: ${(ev.lineup || []).slice(0, 8).map(l => l.name + " " + yen(lpPrice(l))).join("、") || "未定"}` : ""}
 お得な情報: ${offer || "なし"}
 伝えたいこと: ${msg || "とくになし"}
 ${ev && ev.memo ? "出店のメモ・要項から分かったこと: " + String(ev.memo).slice(0, 600) + "\n" : ""}${prodInfo ? "商品の説明:\n" + prodInfo + "\n" : ""}${(L.refs || []).length ? "添付の資料（要項・チラシ・写真）も読んで、そこに書かれた日時・場所・内容・特典などを正しく使ってください。写真があれば、見た目の特徴（色・花材・雰囲気）を文章に生かしてください。\n" : ""}
@@ -5277,6 +5363,20 @@ LINE・インスタ・Threadsで「今」やるとよい宣伝やお得な情報
     const note = [r.summary, (r.todos || []).length ? "【やること】\n" + r.todos.map(x => "・" + x.title).join("\n") : "", (r.decide || []).length ? "【決めること】\n" + r.decide.map(x => "・" + x).join("\n") : "", (r.ideas || []).length ? "【アイデア】\n" + r.ideas.map(x => "・" + x).join("\n") : "", "【もとの書き出し】\n" + d.text].filter(Boolean).join("\n\n");
     await boxPutItem({ id: newId(), title: r.title || String(d.text).slice(0, 20), cat: "アイデア・メモ", note, link: "", files: [], pinned: false, createdAt: Date.now(), updatedAt: Date.now() }); toast("保管箱（アイデア・メモ）にしまいました");
   },
+  efKind: el => { const p = $(".panel"), sel = $("#ef-kind"); if (!sel) return; sel.value = el.dataset.k; sel.dispatchEvent(new Event("change", { bubbles: true })); },
+  csFix: () => { closeSheet(); csSoldSheet(true); },
+  csSchedEdit: el => { state.csEdit = el.dataset.w ? state.evId + el.dataset.w : null; render(); },
+  csSchedSave: async el => { const w = el.dataset.w, g = f => ($(`#cs-${w}-${f}`) || {}).value || ""; const e = curEv(); if (!e) return;
+    const t = g("t"); if (!t) { toast("お店に着く時間を入れてください"); return; }
+    const v = { t, travel: num(g("travel")), work: num(g("work")), ready: w === "in" ? num(g("ready")) : num((e.csOut || {}).ready ?? 60) };
+    state.csEdit = null; FOLDS[e.id + ":cs:" + w] = true; await evUpdate({ [w === "in" ? "csIn" : "csOut"]: v }); toast("スケジュールを作りました"); },
+  csSchedCal: el => { const e = curEv(), w = el.dataset.w, p = e && csPlan(e, w); if (!p) return; const day = w === "in" ? e.date : evEnd(e), nm = w === "in" ? "設置" : "引き上げ";
+    const dt = n => `${icsDate(day)}T${pad(Math.floor(((n % 1440) + 1440) % 1440 / 60))}${pad(((n % 60) + 60) % 60)}00`;
+    const stamp = new Date().toISOString().replace(/[-:]/g, "").replace(/\.\d+/, "");
+    const L = ["BEGIN:VEVENT", `UID:cs${w}-${e.id}@dfn-shop`, `DTSTAMP:${stamp}`, `DTSTART:${dt(Math.max(0, p.depart))}`, `DTEND:${dt(Math.min(1439, p.home))}`, `SUMMARY:${icsEsc(`【委託の${nm}】` + e.title)}`, `DESCRIPTION:${icsEsc(p.rows.map(r => `${hmStr(r.t)} ${r.l}`).join("\n"))}`];
+    if (e.place) L.push(`LOCATION:${icsEsc(e.place)}`);
+    L.push("BEGIN:VALARM", "ACTION:DISPLAY", `DESCRIPTION:${icsEsc("30分後に出発：" + e.title)}`, "TRIGGER:-PT30M", "END:VALARM", "BEGIN:VALARM", "ACTION:DISPLAY", `DESCRIPTION:${icsEsc(`明日は委託の${nm}：` + e.title)}`, "TRIGGER:-PT12H", "END:VALARM", "END:VEVENT");
+    calSheet([L.map(icsFold).join("\r\n")], `${e.title}_${nm}`, `「${e.title}」の${nm}の日（出発 ${hmStr(p.depart)}〜帰宅 ${hmStr(p.home)}）`); },
   efSpan: el => { const p = $(".panel"); if (!p) return; p._span = el.dataset.v === "1"; p._spanTouched = true; if (p._span) $("#ef-end").value = $("#ef-end").value || ""; p._sync && p._sync(); if (p._span) setTimeout(() => { const x = $("#ef-end"); if (x) x.focus(); }, 30); },
   csSold: () => csSoldSheet(),
   csSave: () => csSave(),
@@ -5487,7 +5587,7 @@ function route() { const h = location.hash.replace("#", ""); state.tab = TABS.so
 /* ---------- 2画面（左右・上下） ---------- */
 const SPLIT_KEY = "dfn-split";
 const APP_URL = location.href.split("#")[0];
-const APP_VERSION = "2026-11-24-1";
+const APP_VERSION = "2026-11-25-2";
 window.__dfn = { get state() { return state; }, S: () => S(), ymd: d => ymd(d), repeatLabel: r => repeatLabel(r), occDate: (r, k) => occDate(r, k), rruleOf: r => rruleOf(r), alarmTrigger: (a, b) => alarmTrigger(a, b) }; // 動作確認用
 const SPLITS = { none: "1画面", lr: "左右に2つ", tb: "上下に2つ" };
 function loadSplit() { try { const o = JSON.parse(localStorage.getItem(SPLIT_KEY) || "{}"); if (SPLITS[o.split]) state.split = o.split; if (TABS.some(t => t[0] === o.tab2)) state.tab2 = o.tab2; } catch {} }
